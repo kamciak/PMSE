@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value=""/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="E:\PublicationMetaSearchEngine\PublicationMetaSearchEngine\zrodla"/>
+    <property name="user.dir" value="E:\PMSE"/>
     <property name="java.runtime.version" value="1.7.0_71-b14"/>
     <property name="netbeans.deploy" value="true"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
