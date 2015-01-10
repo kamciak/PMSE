@@ -1,0 +1,2403 @@
+<!DOCTYPE html public '-//W3C//DTD HTML 4.0 Transitional//EN'>
+<html>
+
+<!-- Head -->
+<head>
+<title>
+Order-preserving matching,
+Theoretical Computer Science,
+Vol: 525, Complete
+</title>
+
+<!-- Dublin Core Meta Tag Section -->
+<META NAME="Title" CONTENT="Order-preserving matching">
+<META NAME="Subject" CONTENT="Article">
+<META NAME="Publisher" CONTENT="Elsevier Science">
+<META NAME="Author" CONTENT="Kim, Jinil; Eades, Peter; Fleischer, Rudolf; Hong, Seok-Hee; Iliopoulos, Costas S.; Park, Kunsoo; Puglisi, Simon J.; Tokuyama, Takeshi">
+<META NAME="Other.ObjectType" CONTENT="Journal Article">
+<META NAME="Form" CONTENT="HTML 3.2">
+<META NAME="ISSN.Identifier" CONTENT="0304-3975">
+<META NAME="URL.Identifier" CONTENT="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=68_om">
+<META NAME="Other.Source" CONTENT="0304-3975">
+<META NAME="HTTP.Language" CONTENT="English">
+<META NAME="Date.ANSIX3.30" CONTENT="20140313">
+<META NAME="ANSIX3.30.temporal.Coverage" CONTENT="20140313">
+<META NAME="ISSN.Containted.In.Relation" CONTENT="0304-3975">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<!-- Site Body Include -->
+<body bgcolor="white">
+
+<!-- Site Header Include -->
+<table  border=1 width=750 cellspacing="0" cellpadding="0">
+<tr width=750> 
+<td width=150 valign="top" align="left"  bgcolor="#F0F0F0" >
+<Font size=-1 face="arial"> <b><center>System ScienceServer</center></b></font></td>
+<td width=600  valign="top" align="left"  bgcolor="#F0F0F0" > <center> <b>BIBLIOTEKA WIRTUALNA NAUKI</b></center></td></tr>
+<tr width=750>
+<td width=150 valign="top" align="left"  bgcolor="#F0F0F0" >
+<font face="arial" color="#000000" size=-1>
+&nbsp;&nbsp;&nbsp; <b><i><u>Jesteœ w</u></i>:</b><br>
+<img src=/images/triang.gif> <i>kolekcji</i><font color="green"> &nbsp;<b>Elsevier/ICM</b></font><br>
+&nbsp;&nbsp;&nbsp;aktualizacja:<br>
+<font color="green">
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dn.23.03.2014<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; godz.14:58
+</font><br>
+<hr noshade size=1 width=150>
+<hr noshade size=1 width=150>
+&nbsp;&nbsp;&nbsp; <b><i><u>PrzejdŸ do</u></i>:</b><br>
+ <img src=/images/triang.gif><i><b>przegl¹dania kolekcji:</b></i><br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.sciencedirect.com">Elsevier/online</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/cgi-bin/sciserv.pl?collection=springer">Springer/ICM</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.springerlink.com"><font size="-1">SpringerLink/online</font></a><p>
+ <img src=/images/triang.gif><i><b>przeszukiwania:</b></i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="/cgi-bin/search.pl?template_search_form.advanced=">Advanced</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="/cgi-bin/search.pl?template_search_form.expert=">Expert</a><p>
+ <img src=/images/triang.gif><b><i>baz bibliograficznych:</i></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://zatoka.icm.edu.pl/WoS/CIW.cgi">SCI-Ex/ICM</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://isiknowledge.com">WoK/online</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/webspirs/">INSPEC/ICM</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.pubmed.org/">MEDLINE/PubMed</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.scopus.com/">SCOPUS/Elsevier</a><p>
+ <img src=/images/triang.gif><b><i>informatora:</i> </b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/help/default/helpmain.html">Help</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/opis.html">opis baz</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/zasady/">zasady dostêpu</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/homeuser/">Dostêp z domu</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/searchinfo/"><B><i>Search</i></b> - zmiany</a><br>
+
+</font>
+</td>
+<td width=600 valign="top" >
+
+
+<!-- nav bar start -->
+<table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="gray" >
+    <tr>
+        <td>
+          <table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="#F0F0F0">
+              <tr>
+                  <td width="595" colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+             <tr>
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/">Home</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="white">
+		     <font face="arial" size="-1" >
+		     <a href="/cgi-bin/sciserv.pl?collection=elsevier">Browse</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/cgi-bin/search.pl?template_search_form.advanced=">Search</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/mysettings.pl">Settings</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/saved_searches.pl">Alerts</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/selected_articles.pl">My Articles</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/help/default/helpmain.html">Help</a>
+
+		     </font>
+                 </td>
+             </tr>
+
+             <tr>
+                 <td colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+          </table>
+        </td>
+    </tr>
+</table>
+<!-- nav bar end -->
+<table width="600" border="0" cellpadding="0" cellspacing="0">
+ <tr>
+  <td align="right">
+
+  </td>
+ </tr>
+</table>
+<table width="600" border="0">
+    <tr>
+        <td width="20">
+        </td>
+        <td>
+            <font face="arial"> <b>Enter search term:</b></font>
+        </td>
+    </tr>
+    <tr>
+        <td width="20">
+        </td>
+        <td colspan="4">
+            <form action="/cgi-bin/search.pl" method=get name="quicksearch">
+<input type=hidden name=Database value=elsevier_1990>
+<input type=hidden name="GetSearchResults" value="Search">
+
+            <input name="SearchTemplate" type="hidden"
+                   value="search_form.advanced">
+            <table width="500" cellspacing="1">
+              <tr>
+                <td  colspan="2" align="left" valign="top">
+                    <input type=text name="search_field" size="20">
+
+                </td>
+                <td align="left" valign="top" >
+                        <select name=fields>
+        <option value="Any">All Fields
+        <option value="Author">Author Name
+        <option value="Title">Article Title
+        <option value="Abstract">Abstract
+    </select>
+
+                </td>
+                <td align="left" valign="top" > <select name=canned_search>
+<option value="">All Elsevier Journals
+<option value="issn=(0304-3975)">Just This Journal
+</select>
+ </td>
+                <td align="left" valign="top" >
+                    <input type=submit value="Submit">
+                </td>
+              </tr>
+            </table>
+            </form>
+        </td>
+    </tr>
+<tr><td width="20"></td><td align="center"> <font face="arial" size=-2><img src="/images/subscribed.gif" BORDER=0 ALT="Subscribed Journal">&nbsp;=&nbsp;Subscribed&nbsp;Journal &nbsp; <img src="/images/unsubscribed.gif" BORDER=0 ALT="Unsubscribed Journal">&nbsp;=&nbsp;Unsubscribed&nbsp;Journal</font> </td></tr>
+    <tr>
+        <td width="20">&nbsp;
+        </td>
+        <td colspan="2">
+            <table width="570">
+                <tr>
+                    <td width="285" colspan="2"> 
+                        <font face="arial" color="#000000">
+                            <b>
+                            <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975"><img src="/images/subscribed.gif" BORDER=0 ALT="Subscribed Journal">  Theoretical Computer Science</a>
+
+
+                            </b>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                        <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c">Vol: 69, Issue: 52</a>, March 13, 2014
+                        </font>
+                    </td>
+        	    <td rowspan="2"><img height="11" src="/images/triang.gif" width="13"><font face="arial" size="-1" color="#808080">Bibliographic Page</font><font face="arial" size="-1">
+			<br><img width=13 height=11 src=/images/blank.gif><a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=68_om&amp;form=pdf&amp;file=file.pdf">Article&nbsp;Full&nbsp;Text&nbsp;PDF&nbsp;(750&nbsp;KB)</a><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=68_om&amp;form=refer">Get citation export (Reference format)</A><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&journal=03043975&issue=v525inone_c&article=68_om&form=fulltext">Article Full Text HTML</A>
+
+			</font>
+		    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                               pp. 11064-11069                         
+                        </font>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td width="20">&nbsp;
+        </td>
+        <td valign="top">
+            <table width="570" cellspacing="0" cellpadding="2" 
+                   border="0">
+                <tr>
+                    <td width="100" bgcolor="#F0F0F0" valign="top">
+                        <font face="arial" size="-1" color="black">
+                        <b>
+                        Title:
+                        </b>
+                        </font>
+                    </td>
+                    <td width="470" valign="top"> 
+                        <font face="arial" size="-1" color="black">
+                        <b>Order-preserving matching</b>
+                        </font>
+                    </td>
+                </tr>
+
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Authors: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> Kim, Jinil<sup>a</sup>; Eades, Peter<sup>b</sup>; Fleischer, Rudolf<sup>c</sup><sup>, d</sup>; Hong, Seok-Hee<sup>b</sup>; Iliopoulos, Costas S.<sup>e</sup><sup>, f</sup>; Park, Kunsoo<sup>a</sup>; Puglisi, Simon J.<sup>g</sup>; Tokuyama, Takeshi<sup>h</sup> </font> </td> </tr>
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Affiliations: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> a. Department of Computer Science and Engineering, Institute of Computer Technology, Seoul National University, Seoul, Republic of Korea<br>b. School of Information Technologies, University of Sydney, Australia<br>c. SCS and IIPL, Fudan University, Shanghai, China<br>d. Department of Applied Information Technology, German University of Technology in Oman, Muscat, Oman<br>e. Department of Informatics, King's College London, London, United Kingdom<br>f. Digital Ecosystems and Business Intelligence Institute, Curtin University, Australia<br>g. Department of Computer Science, University of Helsinki, Finland<br>h. Graduate School of Information Sciences, Tohoku University, Japan </font> </td> </tr>
+
+
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Keywords: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> String matching; Numeric string; Order relation; Multiple pattern matching; KMP algorithm; Aho–Corasick algorithm </font> </td> </tr>
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Abstract (English): </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> <p id="sp0070">We introduce a new string matching problem called <i>order-preserving matching</i> on numeric strings, where a pattern matches a text if the text contains a substring of values whose relative orders coincide with those of the pattern. Order-preserving matching is applicable to many scenarios such as stock price analysis and musical melody matching in which the order relations should be matched instead of the strings themselves. Solving order-preserving matching is closely related to the <i>representation of order relations</i> of a numeric string. We define the <i>prefix representation</i> and the <i>nearest neighbor representation</i> of the pattern, both of which lead to efficient algorithms for order-preserving matching. We present efficient algorithms for single and multiple pattern cases. For the single pattern case, we give an  <b><i>Formula Not Shown</i></b>  time algorithm and optimize it further to obtain  <b><i>Formula Not Shown</i></b>  time. For the multiple pattern case, we give an  <b><i>Formula Not Shown</i></b>  time algorithm.</p> </font> </td> </tr>
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Publisher: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> Elsevier Science </font> </td> </tr>
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Language of Publication: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> English </font> </td> </tr>
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Item Identifiers: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black">  9489 10.1016/j.tcs.2013.10.006 S0304-3975(13)00758-5 </font> </td> </tr>
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Publication Type: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> Article </font> </td> </tr>
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> ISSN: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> 0304-3975 </font> </td> </tr>
+
+
+                <tr> <A NAME="CITATIONS"><td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Citations: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"><ol> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Aho, A.V.,
+
+
+
+
+  <i>Handbook of Theoretical Computer Science, vol. A: Algorithms and Complexity (A)</i>, (1990) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Aumann, Y.; Indyk, P.; Levy, A.; Porat, E.,
+  "Efficient computations of  <b><i>Formula Not Shown</i></b>  and  <b><i>Formula Not Shown</i></b>  rearrangement distances"
+  <i>Theor. Comput. Sci.</i>
+  2009
+  pp. 4382-4390
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v410i0043&amp;article=4382_ecofnsfnsd">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v410i0043&amp;article=4382_ecofnsfnsd&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Aumann, Y.; Landau, G.M.; Lewenstein, M.; Lewenstein, N.,
+  "Pattern matching with swaps"
+  <i>J. Algorithms</i>
+  2000
+  pp. 247-266
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=01966774&amp;issue=v37i0002&amp;article=247_pmws">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=01966774&amp;issue=v37i0002&amp;article=247_pmws&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Aumann, Y.; Lewenstein, M.; Porat, E.,
+  "Function matching"
+  <i>SIAM J. Comput.</i>
+  2006
+  pp. 1007-1022
+
+
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Cole, R.; Hariharan, R.; Lewenstein, M.; Porat, E.,
+  "Overlap matching"
+  <i>Inf. Comput.</i>
+  2003
+  pp. 57-74
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=08905401&amp;issue=v181i0001&amp;article=57_om">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=08905401&amp;issue=v181i0001&amp;article=57_om&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Farach, M.,
+  "Efficient 2-dimensional approximate matching of half-rectangular figures"
+  <i>Inf. Comput.</i>
+  1995
+  pp. 1-11
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=08905401&amp;issue=v118i0001&amp;article=1_e2amohf">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=08905401&amp;issue=v118i0001&amp;article=1_e2amohf&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Farach, M.; Muthukrishnan, S.,
+  "Alphabet dependence in parameterized matching"
+  <i>Inf. Process. Lett.</i>
+  1994
+  pp. 111-115
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654714_12524_1">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Lipsky, O.; Porat, E.; Umanski, J.,
+
+
+
+  <i>CPM</i>, (2005) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Amir, A.; Nor, I.,
+  "Generalized function matching"
+  <i>J. Discrete Algorithms</i>
+  2007
+  pp. 514-523
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=15708667&amp;issue=v05i0003&amp;article=514_gfm">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=15708667&amp;issue=v05i0003&amp;article=514_gfm&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Baker, B.S.,
+
+
+
+
+  <i>STOC</i>, (1993) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Boyer, R.S.; Moore, J.S.,
+  "A fast string searching algorithm"
+  <i>Commun. ACM</i>
+  1977
+  pp. 762-772
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654714_12524_2">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Cambouropoulos, E.; Crochemore, M.; Iliopoulos, C.S.; Mouchard, L.; Pinzon, Y.J.,
+  "Algorithms for computing approximate repetitions in musical sequences"
+  <i>Int. J. Comput. Math.</i>
+  2002
+  pp. 1135-1148
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654714_12524_3">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Cantone, D.; Cristofaro, S.; Faro, S.,
+
+
+
+  <i>WEA</i>, (2005) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Cantone, D.; Cristofaro, S.; Faro, S.,
+
+
+
+  <i>ISMIR</i>, (2005) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Clifford, P.; Clifford, R.; Iliopoulos, C.S.,
+
+
+
+  <i>CPM</i>, (2005) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Clifford, R.; Iliopoulos, C.S.,
+  "Approximate string matching for music analysis"
+  <i>Soft Comput.</i>
+  2004
+  pp. 597-603
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=springer&amp;journal=14327643&amp;issue=v08i0009&amp;article=597_asmfma">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=springer&amp;journal=14327643&amp;issue=v08i0009&amp;article=597_asmfma&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Cole, R.; Iliopoulos, C.S.; Lecroq, T.; Plandowski, W.; Rytter, W.,
+  "On special families of morphisms related to <i>?</i>-matching and don't care symbols"
+  <i>Inf. Process. Lett.</i>
+  2003
+  pp. 227-233
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=00200190&amp;issue=v85i0005&amp;article=227_osfomrtadcs">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=00200190&amp;issue=v85i0005&amp;article=227_osfomrtadcs&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Cormen, T.H.; Leiserson, C.E.; Rivest, R.L.; Stein, C.,
+
+
+
+  <i>Introduction to Algorithms</i>, The MIT Press, (2009) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Crochemore, M.; Iliopoulos, C.S.; Lecroq, T.; Plandowski, W.; Rytter, W.,
+
+
+
+  <i>CPM</i>, (2002) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Crochemore, M.; Rytter, W.,
+
+
+
+  <i>Jewels of Stringology: Text Algorithms</i>, World Scientific, (2003) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Fredriksson, K.; Grabowski, S.,
+  "Efficient algorithms for  <b><i>Formula Not Shown</i></b>  and  <b><i>Formula Not Shown</i></b> -matching"
+  <i>Int. J. Found. Comput. Sci.</i>
+  2008
+  pp. 163-183
+
+
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Horspool, R.N.,
+
+  "Practical fast searching in strings"
+  <i>Softw. Pract. Exp.</i>
+  1980
+  pp. 501-506
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654714_12524_4">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Lee, I.; Clifford, R.; Kim, S.-R.,
+
+
+
+  <i>ICCSA, vol. 3</i>, (2006) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Lee, I.; Mendivelso, J.; Pinzon, Y.J.,
+
+
+
+  <i>SPIRE</i>, (2008) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Lipsky, O.; Porat, E.,
+  "Approximate matching in the L<sub>infinity</sub> metric"
+  <i>Inf. Process. Lett.</i>
+  2008
+  pp. 138-140
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=00200190&amp;issue=v105i0004&amp;article=138_amitfnsm">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=00200190&amp;issue=v105i0004&amp;article=138_amitfnsm&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Mendivelso, J.; Lee, I.; Pinzon, Y.J.,
+
+
+
+  <i>SPIRE</i>, (2012) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Muthukrishnan, S.,
+
+
+
+
+  <i>CPM</i>, (1995) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Porat, E.; Efremenko, K.,
+
+
+
+  <i>SODA</i>, (2008) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Sunday, D.M.,
+
+  "A very fast substring search algorithm"
+  <i>Commun. ACM</i>
+  1990
+  pp. 132-142
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654714_12524_5">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  van Emde Boas, P.,
+
+  "Preserving order in a forest in less than logarithmic time and linear space"
+  <i>Inf. Process. Lett.</i>
+  1977
+  pp. 80-82
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654714_12524_6">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Willard, D.E.,
+
+  "Log-logarithmic worst-case range queries are possible in space  <b><i>Formula Not Shown</i></b> "
+  <i>Inf. Process. Lett.</i>
+  1983
+  pp. 81-84
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654714_12524_7">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ </ol></font> </td></A> </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td width="30">&nbsp;
+        </td>
+        <td>
+
+        </td>
+    </tr>
+    <tr>
+        <td width="20">&nbsp;
+        </td>
+        <td colspan="2">
+            <table width="570">
+                <tr>
+                    <td width="285" colspan="2"> 
+                        <font face="arial" color="#000000">
+                            <b>
+                            <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975"><img src="/images/subscribed.gif" BORDER=0 ALT="Subscribed Journal">  Theoretical Computer Science</a>
+
+
+                            </b>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                        <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c">Vol: 525, Complete</a>, March 13, 2014
+                        </font>
+                    </td>
+        	    <td rowspan="2"><img height="11" src="/images/triang.gif" width="13"><font face="arial" size="-1" color="#808080">Bibliographic Page</font><font face="arial" size="-1">
+			<br><img width=13 height=11 src=/images/blank.gif><a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=68_om&amp;form=pdf&amp;file=file.pdf">Article Full Text PDF&nbsp;(750&nbsp;KB)</a><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=68_om&amp;form=refer">Get citation export (Reference format)</A><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&journal=03043975&issue=v525inone_c&article=68_om&form=fulltext">Article Full Text HTML</A>
+
+			</font>
+		    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                        pp. 68-79
+                        </font>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<p>
+<!-- nav bar start -->
+<table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="gray" >
+    <tr>
+        <td>
+          <table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="#F0F0F0">
+              <tr>
+                  <td width="595" colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+             <tr>
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/">Home</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="white">
+		     <font face="arial" size="-1" >
+		     <a href="/cgi-bin/sciserv.pl?collection=elsevier">Browse</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/cgi-bin/search.pl?template_search_form.advanced=">Search</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/mysettings.pl">Settings</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/saved_searches.pl">Alerts</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/selected_articles.pl">My Articles</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/help/default/helpmain.html">Help</a>
+
+		     </font>
+                 </td>
+             </tr>
+
+             <tr>
+                 <td colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+          </table>
+        </td>
+    </tr>
+</table>
+<!-- nav bar end -->
+</td>
+</tr>
+</table>
+<table width="750">
+    <tr>
+        <td width="350">
+<p align="letf"> <font color="#808080" size="-1"><small><i>Hosted by ICM UW</i></small></font></p>
+</td>
+         <td width="350">
+<p align="right"> <font color="#808080" size="-1"><small><i>Copyright &#169; 2003 by&nbsp; ScienceServer LLC</i></small></font></p>
+</td></tr>
+    <tr> 
+       <td width="350">
+<a href="http://www.icm.edu.pl/"><img src="http://vls.icm.edu.pl/images/icm_log_new.gif" border="0" align="left" alt="ICM"></a>
+       </td>
+       <td width="350">
+<a href="http://scienceserver.com"><img src="/images/logo-pbt.GIF" alt="SciServ" align="right" border="0" ></a>
+        </td>
+    </tr>
+</table>
+
+
+</body>
+</html>
+
+
+
+
+<!-- Template used to create this page: /disk/c1t2/vls/scienceserver/templates/elsevier/article.citation -->

@@ -1,0 +1,195 @@
+<REC r_id_disclaimer="ResearcherID data provided by Thomson Reuters">
+  <UID>WOS:000185655500013</UID>
+  <static_data>
+    <summary>
+      <EWUID>
+        <WUID coll_id="WOS"></WUID>
+        <edition value="WOS.SCI"></edition>
+      </EWUID>
+      <pub_info issue="13" pubtype="Journal" sortdate="2003-10-01" has_abstract="Y" coverdate="OCT 2003" pubmonth="OCT" vol="83" pubyear="2003">
+        <page end="1365" page_count="9" begin="1357">1357-1365</page>
+      </pub_info>
+      <titles count="6">
+        <title type="source">JOURNAL OF THE SCIENCE OF FOOD AND AGRICULTURE</title>
+        <title type="source_abbrev">J SCI FOOD AGR</title>
+        <title type="abbrev_iso">J. Sci. Food Agric.</title>
+        <title type="abbrev_11">J SCI FOOD</title>
+        <title type="abbrev_29">J SCI FOOD AGR</title>
+        <title type="item">The effect of adding cadmium and lead alone or in combination to the diet of pigs on their growth, carcase composition and reproduction</title>
+      </titles>
+      <names count="3">
+        <name seq_no="1" dais_id="1175074" reprint="Y" role="author">
+          <display_name>Phillips, C</display_name>
+          <full_name>Phillips, C</full_name>
+          <wos_standard>Phillips, C</wos_standard>
+          <first_name>C</first_name>
+          <last_name>Phillips</last_name>
+        </name>
+        <name dais_id="12489230" seq_no="2" role="author">
+          <display_name>Gyori, Z</display_name>
+          <full_name>Gyori, Z</full_name>
+          <wos_standard>Gyori, Z</wos_standard>
+          <first_name>Z</first_name>
+          <last_name>Gyori</last_name>
+        </name>
+        <name dais_id="5878100" seq_no="3" role="author">
+          <display_name>Kovacs, B</display_name>
+          <full_name>Kovacs, B</full_name>
+          <wos_standard>Kovacs, B</wos_standard>
+          <first_name>B</first_name>
+          <last_name>Kovacs</last_name>
+        </name>
+      </names>
+      <doctypes count="1">
+        <doctype>Article</doctype>
+      </doctypes>
+      <publishers>
+        <publisher>
+          <address_spec addr_no="1">
+            <full_address>THE ATRIUM, SOUTHERN GATE, CHICHESTER PO19 8SQ, W SUSSEX, ENGLAND</full_address>
+            <city>CHICHESTER</city>
+          </address_spec>
+          <names count="1">
+            <name addr_no="1" role="publisher" seq_no="1">
+              <display_name>JOHN WILEY &amp; SONS LTD</display_name>
+              <full_name>JOHN WILEY &amp; SONS LTD</full_name>
+            </name>
+          </names>
+        </publisher>
+      </publishers>
+    </summary>
+    <fullrecord_metadata>
+      <languages count="1">
+        <language type="primary">English</language>
+      </languages>
+      <normalized_languages count="1">
+        <language type="primary">English</language>
+      </normalized_languages>
+      <normalized_doctypes count="1">
+        <doctype>Article</doctype>
+      </normalized_doctypes>
+      <refs count="22"></refs>
+      <addresses count="2">
+        <address_name>
+          <address_spec addr_no="1">
+            <full_address>Univ Cambridge, Dept Clin Vet Med, Cambridge CB3 0ES, England</full_address>
+            <organizations count="2">
+              <organization>Univ Cambridge</organization>
+              <organization>University of Cambridge</organization>
+            </organizations>
+            <suborganizations count="1">
+              <suborganization>Dept Clin Vet Med</suborganization>
+            </suborganizations>
+            <city>Cambridge</city>
+            <country>England</country>
+            <zip location="AC">CB3 0ES</zip>
+          </address_spec>
+        </address_name>
+        <address_name>
+          <address_spec addr_no="2">
+            <full_address>Debrecen Univ, Cent Chem Lab, H-4015 Debrecen, Hungary</full_address>
+            <organizations count="2">
+              <organization>Debrecen Univ</organization>
+              <organization>University of Debrecen</organization>
+            </organizations>
+            <suborganizations count="1">
+              <suborganization>Cent Chem Lab</suborganization>
+            </suborganizations>
+            <city>Debrecen</city>
+            <country>Hungary</country>
+            <zip location="BC">H-4015</zip>
+          </address_spec>
+        </address_name>
+      </addresses>
+      <category_info>
+        <headings count="1">
+          <heading>Science &amp; Technology</heading>
+        </headings>
+        <subheadings count="2">
+          <subheading>Life Sciences &amp; Biomedicine</subheading>
+          <subheading>Physical Sciences</subheading>
+        </subheadings>
+        <subjects count="9">
+          <subject ascatype="traditional">Agriculture, Multidisciplinary</subject>
+          <subject ascatype="traditional">Chemistry, Applied</subject>
+          <subject ascatype="traditional">Food Science &amp; Technology</subject>
+          <subject ascatype="extended">Agriculture</subject>
+          <subject ascatype="extended">Chemistry</subject>
+          <subject ascatype="extended">Food Science &amp; Technology</subject>
+          <subject jcr_quartile="Q1" jcr_rank="6/57" ascatype="traditional">AGRICULTURE, MULTIDISCIPLINARY</subject>
+          <subject jcr_quartile="Q2" jcr_rank="26/71" ascatype="traditional">CHEMISTRY, APPLIED</subject>
+          <subject jcr_quartile="Q2" jcr_rank="47/124" ascatype="traditional">FOOD SCIENCE &amp; TECHNOLOGY</subject>
+        </subjects>
+      </category_info>
+      <keywords count="9">
+        <keyword>cadmium</keyword>
+        <keyword>lead</keyword>
+        <keyword>pigs</keyword>
+        <keyword>growth</keyword>
+        <keyword>carcase composition</keyword>
+        <keyword>dietary supplement</keyword>
+        <keyword>swine</keyword>
+        <keyword>liver</keyword>
+        <keyword>kidney</keyword>
+      </keywords>
+      <abstracts count="1">
+        <abstract>
+          <abstract_text count="1">
+            <p>Limits for cadmium and lead concentrations in food animal products have been established independently, whereas these two toxic metals often co-exist in polluted regions. Weaned pigs (60) were allocated to ten treatments: control; low (0.5 mg kg(-1)), medium (1 mg kg(-1)) or high cadmium (2.5 mg kg(-1)) in feed; low (5 mg kg(-1)) medium (10 mg kg(-1)) or high (25 mg kg(-1)) lead in feed; and low, medium and high cadmium plus lead in feed. Growth rates and concentrations of cadmium and lead in body tissues (kidney, liver, spleen, lungs, heart, testicle, ribs, hair and teeth) were measured after 137 days. There was a similar reduction in weight gain for pigs in the cadmium and lead treatments, compared with the control, and a greater reduction for the pigs in the cadmium plus lead treatments. The reduction increased with the level of metal included. There was an increase in cadmium concentration of all tissues and blood with increasing feed cadmium concentration, which was usually less when lead was also included in the feed. There was also an increase in tissue lead concentration with increasing dietary lead, and this was in most cases increased when cadmium was also included in the feed. The most sensitive tissues for cadmium and lead exposure were the kidney, liver, hair and teeth, and regression equations were developed for the accumulation rates in these tissues. Tissue and blood cadmium concentrations increased gradually with increasing dietary lead, whereas tissue lead concentration was not sensitive to dietary cadmium, except in the ribs and heart. In a second experiment, 10 sows were allocated to a control diet or the same diet but with a supplement of cadmium and lead. The birth weight of piglets was decreased by the supplement and their mortality increased. Lead accumulated most in the ovary and oviduct of the sows, and there were increases in the lead and, to a lesser extent, cadmium concentrations of tissues of the piglets from these sows. (C) 2003 Society of Chemical Industry.</p>
+          </abstract_text>
+        </abstract>
+      </abstracts>
+    </fullrecord_metadata>
+    <item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="itemType_wos">
+      <ids avail="Y">727JU</ids>
+      <bib_id>83 (13): 1357-1365 OCT 2003</bib_id>
+      <reprint_contact>
+        <address_spec addr_no="1">
+          <full_address>Univ Queensland, Sch Vet Sci, Gatton, Qld 4343, Australia</full_address>
+          <organizations count="2">
+            <organization>Univ Queensland</organization>
+            <organization>University of Queensland</organization>
+          </organizations>
+          <suborganizations count="1">
+            <suborganization>Sch Vet Sci</suborganization>
+          </suborganizations>
+          <city>Gatton</city>
+          <state>Qld</state>
+          <country>Australia</country>
+          <zip location="AP">4343</zip>
+        </address_spec>
+        <names count="1">
+          <name display="N" dais_id="1175074" reprint="Y" role="author" seq_no="1" addr_no="1">
+            <display_name>Phillips, C</display_name>
+            <full_name>Phillips, C</full_name>
+            <wos_standard>Phillips, C</wos_standard>
+            <first_name>C</first_name>
+            <last_name>Phillips</last_name>
+          </name>
+        </names>
+      </reprint_contact>
+      <keywords_plus count="6">
+        <keyword>ACCUMULATION</keyword>
+        <keyword>TOXICITY</keyword>
+        <keyword>KIDNEYS</keyword>
+        <keyword>TRENDS</keyword>
+        <keyword>SHEEP</keyword>
+        <keyword>SWINE</keyword>
+      </keywords_plus>
+    </item>
+  </static_data>
+  <dynamic_data>
+    <citation_related>
+      <tc_list>
+        <silo_tc local_count="12" coll_id="WOS"></silo_tc>
+      </tc_list>
+    </citation_related>
+    <cluster_related>
+      <identifiers>
+        <identifier value="0022-5142" type="issn"></identifier>
+        <identifier value="10.1002/jsfa.1548" type="doi"></identifier>
+        <identifier value="10.1002/jsfa.1548" type="xref_doi"></identifier>
+      </identifiers>
+    </cluster_related>
+  </dynamic_data>
+</REC>

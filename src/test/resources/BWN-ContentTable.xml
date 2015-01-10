@@ -1,0 +1,2652 @@
+<!DOCTYPE html public '-//W3C//DTD HTML 4.0 Transitional//EN'>
+<html>
+
+<!-- Head -->
+<head>
+<title>
+Parallel algorithms for Burrows–Wheeler compression and decompression,
+Theoretical Computer Science,
+Vol: 525, Complete
+</title>
+
+<!-- Dublin Core Meta Tag Section -->
+<META NAME="Title" CONTENT="Parallel algorithms for Burrows-Wheeler compression and decompression">
+<META NAME="Subject" CONTENT="Article">
+<META NAME="Publisher" CONTENT="Elsevier Science">
+<META NAME="Author" CONTENT="Edwards, James A.; Vishkin, Uzi">
+<META NAME="Other.ObjectType" CONTENT="Journal Article">
+<META NAME="Form" CONTENT="HTML 3.2">
+<META NAME="ISSN.Identifier" CONTENT="0304-3975">
+<META NAME="URL.Identifier" CONTENT="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=10_pafbcad">
+<META NAME="Other.Source" CONTENT="0304-3975">
+<META NAME="HTTP.Language" CONTENT="English">
+<META NAME="Date.ANSIX3.30" CONTENT="20140313">
+<META NAME="ANSIX3.30.temporal.Coverage" CONTENT="20140313">
+<META NAME="ISSN.Containted.In.Relation" CONTENT="0304-3975">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<!-- Site Body Include -->
+<body bgcolor="white">
+
+<!-- Site Header Include -->
+<table  border=1 width=750 cellspacing="0" cellpadding="0">
+<tr width=750> 
+<td width=150 valign="top" align="left"  bgcolor="#F0F0F0" >
+<Font size=-1 face="arial"> <b><center>System ScienceServer</center></b></font></td>
+<td width=600  valign="top" align="left"  bgcolor="#F0F0F0" > <center> <b>BIBLIOTEKA WIRTUALNA NAUKI</b></center></td></tr>
+<tr width=750>
+<td width=150 valign="top" align="left"  bgcolor="#F0F0F0" >
+<font face="arial" color="#000000" size=-1>
+&nbsp;&nbsp;&nbsp; <b><i><u>Jesteœ w</u></i>:</b><br>
+<img src=/images/triang.gif> <i>kolekcji</i><font color="green"> &nbsp;<b>Elsevier/ICM</b></font><br>
+&nbsp;&nbsp;&nbsp;aktualizacja:<br>
+<font color="green">
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dn.23.03.2014<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; godz.14:58
+</font><br>
+<hr noshade size=1 width=150>
+<hr noshade size=1 width=150>
+&nbsp;&nbsp;&nbsp; <b><i><u>PrzejdŸ do</u></i>:</b><br>
+ <img src=/images/triang.gif><i><b>przegl¹dania kolekcji:</b></i><br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.sciencedirect.com">Elsevier/online</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/cgi-bin/sciserv.pl?collection=springer">Springer/ICM</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.springerlink.com"><font size="-1">SpringerLink/online</font></a><p>
+ <img src=/images/triang.gif><i><b>przeszukiwania:</b></i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="/cgi-bin/search.pl?template_search_form.advanced=">Advanced</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="/cgi-bin/search.pl?template_search_form.expert=">Expert</a><p>
+ <img src=/images/triang.gif><b><i>baz bibliograficznych:</i></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://zatoka.icm.edu.pl/WoS/CIW.cgi">SCI-Ex/ICM</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://isiknowledge.com">WoK/online</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/webspirs/">INSPEC/ICM</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.pubmed.org/">MEDLINE/PubMed</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.scopus.com/">SCOPUS/Elsevier</a><p>
+ <img src=/images/triang.gif><b><i>informatora:</i> </b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/help/default/helpmain.html">Help</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/opis.html">opis baz</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/zasady/">zasady dostêpu</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/homeuser/">Dostêp z domu</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://vls.icm.edu.pl/searchinfo/"><B><i>Search</i></b> - zmiany</a><br>
+
+</font>
+</td>
+<td width=600 valign="top" >
+
+
+<!-- nav bar start -->
+<table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="gray" >
+    <tr>
+        <td>
+          <table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="#F0F0F0">
+              <tr>
+                  <td width="595" colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+             <tr>
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/">Home</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="white">
+		     <font face="arial" size="-1" >
+		     <a href="/cgi-bin/sciserv.pl?collection=elsevier">Browse</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/cgi-bin/search.pl?template_search_form.advanced=">Search</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/mysettings.pl">Settings</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/saved_searches.pl">Alerts</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/selected_articles.pl">My Articles</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/help/default/helpmain.html">Help</a>
+
+		     </font>
+                 </td>
+             </tr>
+
+             <tr>
+                 <td colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+          </table>
+        </td>
+    </tr>
+</table>
+<!-- nav bar end -->
+<table width="600" border="0" cellpadding="0" cellspacing="0">
+ <tr>
+  <td align="right">
+
+  </td>
+ </tr>
+</table>
+<table width="600" border="0">
+    <tr>
+        <td width="20">
+        </td>
+        <td>
+            <font face="arial"> <b>Enter search term:</b></font>
+        </td>
+    </tr>
+    <tr>
+        <td width="20">
+        </td>
+        <td colspan="4">
+            <form action="/cgi-bin/search.pl" method=get name="quicksearch">
+<input type=hidden name=Database value=elsevier_1990>
+<input type=hidden name="GetSearchResults" value="Search">
+
+            <input name="SearchTemplate" type="hidden"
+                   value="search_form.advanced">
+            <table width="500" cellspacing="1">
+              <tr>
+                <td  colspan="2" align="left" valign="top">
+                    <input type=text name="search_field" size="20">
+
+                </td>
+                <td align="left" valign="top" >
+                        <select name=fields>
+        <option value="Any">All Fields
+        <option value="Author">Author Name
+        <option value="Title">Article Title
+        <option value="Abstract">Abstract
+    </select>
+
+                </td>
+                <td align="left" valign="top" > <select name=canned_search>
+<option value="">All Elsevier Journals
+<option value="issn=(0304-3975)">Just This Journal
+</select>
+ </td>
+                <td align="left" valign="top" >
+                    <input type=submit value="Submit">
+                </td>
+              </tr>
+            </table>
+            </form>
+        </td>
+    </tr>
+<tr><td width="20"></td><td align="center"> <font face="arial" size=-2><img src="/images/subscribed.gif" BORDER=0 ALT="Subscribed Journal">&nbsp;=&nbsp;Subscribed&nbsp;Journal &nbsp; <img src="/images/unsubscribed.gif" BORDER=0 ALT="Unsubscribed Journal">&nbsp;=&nbsp;Unsubscribed&nbsp;Journal</font> </td></tr>
+    <tr>
+        <td width="20">&nbsp;
+        </td>
+        <td colspan="2">
+            <table width="570">
+                <tr>
+                    <td width="285" colspan="2"> 
+                        <font face="arial" color="#000000">
+                            <b>
+                            <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975"><img src="/images/subscribed.gif" BORDER=0 ALT="Subscribed Journal">  Theoretical Computer Science</a>
+
+
+                            </b>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                        <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c">Vol: 525, Complete</a>, March 13, 2014
+                        </font>
+                    </td>
+        	    <td rowspan="2"><img height="11" src="/images/triang.gif" width="13"><font face="arial" size="-1" color="#808080">Bibliographic Page</font><font face="arial" size="-1">
+			<br><img width=13 height=11 src=/images/blank.gif><a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=10_pafbcad&amp;form=pdf&amp;file=file.pdf">Article Full Text PDF&nbsp;(729&nbsp;KB)</a><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=10_pafbcad&amp;form=refer">Get citation export (Reference format)</A><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&journal=03043975&issue=v525inone_c&article=10_pafbcad&form=fulltext">Article Full Text HTML</A>
+
+			</font>
+		    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                        pp. 10-22
+                        </font>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td width="20">&nbsp;
+        </td>
+        <td valign="top">
+            <table width="570" cellspacing="0" cellpadding="2" 
+                   border="0">
+                <tr>
+                    <td width="100" bgcolor="#F0F0F0" valign="top">
+                        <font face="arial" size="-1" color="black">
+                        <b>
+                        Title:
+                        </b>
+                        </font>
+                    </td>
+                    <td width="470" valign="top"> 
+                        <font face="arial" size="-1" color="black">
+                        <b>Parallel algorithms for Burrows–Wheeler compression and decompression</b>
+                        </font>
+                    </td>
+                </tr>
+
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Authors: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> Edwards, James A.; Vishkin, Uzi </font> </td> </tr>
+
+
+
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Keywords: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> Parallel algorithms; PRAM; Burrows–Wheeler; Lossless data compression; Huffman coding; Move-to-front coding </font> </td> </tr>
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Abstract (English): </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> <p id="sp0130">We present work-optimal PRAM algorithms for Burrows–Wheeler compression and decompression of strings over a constant alphabet. For a string of length <i>n</i>, the depth of the compression algorithm is  <b><i>Formula Not Shown</i></b>, and the depth of the corresponding decompression algorithm is  <b><i>Formula Not Shown</i></b> . These appear to be the first polylogarithmic-time work-optimal parallel algorithms for any standard lossless compression scheme.</p><p id="sp0140">The algorithms for the individual stages of compression and decompression may also be of independent interest: (1) a novel  <b><i>Formula Not Shown</i></b> -time,  <b><i>Formula Not Shown</i></b> -work PRAM algorithm for Huffman decoding; (2) original insights into the stages of the BW compression and decompression problems, bringing out parallelism that was not readily apparent, allowing them to be mapped to elementary parallel routines that have  <b><i>Formula Not Shown</i></b> -time,  <b><i>Formula Not Shown</i></b> -work solutions, such as: (i) prefix-sums problems with an appropriately-defined associative binary operator for several stages, and (ii) list ranking for the final stage of decompression. Follow-up empirical work suggests potential for considerable practical speedups on a PRAM-driven many-core architecture, against a backdrop of negative contemporary results on common commercial platforms.</p> </font> </td> </tr>
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Publisher: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> Elsevier Science </font> </td> </tr>
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Language of Publication: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> English </font> </td> </tr>
+
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Item Identifiers: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black">  9492 10.1016/j.tcs.2013.10.009 S0304-3975(13)00761-5 </font> </td> </tr>
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Publication Type: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> Article </font> </td> </tr>
+                <tr> <td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> ISSN: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"> 0304-3975 </font> </td> </tr>
+
+
+                <tr> <A NAME="CITATIONS"><td width="100" bgcolor="#F0F0F0" valign="top"> <font face="arial" size="-1" color="black"><b> Citations: </b></font> </td> <td width="470" valign="top"> <font face="arial" size="-1" color="black"><ol> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Gailly, J.; Adler, M.,
+
+  <i>The gzip home page, <a href="http://www.gzip.org/">http://www.gzip.org/</a></i>
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Seward, J.,
+  <i>bzip2, a program and library for data compression, <a href="http://www.bzip.org/">http://www.bzip.org/</a></i>
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Burrows, M.; Wheeler, D.J.,
+
+
+
+  <i>A block-sorting lossless data compression algorithm</i>, Digital Systems Research Center, (1994) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Sadakane, K.,
+
+
+
+
+  <i>Proc. Data Compression Conference</i>, (1998) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Ko, P.; Aluru, S.,
+  "Space efficient linear time construction of suffix arrays"
+  <i>J. Discrete Algorithms</i>
+  2005
+  pp. 143-156
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=15708667&amp;issue=v3i2-4&amp;article=143_seltcosa">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=15708667&amp;issue=v3i2-4&amp;article=143_seltcosa&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Kärkkäinen, J.; Sanders, P.; Burkhardt, S.,
+  "Linear work suffix array construction"
+  <i>J. ACM</i>
+  2006
+  pp. 918-936
+
+
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Nong, G.; Zhang, S.; Chan, W.H.,
+
+
+
+  <i>Proc. Data Compression Conference</i>, IEEE, (2009) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Gilchrist, J.; Cuhadar, A.,
+
+
+
+  <i>Proc. Advanced Information Networking and Applications</i>, (2007) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Lavavej, S.T.,
+  <i>bwtzip: A linear-time portable research-grade universal data compressor, <a href="http://nuwen.net/bwtzip.html">http://nuwen.net/bwtzip.html</a></i>
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Wiseman, Y.,
+
+  "Burrows–Wheeler based JPEG"
+  <i>J. Data Sci.</i>
+  2007
+  pp. 19-27
+
+
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Gilmour, I.; Dávila, R.J.,
+
+  <i>Lossless video compression for archives: Motion JPEG2k and other options, &lt;a href="http://www.media-matters.net/docs/WhitePapers/WPMJ2k.pdf"&gt;http://www.media-matters.net/docs/WhitePapers/WPMJ2k.pdf</a></i>
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Ferragina, P.; Manzini, G.,
+  "Indexing compressed text"
+  <i>J. ACM</i>
+  2005
+  pp. 552-581
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654310_11677_1">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Langmead, B.; Trapnell, C.; Pop, M.; Salzberg, S.,
+  "Ultrafast and memory-efficient alignment of short DNA sequences to the human genome"
+  <i>Genome Biol.</i>
+  2009
+  pp. R25
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654310_11677_2">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Liu, C.-M.; Wong, T.; Wu, E.; Luo, R.; Yiu, S.-M.; Li, Y.; Wang, B.; Yu, C.; Chu, X.; Zhao, K.; Li, R.; Lam, T.-W.,
+  "SOAP3: ultra-fast GPU-based parallel alignment tool for short reads"
+  <i>Bioinformatics</i>
+  2012
+  pp. 878-879
+
+
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Klein, S.T.; Wiseman, Y.,
+  "Parallel Huffman decoding with applications to JPEG files"
+  <i>Comput. J.</i>
+  2003
+  pp. 487-497
+
+
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Ziv, J.; Lempel, A.,
+  "A universal algorithm for sequential data compression"
+  <i>IEEE Trans. Inf. Theory</i>
+  1977
+  pp. 337-343
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654310_11677_3">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Farach, M.; Muthukrishnan, S.,
+
+
+
+  <i>Symposium on Parallel Algorithms and Architectures</i>, (1995) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  De Agostino, S.,
+
+  "Lempel–Ziv data compression on parallel and distributed systems"
+  <i>Algorithms</i>
+  2011
+  pp. 183-199
+
+
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Eirola, A.,
+  <i>Lossless data compression on GPGPU architectures, &lt;a href="http://arxiv.org/abs/1109.2348v1"&gt;http://arxiv.org/abs/1109.2348v1</a></i>
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Patel, R.; Zhang, Y.; Mak, J.; Davidson, A.; Owens, J.,
+
+
+
+  <i>Proc. Innovative Parallel Computing</i>, (2012) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Patel, R.A.,
+
+
+
+
+  <i>Parallel lossless data compression on the GPU</i>, Electrical and Computer Engineering, University of California, Davis, (2012) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Edwards, J.A.; Vishkin, U.,
+
+
+
+  <i>Empirical speedup study of truly parallel data compression</i>, UMD, (2013) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Caragea, G.; Vishkin, U.,
+
+
+
+  <i>Proc. Symposium on Parallel Algorithms and Architectures</i>, (2011) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Edwards, J.A.; Vishkin, U.,
+
+
+
+  <i>Proc. International Workshop on Programming Models and Applications for Multicores and Manycores</i>, ACM, (2012) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Edwards, J.A.; Vishkin, U.,
+
+
+
+  <i>Proc. Symposium on Parallelism in Algorithms and Architectures</i>, ACM, (2012) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Hennessy, J.L.; Patterson, D.A.,
+
+
+
+  <i>Computer Architecture: A Quantitative Approach</i>, Morgan Kaufmann, (2011) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+
+  <i>&lt;a href="http://code.google.com/p/snappy/"&gt;http://code.google.com/p/snappy/</a></i>
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Seward, J.,
+
+
+
+
+  <i>Proc. Data Compression Conference</i>, (2000) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Sahinalp, S.C.; Vishkin, U.,
+
+
+
+  <i>Proc. Symposium on Theory of Computing</i>, ACM, (1994) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Hariharan, R.,
+
+
+
+
+  <i>Proc. Symposium on Theory of Computing</i>, ACM, (1994) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Tarjan, R.E.; Vishkin, U.,
+
+
+
+  <i>Proc. Symposium on Foundations of Computer Science</i>, (1984) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Cole, R.; Vishkin, U.,
+  "Deterministic coin tossing with applications to optimal parallel list ranking"
+  <i>Inf. Control</i>
+  1986
+  pp. 32-53
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654310_11677_4">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Ferragina, P.; Gagie, T.; Manzini, G.,
+  "Lightweight data indexing and compression in external memory"
+  <i>Algorithmica</i>
+  2012
+  pp. 707-730
+
+
+
+
+    <br>
+
+  <a href="/cgi-bin/sciserv.pl?collection=springer&amp;journal=01784617&amp;issue=v63i0003&amp;article=707_ldiaciem">Bibliographic Page</a>
+  <a href="/cgi-bin/sciserv.pl?collection=springer&amp;journal=01784617&amp;issue=v63i0003&amp;article=707_ldiaciem&amp;form=pdf&amp;file=file.pdf">Full Text</a>
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+  Gagie, T.,
+
+
+
+
+  <i>Combinatorial Pattern Matching</i> 
+  <i>vol. 5577</i>, Springer, Berlin Heidelberg, (2009) 
+
+
+
+
+
+
+
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li>
+
+  Cole, R.; Vishkin, U.,
+  "Faster optimal parallel prefix sums and list ranking"
+  <i>Inf. Comput.</i>
+  1989
+  pp. 334-352
+
+
+
+
+
+   <br>
+
+
+  <a href="/cgi/logExternalLink.pl?id=il_1395654310_11677_5">CrossRef</a>
+
+
+  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ </ol></font> </td></A> </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td width="30">&nbsp;
+        </td>
+        <td>
+
+        </td>
+    </tr>
+    <tr>
+        <td width="20">&nbsp;
+        </td>
+        <td colspan="2">
+            <table width="570">
+                <tr>
+                    <td width="285" colspan="2"> 
+                        <font face="arial" color="#000000">
+                            <b>
+                            <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975"><img src="/images/subscribed.gif" BORDER=0 ALT="Subscribed Journal">  Theoretical Computer Science</a>
+
+
+                            </b>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                        <a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c">Vol: 525, Complete</a>, March 13, 2014
+                        </font>
+                    </td>
+        	    <td rowspan="2"><img height="11" src="/images/triang.gif" width="13"><font face="arial" size="-1" color="#808080">Bibliographic Page</font><font face="arial" size="-1">
+			<br><img width=13 height=11 src=/images/blank.gif><a href="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=10_pafbcad&amp;form=pdf&amp;file=file.pdf">Article&nbsp;Full&nbsp;Text&nbsp;PDF&nbsp;(729&nbsp;KB)</a><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&amp;journal=03043975&amp;issue=v525inone_c&amp;article=10_pafbcad&amp;form=refer">Get citation export (Reference format)</A><br><img width=13 height=11 src=/images/blank.gif><A HREF="/cgi-bin/sciserv.pl?collection=elsevier&journal=03043975&issue=v525inone_c&article=10_pafbcad&form=fulltext">Article Full Text HTML</A>
+
+			</font>
+		    </td>
+                </tr>
+                <tr>
+                    <td width="285" valign="top" align="left">
+                        <font face="arial" size="-1" color="#000000">
+                        pp. 10-22
+                        </font>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<p>
+<!-- nav bar start -->
+<table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="gray" >
+    <tr>
+        <td>
+          <table border="0" width="595" cellspacing="0" cellpadding="0" bgcolor="#F0F0F0">
+              <tr>
+                  <td width="595" colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+             <tr>
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/">Home</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="white">
+		     <font face="arial" size="-1" >
+		     <a href="/cgi-bin/sciserv.pl?collection=elsevier">Browse</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="http://vls.icm.edu.pl/cgi-bin/search.pl?template_search_form.advanced=">Search</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/mysettings.pl">Settings</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/saved_searches.pl">Alerts</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/cgi-bin/selected_articles.pl">My Articles</a>
+
+		     </font>
+                 </td>
+
+                 <td width="1" bgcolor="gray"></td>
+
+                 <td align="center" width="85" valign="middle" bgcolor="#F0F0F0">
+		     <font face="arial" size="-1">
+		     <a href="/help/default/helpmain.html">Help</a>
+
+		     </font>
+                 </td>
+             </tr>
+
+             <tr>
+                 <td colspan="13" bgcolor="gray" height="2"></td>
+             </tr>
+          </table>
+        </td>
+    </tr>
+</table>
+<!-- nav bar end -->
+</td>
+</tr>
+</table>
+<table width="750">
+    <tr>
+        <td width="350">
+<p align="letf"> <font color="#808080" size="-1"><small><i>Hosted by ICM UW</i></small></font></p>
+</td>
+         <td width="350">
+<p align="right"> <font color="#808080" size="-1"><small><i>Copyright &#169; 2003 by&nbsp; ScienceServer LLC</i></small></font></p>
+</td></tr>
+    <tr> 
+       <td width="350">
+<a href="http://www.icm.edu.pl/"><img src="http://vls.icm.edu.pl/images/icm_log_new.gif" border="0" align="left" alt="ICM"></a>
+       </td>
+       <td width="350">
+<a href="http://scienceserver.com"><img src="/images/logo-pbt.GIF" alt="SciServ" align="right" border="0" ></a>
+        </td>
+    </tr>
+</table>
+
+
+</body>
+</html>
+
+
+
+
+<!-- Template used to create this page: /disk/c1t2/vls/scienceserver/templates/elsevier/article.citation -->
