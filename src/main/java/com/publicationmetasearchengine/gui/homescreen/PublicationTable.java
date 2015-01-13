@@ -90,6 +90,10 @@ public class PublicationTable extends Table {
             addPublication(publication, false);
     }
 
+    public List<Publication> getAllPublication(){
+        return allPublications;
+    }
+    
     public void filterByTitleKeywords(List<String> keywords){
         removeAllItems();
         if (keywords==null || keywords.isEmpty()) {

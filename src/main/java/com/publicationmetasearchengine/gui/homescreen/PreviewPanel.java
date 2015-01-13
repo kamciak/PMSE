@@ -62,12 +62,17 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             LOGGER.debug(String.format("Found %d publications of author", publications.size()));
             for (Publication publication : publications){
                 LOGGER.debug("Found publications: "+ publication.getTitle());
-                homePanel.filterPublicationByAuthorOfSelected(activePublication.getMainAuthor());
-        }
+                }
+            homePanel.filterPublicationByAuthorOfSelected(activePublication.getMainAuthor());
             
             //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     };
+    
+    
+    public Publication getActivePublication(){
+        return activePublication;
+    }
     
     
     private final Button.ClickListener markAsReadListener = new Button.ClickListener() {
@@ -126,6 +131,17 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         summaryPanel.setContent(summaryPanelLayout);
         summaryPanel.setSizeFull();
         summaryPanel.setStyleName("borderless");
+        
+       
+    }
+    
+    public void initializeActiveUser(){
+        try{
+            activeUser = (User)getApplication().getUser();
+        }
+        catch(NullPointerException e){
+            LOGGER.debug("Unauthorized user");
+        }
     }
     
     public void showToReadBtn(){
@@ -160,7 +176,8 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
 
     public void setContent(Publication publication) {
         activePublication = publication;
-        activeUser = (User)getApplication().getUser();
+        //activeUser = (User)getApplication().getUser();
+        initializeActiveUser();
         ArrayList<Author> publicationAuthors = null;
         try {
             publicationAuthors = authorManager.getPublicationAuthors(publication);

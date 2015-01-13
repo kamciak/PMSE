@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.01" errors="0" skipped="0" tests="7" name="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest">
+<testsuite failures="0" time="0.007" errors="0" skipped="0" tests="7" name="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files (x86)\Java\jdk1.7.0_71\jre\bin"/>
@@ -61,11 +61,11 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetAuthorStrings"/>
+  <testcase time="0.002" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetAuthorStrings"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetTitle"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetSummary"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetPDFLink"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetID"/>
-  <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetPublicationDate"/>
+  <testcase time="0.001" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetPublicationDate"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetDOI"/>
 </testsuite>

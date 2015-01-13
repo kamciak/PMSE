@@ -15,6 +15,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.VerticalLayout;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +34,10 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     private final PreviewPanel previewPanel = new PreviewPanel("Content");
     private final Map<String, Date> dateMap = new LinkedHashMap<String, Date>();
     private final PMSEButton showAllBtn = new PMSEButton("Show all");
+    private final PMSEButton goBackBtn = new PMSEButton("Go back");
+    private List<Publication> backupPublications = new ArrayList<Publication>();
+    private Publication activePublication;
+    
     {
         DateTime now = new DateTime();
         dateMap.put("Day", now.minusDays(1).toDate());
@@ -65,13 +70,15 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         super();
         this.menuBar = menuBar;
         initHomeScreenPanel();
+        this.goBackBtn.setEnabled(false);
     }
     
-    
+
     public HomeScreenPanel(){
         super();
         this.menuBar = new MainMenuBarAuthorizedUser();
         initHomeScreenPanel();
+        this.goBackBtn.setEnabled(false);
     }
     
     private void initHomeScreenPanel(){
@@ -87,14 +94,21 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         setExpandRatio(mainHorizontalLayout, 1);
         
         showAllBtn.addListener(showAllClickListener);
+        goBackBtn.addListener(goBackBtnListener);
         setHomePanelForPreviewPanel();
     }
+
     
     private void setHomePanelForPreviewPanel(){
         previewPanel.setHomePanel(this);
     }
     
-    public void filterPublicationByAuthorOfSelected(String authorName){
+    public void filterPublicationByAuthorOfSelected(String authorName){ 
+        goBackBtn.setEnabled(true);
+        if(previewPanel.isVisible())
+            activePublication = previewPanel.getActivePublication();
+        
+        backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
         List<Publication> publications = publicationManager.getPublicationOfAuthor(authorName);
        
         publicationTable.cleanAndAddPublications(publications);
@@ -112,26 +126,14 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
 
         hl.addComponent(recentPanel);
         hl.setExpandRatio(recentPanel, 3);
+        
+        
 
         return hl;
     }
-    private final Button.ClickListener showAllClickListener = new Button.ClickListener() {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            publicationTable.restoreAllPublication();
-        }
-    };
     
-    public void getPublicationsOfCurrentAuthor(){
-        Publication selectedPublication = (Publication)publicationTable.getValue();
-        List<Publication> publications = publicationManager.getPublicationOfAuthor(selectedPublication.getMainAuthor());
-       
-        publicationTable.addPublications(publications);
-        
-    }
-    
+
+
     private void initRecentPanelContent() {
         recentPanel.setSizeFull();
         HorizontalLayout searchLayout = new HorizontalLayout();
@@ -163,8 +165,8 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
 
                 if (!isPreviewVisible)
                     setPreviewPanelVisibility(true);
-                Publication publication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
-                previewPanel.setContent(publication);
+                Publication recentlyPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
+                previewPanel.setContent(recentlyPublication);
             }
         });
 
@@ -209,13 +211,22 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         sourceDBCB.addListener(cbValueChangeListener);
         sourceDBCB.select(allSourceDBS.get(0));
 
+        HorizontalLayout bottomLayout = new HorizontalLayout();
+        bottomLayout.setSpacing(true);
+        bottomLayout.setSizeFull();
+        bottomLayout.addComponent(goBackBtn);
+        
         VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
         mainLayout.setSpacing(true);
         mainLayout.setWidth("100%");
         mainLayout.addComponent(searchLayout);
         mainLayout.addComponent(publicationTable);
+        mainLayout.addComponent(bottomLayout);
         recentPanel.setContent(mainLayout);
+        
+        
+        
     }
 
     private void initPreviewPanelContent() {
@@ -230,4 +241,34 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         } else
             mainHorizontalLayout.removeComponent(previewPanel);
     }
+    
+    
+    
+    /*
+     * LISTENERS
+     */
+    private final Button.ClickListener showAllClickListener = new Button.ClickListener() {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            publicationTable.restoreAllPublication();
+        }
+    };
+    
+    private final Button.ClickListener goBackBtnListener = new Button.ClickListener() {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            publicationTable.cleanAndAddPublications(backupPublications);
+            previewPanel.setContent(activePublication);
+            setPreviewPanelVisibility(true);
+            goBackBtn.setEnabled(false);
+        }
+    };
+    
+    
+    
+    
 }
