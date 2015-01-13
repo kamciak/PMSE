@@ -6,7 +6,7 @@ import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.ConfirmWindow;
 import com.publicationmetasearchengine.gui.ScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBar;
+import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
@@ -26,7 +26,7 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ToReadScreenPanel.class);
 
-    private final MainMenuBar menuBar = new MainMenuBar();
+    private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
 
     @Autowired
     private PublicationManager publicationManager;

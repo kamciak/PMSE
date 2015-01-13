@@ -4,7 +4,7 @@ import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
 import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.homescreen.PreviewPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBar;
+import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.vaadin.data.Property;
@@ -21,7 +21,7 @@ public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
     @Autowired
     PublicationManager publicationManager;
 
-    private final MainMenuBar menuBar = new MainMenuBar();
+    private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
 
     private FiltersPanel filtersPanel = new FiltersPanel("Filters") {
         private static final long serialVersionUID = 1L;

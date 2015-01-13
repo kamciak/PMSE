@@ -7,6 +7,7 @@ import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
 import com.publicationmetasearchengine.dao.users.exceptions.InvalidCredentialsException;
 import com.publicationmetasearchengine.gui.ScreenPanel;
+import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.utils.CryptoUtils;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.event.ShortcutAction;
@@ -135,7 +136,7 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
             User user = userManager.getUserByLoginAndPassword(username, password);
             getApplication().setUser(user);
             LOGGER.info(String.format("User [%s] logged in", user));
-            getApplication().getMainWindow().setContent(user.getScreenPanel(new HomeScreenPanel()));
+            getApplication().getMainWindow().setContent(user.getScreenPanel(new HomeScreenPanel(new MainMenuBarAuthorizedUser())));
         } catch (InvalidCredentialsException ex) {
             Notificator.showNotification(getApplication(), "Login error", "Invalid user credentials", Notificator.NotificationType.ERROR);
             LOGGER.debug(String.format("Invalid users credentials [%s - %s]", username, password));

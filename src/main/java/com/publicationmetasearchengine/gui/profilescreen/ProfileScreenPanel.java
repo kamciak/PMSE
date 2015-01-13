@@ -3,7 +3,7 @@ package com.publicationmetasearchengine.gui.profilescreen;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.dao.users.exceptions.UserDoesNotExistException;
 import com.publicationmetasearchengine.gui.ScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBar;
+import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
@@ -72,7 +72,7 @@ public class ProfileScreenPanel extends VerticalLayout implements ScreenPanel {
         }
     }
 
-    private MainMenuBar menuBar = new MainMenuBar();
+    private MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
 
     @Autowired
     UserManager userManager;

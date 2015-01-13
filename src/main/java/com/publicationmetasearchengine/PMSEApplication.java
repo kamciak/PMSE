@@ -1,6 +1,8 @@
 package com.publicationmetasearchengine;
 
+import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.gui.loginscreen.LoginScreenPanel;
+import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarUnauthorizedUser;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.Application;
 import com.vaadin.terminal.Terminal;
@@ -25,7 +27,7 @@ public class PMSEApplication extends Application{
     private void initMainWindow() {
         setTheme("pmseTheme");
         Window mainWindow = new Window("Publication MetaSearch Engine");
-        mainWindow.setContent(new LoginScreenPanel());
+        mainWindow.setContent(new HomeScreenPanel(new MainMenuBarUnauthorizedUser()));
         setMainWindow(mainWindow);
     }
 

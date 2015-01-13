@@ -37,6 +37,7 @@ E:\PMSE\target\generated\cxf\com\thomsonreuters\wokmws\v3\woksearch\TimeSpan.jav
 E:\PMSE\target\generated\cxf\com\thomsonreuters\wokmws\v3\woksearch\InvalidInputException.java
 E:\PMSE\src\main\java\com\publicationmetasearchengine\services\croneservice\CroneService.java
 E:\PMSE\src\main\java\com\publicationmetasearchengine\PMSEApplication.java
+E:\PMSE\src\main\java\com\publicationmetasearchengine\gui\mainmenu\MainMenuBarAuthorizedUser.java
 E:\PMSE\src\main\java\com\publicationmetasearchengine\gui\searchscreen\components\Filter.java
 E:\PMSE\src\main\java\com\publicationmetasearchengine\gui\ScreenPanel.java
 E:\PMSE\target\generated\cxf\com\thomsonreuters\wokmws\v3\woksearch\InvalidInputException_Exception.java
@@ -168,6 +169,7 @@ E:\PMSE\src\main\java\com\publicationmetasearchengine\data\filters\FilterType.ja
 E:\PMSE\src\main\java\com\publicationmetasearchengine\gui\searchscreen\FiltersPanel.java
 E:\PMSE\target\generated\cxf\com\thomsonreuters\wokmws\cxf\auth\CloseSessionResponse.java
 E:\PMSE\target\generated\cxf\com\thomsonreuters\wokmws\v3\woksearch\AuthenticationException_Exception.java
+E:\PMSE\src\main\java\com\publicationmetasearchengine\gui\mainmenu\MainMenuBarUnauthorizedUser.java
 E:\PMSE\src\main\java\com\publicationmetasearchengine\data\Publication.java
 E:\PMSE\src\main\java\com\publicationmetasearchengine\services\ServiceJobProvider.java
 E:\PMSE\src\main\java\com\publicationmetasearchengine\services\mailingservice\emailparts\EmailSubject.java

@@ -4,7 +4,7 @@ import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.SourceDB;
 import com.publicationmetasearchengine.gui.ScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBar;
+import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
@@ -12,6 +12,7 @@ import com.vaadin.data.Property;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.VerticalLayout;
 import java.util.Date;
@@ -26,7 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     private static final long serialVersionUID = 1L;
 
-    private final MainMenuBar menuBar = new MainMenuBar();
+    private final MenuBar menuBar;
 
     private final PMSEPanel recentPanel = new PMSEPanel("Recent publications");
     private final PreviewPanel previewPanel = new PreviewPanel("Content");
@@ -60,8 +61,20 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     private HorizontalLayout mainHorizontalLayout;
     boolean isPreviewVisible = false;
 
+    public HomeScreenPanel(MenuBar menuBar){
+        super();
+        this.menuBar = menuBar;
+        initHomeScreenPanel();
+    }
+    
+    
     public HomeScreenPanel(){
         super();
+        this.menuBar = new MainMenuBarAuthorizedUser();
+        initHomeScreenPanel();
+    }
+    
+    private void initHomeScreenPanel(){
         setMargin(true);
         setSpacing(true);
         setSizeFull();
@@ -75,7 +88,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         
         showAllBtn.addListener(showAllClickListener);
         setHomePanelForPreviewPanel();
-        //publicationTable.setAllPublication(publicationManager.getAllPublications());
     }
     
     private void setHomePanelForPreviewPanel(){
