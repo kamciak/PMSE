@@ -105,20 +105,19 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         vl.setSizeFull();
         vl.setMargin(true);
         vl.setSpacing(true);
-
-
         vl.addComponent(titleLbl);
         vl.addComponent(authorsLbl);
         vl.addComponent(publicationSourceLabel);
         vl.addComponent(doiLink);
         vl.addComponent(pdfLink);
         vl.addComponent(summaryPanel);
+        
+        toReadBtn.setVisible(false);
         vl.addComponent(toReadBtn);
         vl.addComponent(showMoreBtn);
         vl.setExpandRatio(summaryPanel, 1);
         setContent(vl);
-
-
+        
         titleLbl.setStyleName("boldTitle");
         VerticalLayout summaryPanelLayout = new VerticalLayout();
         summaryPanelLayout.addComponent(summaryLbl);
@@ -129,15 +128,26 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         summaryPanel.setStyleName("borderless");
     }
     
+    public void showToReadBtn(){
+        toReadBtn.setVisible(true);
+    }
+    
+    public void hideToReadBtn(){
+        toReadBtn.setVisible(false);
+    }
+    
     public void setHomePanel(HomeScreenPanel panel){
         this.homePanel = panel;
     }
 
     private void initializeToReadBtn() {
+        showToReadBtn();
         toReadBtn.removeListener(markAsReadListener);
         toReadBtn.removeListener(markToReadListener);
-        if (activeUser == null)
+        if (activeUser == null){
+            hideToReadBtn();
             return;
+        }
         if (publicationManager.isUserPublication(activeUser, activePublication)) {
             toReadBtn.setCaption(MARK_AS_READ_CAPTION);
             toReadBtn.addListener(markAsReadListener);
@@ -151,7 +161,6 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     public void setContent(Publication publication) {
         activePublication = publication;
         activeUser = (User)getApplication().getUser();
-
         ArrayList<Author> publicationAuthors = null;
         try {
             publicationAuthors = authorManager.getPublicationAuthors(publication);
@@ -202,10 +211,12 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     }
 
     public void additionalMarkAsReadAction(){
-
+        toReadBtn.removeListener(markAsReadListener);
+        toReadBtn.addListener(markToReadListener);
     }
 
     public void additionalMarkToReadAction(){
-
+        toReadBtn.removeListener(markToReadListener);
+        toReadBtn.addListener(markAsReadListener);
     }
 }
