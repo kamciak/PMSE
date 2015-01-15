@@ -205,4 +205,5 @@ build/*
 build
 build/
 build/web/
-target/
+target/*
+target/classes/
