@@ -66,6 +66,6 @@
   <testcase time="0.001" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetSummary"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetPDFLink"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetID"/>
-  <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetPublicationDate"/>
-  <testcase time="0.001" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetDOI"/>
+  <testcase time="0.001" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetPublicationDate"/>
+  <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.EntryParserTest" name="testGetDOI"/>
 </testsuite>

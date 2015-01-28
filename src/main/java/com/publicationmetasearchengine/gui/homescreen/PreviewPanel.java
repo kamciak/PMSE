@@ -16,6 +16,7 @@ import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -53,12 +54,14 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private final Panel summaryPanel = new Panel();
     private final PMSEButton toReadBtn = new PMSEButton();
     private final PMSEButton showMoreBtn = new PMSEButton();
+
     private final int authorButtonStartIndex = 1;
     private int authorButtonEndIndex = 1;
     private List<Author> authors = new ArrayList<Author>();
     private Publication activePublication;
     private User activeUser;
     private HorizontalLayout hl = new HorizontalLayout();
+    private CssLayout h;
     private VerticalLayout vl = new VerticalLayout();
     private final Button.ClickListener showOtherPublicationListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
@@ -118,8 +121,23 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         vl.setMargin(true);
         vl.setSpacing(true);
         vl.addComponent(titleLbl);
+        h = new CssLayout();
+        
+        //h.setSpacing(true);
+        
+        h.setMargin(false);
+        h.setWidth("100%");
+        //h.addComponent(jakisbutton);
 
         
+    
+       
+        //h.setHeight("300");
+        
+        //h.setMargin(true);
+        
+        h.setVisible(true);
+        vl.addComponent(h);
         //index 1 - miejsce na buttony
         
         //
@@ -204,7 +222,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         titleLbl.setValue(publication.getTitle());
         
         String authorsString = publicationAuthors!=null?concatAuthors(publicationAuthors): null;
-        authorsLbl.setValue(authorsString!=null?"by: " + authorsString:"");
+        authorsLbl.setValue(authorsString!=null?"by: ":"");
         createAndAddAuthorButtons(publicationAuthors);
         
         
@@ -259,16 +277,13 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private void createAndAddAuthorButtons(ArrayList<Author> publicationAuthors) {
 
 
-        for(; authorButtonEndIndex >= authorButtonStartIndex; --authorButtonEndIndex)
-            vl.removeComponent(vl.getComponent(authorButtonEndIndex));
+        h.removeAllComponents();
         
-       
+        h.addComponent(authorsLbl);
         for(Author author : publicationAuthors){
-            authorButtonEndIndex++;
             PMSEButton button = new PMSEButton(author.getName());
             final String authorName = author.getName();
-            button.setStyleName("link");
-            button.setVisible(true);
+            
             button.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 1L;
 
@@ -278,13 +293,16 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             }
             });
             
-            vl.addComponent(button,authorButtonEndIndex);
+           h.addComponent(button);
+           button.setStyleName("link");
+           //button.setVisible(true);
            
-
         }
         
 
     }
+    
+
 
     public void additionalMarkAsReadAction(){
         toReadBtn.removeListener(markAsReadListener);
