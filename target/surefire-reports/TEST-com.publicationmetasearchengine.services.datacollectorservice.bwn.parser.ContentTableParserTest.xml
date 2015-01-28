@@ -29,7 +29,7 @@
     <property name="os.name" value="Windows 7"/>
     <property name="classworlds.conf" value="E:\Program Files\NetBeans 7.3.1\java\maven\bin\m2.conf"/>
     <property name="sun.jnu.encoding" value="Cp1250"/>
-    <property name="java.library.path" value="C:\Program Files (x86)\Java\jdk1.7.0_71\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Common Files\Microsoft Shared\Windows Live;."/>
+    <property name="java.library.path" value="C:\Program Files (x86)\Java\jdk1.7.0_71\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;E:\CooCox\CoIDE\gcc\bin;C:\Program Files\Common Files\Microsoft Shared\Windows Live;."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="51.0"/>
     <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
@@ -62,10 +62,10 @@
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testExctactDOI"/>
-  <testcase time="0.001" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetTitle"/>
-  <testcase time="0.002" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetSummary"/>
-  <testcase time="0.002" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetPDFLink"/>
+  <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetTitle"/>
+  <testcase time="0.003" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetSummary"/>
+  <testcase time="0.001" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetPDFLink"/>
   <testcase time="0.001" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetAuthors"/>
-  <testcase time="0.005" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetSourceInfo"/>
+  <testcase time="0.004" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetSourceInfo"/>
   <testcase time="0" classname="com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParserTest" name="testGetDOI"/>
 </testsuite>

@@ -6,6 +6,7 @@ import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesN
 import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
+import com.publicationmetasearchengine.gui.loginscreen.ForgottenPasswordWindow;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
@@ -13,7 +14,10 @@ import com.publicationmetasearchengine.management.publicationmanagement.Publicat
 import com.publicationmetasearchengine.utils.DateUtils;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
@@ -49,10 +53,13 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private final Panel summaryPanel = new Panel();
     private final PMSEButton toReadBtn = new PMSEButton();
     private final PMSEButton showMoreBtn = new PMSEButton();
-
+    private final int authorButtonStartIndex = 1;
+    private int authorButtonEndIndex = 1;
+    private List<Author> authors = new ArrayList<Author>();
     private Publication activePublication;
     private User activeUser;
-    
+    private HorizontalLayout hl = new HorizontalLayout();
+    private VerticalLayout vl = new VerticalLayout();
     private final Button.ClickListener showOtherPublicationListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
         
@@ -106,12 +113,20 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
 
     public PreviewPanel(String caption) {
         super(caption);
-        VerticalLayout vl = new VerticalLayout();
+        
         vl.setSizeFull();
         vl.setMargin(true);
         vl.setSpacing(true);
         vl.addComponent(titleLbl);
-        vl.addComponent(authorsLbl);
+
+        
+        //index 1 - miejsce na buttony
+        
+        //
+        //vl.addComponent(authorsLbl);
+
+        
+
         vl.addComponent(publicationSourceLabel);
         vl.addComponent(doiLink);
         vl.addComponent(pdfLink);
@@ -121,6 +136,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         vl.addComponent(toReadBtn);
         vl.addComponent(showMoreBtn);
         vl.setExpandRatio(summaryPanel, 1);
+        
         setContent(vl);
         
         titleLbl.setStyleName("boldTitle");
@@ -181,12 +197,17 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         ArrayList<Author> publicationAuthors = null;
         try {
             publicationAuthors = authorManager.getPublicationAuthors(publication);
+            
         } catch (PublicationWithNoAuthorException ex) {
             LOGGER.error(ex);
         }
         titleLbl.setValue(publication.getTitle());
+        
         String authorsString = publicationAuthors!=null?concatAuthors(publicationAuthors): null;
         authorsLbl.setValue(authorsString!=null?"by: " + authorsString:"");
+        createAndAddAuthorButtons(publicationAuthors);
+        
+        
         if (publication.getSourceTitle() == null)
             publicationSourceLabel.setValue("Published: "+DateUtils.formatDateOnly(publication.getPublicationDate()));
         else
@@ -215,6 +236,14 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         showMoreBtn.addListener(showOtherPublicationListener);
     }
 
+    private HorizontalLayout initMainHorizontalLayout(List<PMSEButton> buttons) {
+        for(PMSEButton button : buttons){
+            hl.addComponent(button);
+        }
+        
+        return hl;
+    }
+    
     private void setLink(Link link, String caption, String resourceLink) {
         link.setCaption(caption);
         link.setResource(new ExternalResource(resourceLink));
@@ -225,6 +254,36 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         for(int i = 1; i < authors.size(); ++i)
             sb.append(", ").append(authors.get(i).getName());
         return sb.toString();
+    }
+    
+    private void createAndAddAuthorButtons(ArrayList<Author> publicationAuthors) {
+
+
+        for(; authorButtonEndIndex >= authorButtonStartIndex; --authorButtonEndIndex)
+            vl.removeComponent(vl.getComponent(authorButtonEndIndex));
+        
+       
+        for(Author author : publicationAuthors){
+            authorButtonEndIndex++;
+            PMSEButton button = new PMSEButton(author.getName());
+            final String authorName = author.getName();
+            button.setStyleName("link");
+            button.setVisible(true);
+            button.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                homePanel.filterPublicationByAuthorOfSelected(authorName);
+            }
+            });
+            
+            vl.addComponent(button,authorButtonEndIndex);
+           
+
+        }
+        
+
     }
 
     public void additionalMarkAsReadAction(){

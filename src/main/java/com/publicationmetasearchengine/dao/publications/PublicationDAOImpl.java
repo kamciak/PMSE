@@ -191,19 +191,24 @@ public class PublicationDAOImpl implements PublicationDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Publication> getPublicationOfAuthor(String mainAuthorId){
+    public List<Publication> getPublicationOfAuthor(String authorName){
         String selectQuery = new SelectQuery()
-                .addAllTableColumns(DBSchema.PUBLICATION_TABLE)
-                .addColumns(DBSchema.AUTHOR_NAME_COLUMN)
-                .addAliasedColumn(DBSchema.SOURCETITLE_TITLE_COLUMN, SOURCE_TITLE_COLUMN_ALIAS)
-                .addFromTable(DBSchema.PUBLICATION_TABLE)
-                .addJoins(SelectQuery.JoinType.INNER, DBSchema.PUBLICATION_MAINAUTHOR_JOIN)
-                .addJoins(SelectQuery.JoinType.LEFT_OUTER, DBSchema.PUBLICATION_SOURCETITLE_JOIN)
-                .addCondition(new ComboCondition(ComboCondition.Op.AND,
-                    new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.AUTHOR_NAME_COLUMN, mainAuthorId)
-                ))
+                .addAllColumns()
+                
+                
+                .addJoin(SelectQuery.JoinType.INNER, DBSchema.PUBLICATION_TABLE, DBSchema.PUBLICATIONAUTHORS_TABLE, new ComboCondition(ComboCondition.Op.AND,
+                    new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATIONAUTHORS_PUBLICATION_ID_COLUMN, DBSchema.PUBLICATION_ID_COLUMN)
+                )).addJoin(SelectQuery.JoinType.INNER, DBSchema.PUBLICATION_TABLE, DBSchema.AUTHOR_TABLE, new ComboCondition(ComboCondition.Op.AND,
+                    new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.AUTHOR_ID_COLUMN, DBSchema.PUBLICATIONAUTHORS_AUTHOR_ID_COLUMN)
+                )).addCondition(new ComboCondition(ComboCondition.Op.AND,
+                    new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.AUTHOR_NAME_COLUMN, authorName)))
+                
+                
                 .toString();
-        return (ArrayList<Publication>) jdbcTemplate.query(selectQuery.toString(), new PublicationRowMapper(true, true));
+                
+                LOGGER.debug("SELECTION QUERY: \n"+selectQuery);
+   
+        return (ArrayList<Publication>) jdbcTemplate.query(selectQuery.toString(), new PublicationRowMapper(true, false));
     }
 
     @Override
