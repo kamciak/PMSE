@@ -177,7 +177,6 @@ Desktop.ini
 dist
 build
 eggs
-parts
 bin
 var
 sdist
@@ -207,3 +206,4 @@ build/
 build/web/
 target/*
 target/classes/
+*.class
