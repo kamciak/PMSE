@@ -37,6 +37,9 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     private final PMSEButton goBackBtn = new PMSEButton("Go back");
     private List<Publication> backupPublications = new ArrayList<Publication>();
     private Publication activePublication;
+    private final PublicationTable publicationTable = new PublicationTable() ;
+    private HorizontalLayout mainHorizontalLayout;
+    boolean isPreviewVisible = false;
     
     {
         DateTime now = new DateTime();
@@ -60,11 +63,8 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         public void onFilterBtnClick() {
             publicationTable.filterByTitleKeywords(keywordFilter.getKeywords());
         }
-
     };
-    private final PublicationTable publicationTable = new PublicationTable() ;
-    private HorizontalLayout mainHorizontalLayout;
-    boolean isPreviewVisible = false;
+    
 
     public HomeScreenPanel(MenuBar menuBar){
         super();
@@ -107,7 +107,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         goBackBtn.setEnabled(true);
         if(previewPanel.isVisible())
             activePublication = previewPanel.getActivePublication();
-        
+        setPreviewPanelVisibility(false);
         backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
         List<Publication> publications = publicationManager.getPublicationOfAuthor(authorName);
        
@@ -126,8 +126,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
 
         hl.addComponent(recentPanel);
         hl.setExpandRatio(recentPanel, 3);
-        
-        
 
         return hl;
     }
@@ -143,8 +141,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         searchLayout.addComponent(dateCB);
         searchLayout.addComponent(showAllBtn);
         searchLayout.setComponentAlignment(showAllBtn, Alignment.BOTTOM_LEFT);
-        
-        
         searchLayout.addComponent(keywordFilter);
         searchLayout.setExpandRatio(keywordFilter, 1);
         searchLayout.setComponentAlignment(keywordFilter, Alignment.MIDDLE_RIGHT);
@@ -224,9 +220,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         mainLayout.addComponent(publicationTable);
         mainLayout.addComponent(bottomLayout);
         recentPanel.setContent(mainLayout);
-        
-        
-        
+
     }
 
     private void initPreviewPanelContent() {
@@ -240,6 +234,10 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
             mainHorizontalLayout.setExpandRatio(previewPanel, 2);
         } else
             mainHorizontalLayout.removeComponent(previewPanel);
+    }
+    
+    public void changePreviePanelVisibility(){
+        setPreviewPanelVisibility(!isPreviewVisible);
     }
     
     
@@ -267,8 +265,5 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
             goBackBtn.setEnabled(false);
         }
     };
-    
-    
-    
     
 }

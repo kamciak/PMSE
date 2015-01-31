@@ -8,6 +8,7 @@ import com.publicationmetasearchengine.management.usermanagement.UserManager;
 import com.publicationmetasearchengine.dao.users.exceptions.InvalidCredentialsException;
 import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
+import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarUnauthorizedUser;
 import com.publicationmetasearchengine.utils.CryptoUtils;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.event.ShortcutAction;
@@ -44,7 +45,8 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
     private PMSEButton loginBtn = new PMSEButton("Login");
     private PMSEButton forgotPasswordBtn = new PMSEButton("Forgot your password?");
     private PMSEButton registerBtn = new PMSEButton("Register");
-
+    private PMSEButton goBackBtn = new PMSEButton("Go back");
+    
     public LoginScreenPanel() {
         setSizeFull();
         setHeight("50%");
@@ -55,7 +57,7 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
     }
 
     private void initLoginPanel() {
-        GridLayout gl = new GridLayout(2, 4);
+        GridLayout gl = new GridLayout(2, 5);
         gl.setSpacing(true);
         gl.setMargin(true);
 
@@ -65,9 +67,9 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
         gl.addComponent(passwordField,      1, 1);
         VerticalLayout buttonLayout = initButtonLayout();
         gl.addComponent(buttonLayout, 1, 3);
-
         gl.setComponentAlignment(buttonLayout, Alignment.MIDDLE_RIGHT);
-
+        gl.addComponent(goBackBtn, 0, 4);
+        gl.setComponentAlignment(goBackBtn, Alignment.MIDDLE_LEFT);
         usernameField.setWidth("100%");
         passwordField.setWidth("100%");
 
@@ -81,8 +83,22 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
         forgotPasswordBtn.setTabIndex(-1);
         registerBtn.setTabIndex(-1);
 
+        
         loginPanel.setContent(gl);
         loginPanel.setSizeUndefined();
+        
+        
+        
+        
+        
+        goBackBtn.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarUnauthorizedUser()));
+            }
+        });
     }
 
     private VerticalLayout initButtonLayout() {
@@ -118,6 +134,7 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
             }
         });
 
+        
 
         vl.addComponent(loginBtn);
         vl.addComponent(forgotPasswordBtn);
@@ -125,7 +142,7 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
         vl.setComponentAlignment(loginBtn, Alignment.MIDDLE_RIGHT);
         vl.setComponentAlignment(forgotPasswordBtn, Alignment.MIDDLE_RIGHT);
         vl.setComponentAlignment(registerBtn, Alignment.MIDDLE_RIGHT);
-
+        
         return vl;
     }
 

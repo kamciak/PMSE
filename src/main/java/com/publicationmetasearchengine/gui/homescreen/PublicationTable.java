@@ -19,7 +19,6 @@ public class PublicationTable extends Table {
         TABLE_TITLE_COLUMN
     };
     private final List<Publication> allPublications = new ArrayList<Publication>();
-    //private final List<Publication> all = new ArrayList<Publication>();
 
     public PublicationTable() {
         addContainerProperty(TABLE_SOURCE_COLUMN, String.class, "");
@@ -35,15 +34,7 @@ public class PublicationTable extends Table {
         removeAllItems();
         allPublications.clear();
     }
-    /*
-    public void setAllPublication(List<Publication> publications){
-        all.removeAll(all);
-        for(Publication publication : publications){
-            all.add(publication);
-            LOGGER.debug("Added to all: " + publication.getTitle());
-        }
-    }
-    */
+
     private void addPublication(Publication publication, boolean addToBackupList) {
         Object id = addItem();
         getItem(id).getItemProperty(TABLE_SOURCE_COLUMN).setValue(publication.getSourceDB().getShortName());
@@ -71,19 +62,7 @@ public class PublicationTable extends Table {
             addPublication(p, false);
         
     }
-    /*
-    public void filterPublicationByAuthorOfSelected(String authorName){
-        removeAllItems();
-        if(authorName == null){
-            for(Publication publication: allPublications)
-                addPublication(publication, false);
-            return ;
-        }
-        for(Publication publication: all)
-            if(authorName.equals(publication.getMainAuthor()))
-                addPublication(publication, false);
-    }*/
-    
+
     public void restoreAllPublication(){
         removeAllItems();
         for(Publication publication : allPublications)
