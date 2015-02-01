@@ -137,6 +137,14 @@ public class PublicationManagerImpl implements PublicationManager {
         }
     }
 
+    @Override
+    public void removeUserSelectedPublications(User user, List<Publication> publicationList){
+        try {
+            for (Publication publication : publicationList){
+                publicationDAO.removeUserPublication(user.getId(), publication.getId());
+            }
+        } catch(RelationDoesNotExistException ex){}
+    }
 
 
     @Override
