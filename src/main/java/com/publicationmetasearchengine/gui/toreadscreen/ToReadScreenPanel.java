@@ -10,11 +10,15 @@ import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
+import com.publicationmetasearchengine.utils.BibTeXGenerator;
 import com.publicationmetasearchengine.utils.Notificator;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.ContentModelContainer;
 import com.vaadin.data.Property;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import java.util.Set;
@@ -50,10 +54,12 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
     private PMSEButton cleanList = new PMSEButton("Clean list");
     private PMSEButton deleteSelected = new PMSEButton("Delete selected publications");
     private PMSEButton markAll = new PMSEButton("Select all");
+    private PMSEButton generateBibTeX = new PMSEButton("Generate BibTeX");
     private HorizontalLayout mainHorizontalLayout;
     private boolean isAllSelected = false;
     private boolean isPreviewVisible = false;
-
+    private List<String> bibtexStringList;
+    private PMSEPanel bibtexPanel = new PMSEPanel();
     public ToReadScreenPanel(){
         super();
         setMargin(true);
@@ -102,10 +108,17 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
         toReadPanelLayout.setMargin(true);
         toReadPanelLayout.setSpacing(true);
         toReadPanelLayout.addComponent(toReadTable);
-        toReadPanelLayout.addComponent((markAll));
+
+        
+        
+        
+        toReadPanelLayout.addComponent(bibtexPanel);
+        bibtexPanel.setSizeFull();
+        toReadPanelLayout.addComponent(markAll);
         toReadPanelLayout.addComponent(downloadAll);
         toReadPanelLayout.addComponent(cleanList);
         toReadPanelLayout.addComponent(deleteSelected);
+        toReadPanelLayout.addComponent(generateBibTeX);
         toReadPanelLayout.setComponentAlignment(downloadAll, Alignment.TOP_RIGHT);
         toReadPanelLayout.setComponentAlignment(cleanList, Alignment.TOP_RIGHT);
         toReadPanel.setContent(toReadPanelLayout);
@@ -236,6 +249,32 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
                         Notificator.showNotification(getApplication(), "Info", "All marked publications have been removed.", Notificator.NotificationType.HUMANIZED);
                     }
                 };
+            }
+        });
+        
+        generateBibTeX.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                bibtexStringList = BibTeXGenerator.generate(toReadTable.getSelectedPublications());
+                
+                LOGGER.debug("==========================================\n\n B i b T e x   \n\n");
+                
+                bibtexPanel.removeAllComponents();
+                for(String b : bibtexStringList){
+                    Label bibtexLabel = new Label(b, Label.CONTENT_PREFORMATTED);
+                    
+                    
+                    bibtexPanel.addComponent(bibtexLabel);
+                    LOGGER.debug(b);
+                }
+                
+                
+                
+                        
+                        
+                
             }
         });
     }
