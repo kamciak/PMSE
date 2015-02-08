@@ -22,6 +22,7 @@ CREATE TABLE `publication` (
     `title`             VARCHAR(767)    NOT NULL,
     `summary`           VARCHAR(10240)  NOT NULL,
     `doi`               VARCHAR(128)    DEFAULT NULL,
+    `journalRef`        VARCHAR(256)    DEFAULT NULL,
     `sourceTitleId`     INT             NOT NULL,
     `sourceVolume`      VARCHAR(16)     DEFAULT NULL,
     `sourceIssue`       VARCHAR(16)     DEFAULT NULL,

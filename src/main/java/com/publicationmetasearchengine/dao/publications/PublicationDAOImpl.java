@@ -63,6 +63,7 @@ public class PublicationDAOImpl implements PublicationDAO {
                     rs.getString(DBSchema.PUBLICATION_TITLE_COLUMN.getName()),
                     rs.getString(DBSchema.PUBLICATION_SUMMARY_COLUMN.getName()),
                     rs.getString(DBSchema.PUBLICATION_DOI_COLUMN.getName()),
+                    rs.getString(DBSchema.PUBLICATION_JOURNAL_REF_COLUMN.getName()),
                     useSourceTitle?rs.getString(SOURCE_TITLE_COLUMN_ALIAS):null,
                     rs.getString(DBSchema.PUBLICATION_SOURCE_VOLUME_COLUMN.getName()),
                     rs.getString(DBSchema.PUBLICATION_SOURCE_ISSUE_COLUMN.getName()),
@@ -97,10 +98,10 @@ public class PublicationDAOImpl implements PublicationDAO {
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
-
+    
     @Override
     public Integer insertPublication(int sourceDBId, String articleId, int mainAuthorId,
-            String title, String summary, String doi, Integer sourceTitleId,
+            String title, String summary, String doi, String journalRef, Integer sourceTitleId,
             String sourceVolume, String sourceIssue, String sourcePageRange,
             Date publicationDate, String pdfLink) throws PublicationAlreadyExistException {
         final Date insertDate = new Date();
@@ -111,6 +112,7 @@ public class PublicationDAOImpl implements PublicationDAO {
                 .addColumn(DBSchema.PUBLICATION_TITLE_COLUMN, MySQLUtils.escapeSpecialCharacters(title))
                 .addColumn(DBSchema.PUBLICATION_SUMMARY_COLUMN, MySQLUtils.escapeSpecialCharacters(summary))
                 .addColumn(DBSchema.PUBLICATION_DOI_COLUMN, doi!=null?MySQLUtils.escapeSpecialCharacters(doi):null)
+                .addColumn(DBSchema.PUBLICATION_JOURNAL_REF_COLUMN, journalRef!=null?MySQLUtils.escapeSpecialCharacters(journalRef):null)
                 .addColumn(DBSchema.PUBLICATION_SOURCE_TITLE_ID_COLUMN, sourceTitleId)
                 .addColumn(DBSchema.PUBLICATION_SOURCE_VOLUME_COLUMN, sourceVolume)
                 .addColumn(DBSchema.PUBLICATION_SOURCE_ISSUE_COLUMN, sourceIssue)

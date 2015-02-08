@@ -46,6 +46,7 @@ public class BibTeXGenerator {
             sb.append(getYearString(publication)).append("\n");
             sb.append(getPagesString(publication)).append("\n");
             sb.append(getEprintString(publication)).append("\n");
+            sb.append(getJournalRefString(publication)).append("\n");
 
             sb.append("}").append("\n\n");
             
@@ -112,6 +113,15 @@ public class BibTeXGenerator {
         sb.append("eprint\t= \"" );
         //do zmiany;
         sb.append(publication.getDoi());
+        sb.append("\",");
+        
+        return sb.toString();
+    }
+    
+    public static String getJournalRefString(Publication publication){
+        StringBuilder sb = new StringBuilder();
+        sb.append("journal\t= \"");
+        sb.append(publication.getJournalRef());
         sb.append("\",");
         
         return sb.toString();

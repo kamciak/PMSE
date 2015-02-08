@@ -182,7 +182,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
                         publicationTable.addPublications(publications);
                     } else {
                         publicationTable.setSelectable(false);
-                        publicationTable.addMockPublication(new Publication(null, null, null, null, "No publication found", null, null, null, null, null, null, null, null, null));
+                        publicationTable.addMockPublication(new Publication(null, null, null, null, "No publication found", null, null, null, null, null, null, null, null, null, null));
                     }
                 }
             }

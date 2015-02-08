@@ -13,6 +13,7 @@ public class Publication {
     private final String title;
     private final String summary;
     private final String doi;
+    private final String journalRef;
     private final String sourceTitle;
     private final String sourceVolume;
     private final String sourceIssue;
@@ -23,7 +24,7 @@ public class Publication {
 
     private List<Author> authors;
 
-    public Publication(Integer id, SourceDB sourceDB, String articleId, String mainAuthor, String title, String summary, String doi, String sourceTitle, String sourceVolume, String sourceIssue, String sourcePageRange, Date publicationDate, String pdfLink, Date insertDate) {
+    public Publication(Integer id, SourceDB sourceDB, String articleId, String mainAuthor, String title, String summary, String doi, String journalRef, String sourceTitle, String sourceVolume, String sourceIssue, String sourcePageRange, Date publicationDate, String pdfLink, Date insertDate) {
         this.id = id;
         this.sourceDbId = null;
         this.sourceDB = sourceDB;
@@ -32,6 +33,7 @@ public class Publication {
         this.title = title;
         this.summary = summary;
         this.doi = doi;
+        this.journalRef = journalRef;
         this.sourceTitle = sourceTitle;
         this.sourceVolume = sourceVolume;
         this.sourceIssue = sourceIssue;
@@ -73,6 +75,10 @@ public class Publication {
         return doi;
     }
 
+    public String getJournalRef() {
+        return journalRef;
+    }
+    
     public String getSourceTitle() {
         return sourceTitle;
     }
