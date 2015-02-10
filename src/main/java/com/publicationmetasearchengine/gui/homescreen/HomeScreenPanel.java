@@ -3,10 +3,12 @@ package com.publicationmetasearchengine.gui.homescreen;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.SourceDB;
+import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
+import com.publicationmetasearchengine.gui.toreadscreen.ToReadScreenPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.vaadin.data.Property;
 import com.vaadin.ui.Alignment;
@@ -81,6 +83,16 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         this.goBackBtn.setEnabled(false);
     }
     
+    public HomeScreenPanel(MenuBar menuBar, List<Publication> publications){
+        super();
+        this.menuBar = menuBar;
+        initHomeScreenPanel();
+        publicationTable.cleanAndAddPublications(publications);
+        this.goBackBtn.setEnabled(true);
+        goBackBtn.removeListener(goBackBtnListener);
+        goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
+    }
+    
     private void initHomeScreenPanel(){
         setMargin(true);
         setSpacing(true);
@@ -100,7 +112,13 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
 
     
     private void setHomePanelForPreviewPanel(){
-        previewPanel.setHomePanel(this);
+        previewPanel.setParentPanel(this);
+    }
+    
+    
+    
+    public void addPublicationToTable(List<Publication> publications){
+        publicationTable.cleanAndAddPublications(publications);
     }
     
     public void filterPublicationByAuthorOfSelected(String authorName){ 
@@ -263,6 +281,15 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
             previewPanel.setContent(activePublication);
             setPreviewPanelVisibility(true);
             goBackBtn.setEnabled(false);
+        }
+    };
+    
+    private final Button.ClickListener goBackBtnToReadScreenPanelListener = new Button.ClickListener() {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            getApplication().getMainWindow().setContent(((User)getApplication().getUser()).getScreenPanel(new ToReadScreenPanel()));
         }
     };
     

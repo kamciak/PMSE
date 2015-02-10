@@ -31,7 +31,7 @@ public class MainMenuBarAuthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(user.getScreenPanel(new HomeScreenPanel()));
+                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser()));
             }
         });
     }
