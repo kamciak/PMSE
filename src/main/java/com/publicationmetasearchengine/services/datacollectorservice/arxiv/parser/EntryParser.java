@@ -37,10 +37,6 @@ public class EntryParser {
     }
     
     public String getJournalRef() {
-        System.out.println("\nJOURNALREF\n####################################################");
-        String aa = (!entryDoc.select("arxiv|journal_ref").text().isEmpty() ? entryDoc.select("arxiv|journal_ref").text() : "pusto");
-        System.out.println(aa);
-        System.out.println("####################################################\n");
         return !entryDoc.select("arxiv|journal_ref").text().isEmpty() ? entryDoc.select("arxiv|journal_ref").text() : null;
         
     }

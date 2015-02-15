@@ -1,7 +1,6 @@
 package com.publicationmetasearchengine;
 
 import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
-import com.publicationmetasearchengine.gui.loginscreen.LoginScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarUnauthorizedUser;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.Application;
