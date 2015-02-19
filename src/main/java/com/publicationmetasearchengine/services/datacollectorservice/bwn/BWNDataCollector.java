@@ -213,7 +213,7 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                         record.getTitle(),
                         record.getSummary(),
                         record.getDOI(),
-                        null, ////////////////////////////////////////////JOURNAL_REF ?????????????
+                        record.getJournalRef(), ////////////////////////////////////////////JOURNAL_REF ?????????????
                         sourceTitleId,
                         record.getSourceInfo().getVolumeId(),
                         record.getSourceInfo().getIssueId(),
