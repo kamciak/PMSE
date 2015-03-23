@@ -7,7 +7,8 @@ public enum FilterType {
     TITLE(DBSchema.PUBLICATION_TITLE_COLUMN),
     SUMMARY(DBSchema.PUBLICATION_SUMMARY_COLUMN),
     PUBLICATION_DATE(DBSchema.PUBLICATION_PUBLICATION_DATE_COLUMN),
-    AUTHOR(null);
+    AUTHOR(null),
+    DOI(DBSchema.PUBLICATION_DOI_COLUMN);
 
     private final DbColumn dbColumn;
 
