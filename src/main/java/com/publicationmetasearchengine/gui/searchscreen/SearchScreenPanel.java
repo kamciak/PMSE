@@ -7,15 +7,18 @@ import com.publicationmetasearchengine.gui.homescreen.PreviewPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
+import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.data.Property;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
 public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
+    private static final Logger LOGGER = Logger.getLogger(SearchScreenPanel.class);
     private static final long serialVersionUID = 1L;
 
     @Autowired
@@ -28,10 +31,14 @@ public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
 
         @Override
         public void searchClick() {
-            final List<FilterCriteria> filtersCriteria = getFiltersCriteria();
-            final List<Publication> publications = publicationManager.getPublicationsMatchingFiltersCriteria(filtersCriteria);
-            resultTable.clear();
-            resultTable.addPublications(publications);
+                final List<FilterCriteria> filtersCriteria = getFiltersCriteria();
+                if(!isFilterCriteriaEmpty(filtersCriteria)){
+                    final List<Publication> publications = publicationManager.getPublicationsMatchingFiltersCriteria(filtersCriteria);
+                    resultTable.clear();
+                    resultTable.addPublications(publications);
+                } else {
+                    Notificator.showNotification(getApplication(), "No filter criteria", "\nEmpty filter criteria. Please fill any of field.", Notificator.NotificationType.HUMANIZED);
+                }
         }
     };
 
@@ -116,5 +123,15 @@ public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
         } else {
             mainHorizontalLayout.removeComponent(previewPanel);
         }
+    }
+    
+    private boolean isFilterCriteriaEmpty(List<FilterCriteria> filterCriteriaList){
+        boolean isEmpty = true;
+        for(FilterCriteria filter : filterCriteriaList){
+            if(!filter.isEmpty())
+                if(!filter.gotOnlyNulls())
+                    isEmpty = false;
+        }
+        return isEmpty;
     }
 }
