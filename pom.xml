@@ -142,6 +142,13 @@
             <artifactId>cxf-api</artifactId>
             <version>${apacheCxf}</version>
         </dependency>
+        <dependency>
+        <groupId>org.vaadin.addon</groupId>
+        <artifactId>confirmdialog</artifactId>
+        <version>1.2.1</version>
+     </dependency>
+
+
     </dependencies>
 
     <build>

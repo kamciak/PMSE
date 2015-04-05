@@ -12,7 +12,11 @@ import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
+import com.publicationmetasearchengine.services.ServiceJobProvider;
+import com.publicationmetasearchengine.services.croneservice.CroneService;
+import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
 import com.publicationmetasearchengine.utils.DateUtils;
+import com.publicationmetasearchengine.utils.Notificator;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
@@ -24,9 +28,12 @@ import com.vaadin.ui.VerticalLayout;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import javax.crypto.Cipher;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.dialogs.ConfirmDialog;
 
 @Configurable(preConstruction = true)
 public class PreviewPanel extends PMSEPanel implements Serializable {
@@ -52,7 +59,8 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private User activeUser;
     private VerticalLayout vl = new VerticalLayout();
     private CssLayout cl = new CssLayout();
-
+    private final String confirmationText = "Searching in external libraries can take up to few minutes. Do you want to continue?";
+    
     public Publication getActivePublication() {
         return activePublication;
     }
@@ -165,20 +173,44 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         }
     }
 
+    public void setContentForAuthorPublications(Publication publication)
+    {
+        List<Author> publicationAuthors = null;
+        try{    
+            publicationAuthors = publication.getAuthors();
+        } catch (PublicationWithNoAuthorException ex) {
+            LOGGER.error(ex);
+        }
+        prepareContent(publication, publicationAuthors);
+    }
+    
     public void setContent(Publication publication) {
-        activePublication = publication;
-        initializeActiveUser();
-        ArrayList<Author> publicationAuthors = null;
+        List<Author> publicationAuthors = null;
         try {
             publicationAuthors = authorManager.getPublicationAuthors(publication);
 
         } catch (PublicationWithNoAuthorException ex) {
             LOGGER.error(ex);
         }
-        titleLbl.setValue(publication.getTitle());
+
+        prepareContent(publication, publicationAuthors);
+    }
+    
+    private void prepareContent(Publication publication, List<Author> publicationAuthors) {
+        initializeActiveUser();
         initAuthorButtons(publicationAuthors);
+        setPublicationSourceLabel(publication);
+        setDoiLink(publication);
+        setPdfLink(publication);
 
+        activePublication = publication;
+        titleLbl.setValue(publication.getTitle());
+        summaryLbl.setValue(publication.getSummary());
 
+        initializeToReadBtn();
+    }
+    
+    private void setPublicationSourceLabel(Publication publication) {
         if (publication.getSourceTitle() == null && publication.getJournalRef() == null) {
             publicationSourceLabel.setValue("Published: " + DateUtils.formatDateOnly(publication.getPublicationDate()));
         } else {
@@ -189,22 +221,23 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                     publication.getSourceIssue() != null ? "(" + publication.getSourceIssue() + ")" : "",
                     DateUtils.formatYearOnly(publication.getPublicationDate())));
         }
-
+    }
+    
+    private void setDoiLink(Publication publication) {
         final String doiString = publication.getDoi();
         setLink(doiLink, doiString, String.format("https://www.google.pl/search?q=\"%s\"", doiString));
         if (publication.getSourceDB().getShortName().equals(PMSEConstants.ARXIV_SHORT_NAME) && doiString == null) {
             String arxivePageString = "arxiv.org/abs/" + publication.getArticleId();
             setLink(doiLink, arxivePageString, "http://" + arxivePageString);
         }
+    }
+    
+    private void setPdfLink(Publication publication) {
         if (publication.getPdfLink() != null) {
             setLink(pdfLink, "PDF", publication.getPdfLink());
         } else {
             pdfLink.setCaption("");
         }
-
-        summaryLbl.setValue(publication.getSummary());
-
-        initializeToReadBtn();
     }
 
     private void setLink(Link link, String caption, String resourceLink) {
@@ -225,13 +258,14 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         return sb.toString();
     }
 
-    private void initAuthorButtons(ArrayList<Author> publicationAuthors) {
+    private void initAuthorButtons(List<Author> publicationAuthors) {
         cl.removeAllComponents();
         authorsLbl.setValue(publicationAuthors != null ? "by: " : "");
         cl.addComponent(authorsLbl);
 
         for (Author author : publicationAuthors) {
             PMSEButton button = new PMSEButton(author.getName());
+            PMSEButton searchForAllAuthorsPublication = new PMSEButton("Find all of: "+author.getName());
             final String authorName = author.getName();
 
             button.addListener(new Button.ClickListener() {
@@ -250,7 +284,31 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                 }
             });
 
+            searchForAllAuthorsPublication.addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    ConfirmDialog.show(getWindow(), confirmationText,
+                            new ConfirmDialog.Listener() {
+                        @Override
+                        public void onClose(ConfirmDialog dialog) {
+                            if (dialog.isConfirmed()) {
+                                ArxivAuthorCollector authorCollector = new ArxivAuthorCollector(authorName);
+                                authorCollector.downloadAuthorPublications();
+
+                                if (parentPanel instanceof HomeScreenPanel) {
+                                    ((HomeScreenPanel) parentPanel).setBackupPublication();
+                                    ((HomeScreenPanel) parentPanel).enableBackButon();
+                                    ((HomeScreenPanel) parentPanel).addAuthorPublicationsToTable(authorCollector.getPublication());
+                                } else {
+                                    getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), authorCollector.getPublication()));
+                                }
+                            }
+                        }
+                    });
+                }
+            });
             cl.addComponent(button);
+            cl.addComponent(searchForAllAuthorsPublication);
             button.setStyleName("link");
         }
     }
@@ -263,5 +321,5 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     public void additionalMarkToReadAction() {
         toReadBtn.removeListener(markToReadListener);
         toReadBtn.addListener(markAsReadListener);
-    }
+    } 
 }

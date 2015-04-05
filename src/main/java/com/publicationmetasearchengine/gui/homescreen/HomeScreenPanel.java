@@ -117,16 +117,21 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     
     
     
-    public void addPublicationToTable(List<Publication> publications){
+    public void addPublicationsToTable(List<Publication> publications){
         publicationTable.cleanAndAddPublications(publications);
+        setPublicationTableChangeListener();
+    }
+    
+    public void addAuthorPublicationsToTable(List<Publication> publications){
+        setBackupPublication();
+        publicationTable.cleanAndAddPublications(publications);
+        setAuthorPublicationTableChangeListener();
     }
     
     public void filterPublicationByAuthorOfSelected(String authorName){ 
         goBackBtn.setEnabled(true);
-        if(previewPanel.isVisible())
-            activePublication = previewPanel.getActivePublication();
         setPreviewPanelVisibility(false);
-        backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
+        
         List<Publication> publications = publicationManager.getPublicationOfAuthor(authorName);
        
         publicationTable.cleanAndAddPublications(publications);
@@ -259,7 +264,64 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     }
     
     
+    public void setBackupPublication() {
+        if(previewPanel.isVisible())
+            activePublication = previewPanel.getActivePublication();
+        backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
+    }
     
+    public void enableBackButon() {
+        goBackBtn.setEnabled(true);
+    }
+    
+    private void setAuthorPublicationTableChangeListener()
+    {       
+        publicationTable.removeListener(publicationTableChangeListener);
+        publicationTable.addListener(authorPublicationTableChangeListener);
+    }
+    
+    private Property.ValueChangeListener authorPublicationTableChangeListener = new Property.ValueChangeListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                Object id = event.getProperty().getValue();
+                if (id == null) {
+                    setPreviewPanelVisibility(false);
+                    return;
+                }
+
+                if (!isPreviewVisible)
+                    setPreviewPanelVisibility(true);
+                Publication recentlyPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
+                previewPanel.setContentForAuthorPublications(recentlyPublication);
+            }
+        };
+    
+    private Property.ValueChangeListener publicationTableChangeListener = new Property.ValueChangeListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                Object id = event.getProperty().getValue();
+                if (id == null) {
+                    setPreviewPanelVisibility(false);
+                    return;
+                }
+
+                if (!isPreviewVisible)
+                    setPreviewPanelVisibility(true);
+                Publication recentlyPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
+                previewPanel.setContent(recentlyPublication);
+            }
+        };
+    
+    
+        private void setPublicationTableChangeListener()
+    {        
+        publicationTable.removeListener(authorPublicationTableChangeListener);
+        publicationTable.addListener(publicationTableChangeListener);
+    }
     /*
      * LISTENERS
      */
@@ -277,7 +339,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         
         @Override
         public void buttonClick(Button.ClickEvent event) {
-            publicationTable.cleanAndAddPublications(backupPublications);
+            addPublicationsToTable(backupPublications);
             previewPanel.setContent(activePublication);
             setPreviewPanelVisibility(true);
             goBackBtn.setEnabled(false);

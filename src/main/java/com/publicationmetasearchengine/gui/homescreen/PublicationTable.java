@@ -57,9 +57,9 @@ public class PublicationTable extends Table {
     }
     
     public void cleanAndAddPublications(List<Publication> publications) {
-        removeAllItems();
+        clear();
         for (Publication p : publications)
-            addPublication(p, false);
+            addPublication(p, true);
         
     }
 

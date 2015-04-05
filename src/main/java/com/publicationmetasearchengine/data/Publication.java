@@ -1,5 +1,6 @@
 package com.publicationmetasearchengine.data;
 
+import com.publicationmetasearchengine.dao.publications.exceptions.PublicationWithNoAuthorException;
 import java.util.Date;
 import java.util.List;
 
@@ -115,8 +116,12 @@ public class Publication {
         this.sourceDB = sourceDB;
     }
 
-    public List<Author> getAuthors() {
-        return authors;
+    public List<Author> getAuthors() throws PublicationWithNoAuthorException {
+        if (authors == null || authors.isEmpty()) {
+            throw new PublicationWithNoAuthorException();
+        } else {
+            return authors;
+        }
     }
 
     public void setAuthors(List<Author> authors) {

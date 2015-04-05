@@ -18,7 +18,7 @@ public class ServiceManager implements ServletContextListener{
     private static final String NOTIFICATION_SERVICE_PREFIX = "notificationservice" + SETTINGS_SEPARATOR;
     private static final String COLLECTOR_PREFIX = "datacollector" + SETTINGS_SEPARATOR;
     private static final String CLASS_SETTING = "class";
-
+    
     private final CroneService croneService;
 
     public ServiceManager() {
@@ -44,7 +44,7 @@ public class ServiceManager implements ServletContextListener{
                 try {
                     ServiceJobProvider dataCollector = (ServiceJobProvider) Class.forName(classPath).newInstance();
                     dataCollector.initialize(collectorPrefix);
-                    LOGGER.debug("Starting class " + classPath);
+                    LOGGER.debug("Starting class " + classPath);         
                     croneService.scheduleJob(dataCollector.getJobDetail(), dataCollector.getTrigger());
                 } catch (ClassNotFoundException ex) {
                     LOGGER.fatal(ex);
