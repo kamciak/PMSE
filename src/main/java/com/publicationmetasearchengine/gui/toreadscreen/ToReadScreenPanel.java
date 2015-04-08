@@ -12,11 +12,13 @@ import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.utils.BibTeXGenerator;
 import com.publicationmetasearchengine.utils.Notificator;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.ContentModelContainer;
 import com.vaadin.data.Property;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +30,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ToReadScreenPanel.class);
-
 
     private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
 
@@ -64,6 +65,7 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
         setMargin(true);
         setSpacing(true);
         setSizeFull();
+
         mainHorizontalLayout = initMainHorizontalLayout();
 
         addComponent(menuBar);
@@ -128,7 +130,6 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
 
     private void initPreviewPanelContent() {
         previewPanel.setSizeFull();
-        previewPanel.setParentPanel(this);
     }
 
     private void setPreviewPanelVisibility(boolean visible) {
@@ -144,12 +145,9 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
     private void addListeners() {
         markAll.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                            LOGGER.debug("getApplication().getMainWindow().getName(): " + getApplication().getMainWindow().getWindow().getClass().getName());
-            LOGGER.debug("getApplication().getMainWindow().getName(): " + getApplication().getMainWindow().getName());
-            LOGGER.debug("getApplication().getMainWindow().getName(): " + getApplication().getMainWindow().getWindow().getName());  
-            LOGGER.debug("getApplication().getMainWindow().getName(): " + getClass().getName());  
                 if(isAllSelected){
                     toReadTable.unselectAll();
                     isAllSelected = false;
