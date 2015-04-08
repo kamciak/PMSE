@@ -26,13 +26,4 @@ public class ArxivParser {
 
         return entries;
     }
-    
-    public List<RawEntry> getAuthorEntries(){
-        List<RawEntry> entries = new ArrayList<RawEntry>();
-        for(Element rawEntry : arxivDoc.select("entry")) {
-            EntryParser entryParser = new EntryParser(rawEntry.toString());
-            entries.add(entryParser.getRawEntry());
-        }
-        return entries;
-    }
 }

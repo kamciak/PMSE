@@ -46,8 +46,7 @@ public class AuthorManagerImpl implements AuthorManager {
     @Override
     public ArrayList<Author> getPublicationAuthors(Publication publication) throws PublicationWithNoAuthorException {
         final ArrayList<Author> authors = authorDAO.getPublicationAuthorsById(publication.getId());
-        if(authors != null)
-            LOGGER.debug(String.format("Found %d authors for publication %s", authors.size(), publication));
+        LOGGER.debug(String.format("Found %d authors for publication %s", authors.size(), publication));
         return authors;
     }
 
