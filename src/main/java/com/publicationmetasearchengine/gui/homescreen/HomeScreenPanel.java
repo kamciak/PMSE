@@ -28,21 +28,19 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
 public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
+
     private static final long serialVersionUID = 1L;
-
     private final MenuBar menuBar;
-
     private final PMSEPanel recentPanel = new PMSEPanel("Recent publications");
     private final PreviewPanel previewPanel = new PreviewPanel("Content");
     private final Map<String, Date> dateMap = new LinkedHashMap<String, Date>();
-    private final PMSEButton showAllBtn = new PMSEButton("Show all");
     private final PMSEButton goBackBtn = new PMSEButton("Go back");
     private List<Publication> backupPublications = new ArrayList<Publication>();
-    private Publication activePublication;
-    private final PublicationTable publicationTable = new PublicationTable() ;
+    private Publication recentPublication;
+    private final PublicationTable publicationTable = new PublicationTable();
     private HorizontalLayout mainHorizontalLayout;
     boolean isPreviewVisible = false;
-    
+
     {
         DateTime now = new DateTime();
         dateMap.put("Day", now.minusDays(1).toDate());
@@ -50,15 +48,13 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         dateMap.put("Month", now.minusMonths(1).toDate());
         dateMap.put("Half Year", now.minusMonths(6).toDate());
     }
-
     @Autowired
     private PublicationManager publicationManager;
     @Autowired
     private SourceDbDAO sourceDbDAO;
-
     private final NativeSelect sourceDBCB = new NativeSelect("Source");
     private final NativeSelect dateCB = new NativeSelect("Period");
-    private final KeywordFilter keywordFilter = new KeywordFilter("Title keywords"){
+    private final KeywordFilter keywordFilter = new KeywordFilter("Title keywords") {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -66,34 +62,32 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
             publicationTable.filterByTitleKeywords(keywordFilter.getKeywords());
         }
     };
-    
 
-    public HomeScreenPanel(MenuBar menuBar){
+    public HomeScreenPanel(MenuBar menuBar) {
         super();
         this.menuBar = menuBar;
         initHomeScreenPanel();
         this.goBackBtn.setEnabled(false);
     }
-    
 
-    public HomeScreenPanel(){
+    public HomeScreenPanel() {
         super();
-        this.menuBar = new MainMenuBarAuthorizedUser();
+        menuBar = new MainMenuBarAuthorizedUser();
         initHomeScreenPanel();
-        this.goBackBtn.setEnabled(false);
+        goBackBtn.setEnabled(false);
     }
-    
-    public HomeScreenPanel(MenuBar menuBar, List<Publication> publications){
+
+    public HomeScreenPanel(MenuBar menuBar, List<Publication> publications) {
         super();
         this.menuBar = menuBar;
         initHomeScreenPanel();
         publicationTable.cleanAndAddPublications(publications);
-        this.goBackBtn.setEnabled(true);
+        goBackBtn.setEnabled(true);
         goBackBtn.removeListener(goBackBtnListener);
         goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
     }
-    
-    private void initHomeScreenPanel(){
+
+    private void initHomeScreenPanel() {
         setMargin(true);
         setSpacing(true);
         setSizeFull();
@@ -104,38 +98,31 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         addComponent(mainHorizontalLayout);
         setExpandRatio(menuBar, 0);
         setExpandRatio(mainHorizontalLayout, 1);
-        
-        showAllBtn.addListener(showAllClickListener);
+
         goBackBtn.addListener(goBackBtnListener);
         setHomePanelForPreviewPanel();
     }
 
-    
-    private void setHomePanelForPreviewPanel(){
+    private void setHomePanelForPreviewPanel() {
         previewPanel.setParentPanel(this);
     }
-    
-    
-    
-    public void addPublicationsToTable(List<Publication> publications){
+
+    public void addPublicationsToTable(List<Publication> publications) {
+        //setBackupPublications();
         publicationTable.cleanAndAddPublications(publications);
         setPublicationTableChangeListener();
     }
-    
-    public void addAuthorPublicationsToTable(List<Publication> publications){
-        setBackupPublication();
+
+    public void addAuthorPublicationsToTable(List<Publication> publications) {
+        //setBackupPublications();
         publicationTable.cleanAndAddPublications(publications);
         setAuthorPublicationTableChangeListener();
     }
-    
-    public void filterPublicationByAuthorOfSelected(String authorName){ 
-        goBackBtn.setEnabled(true);
-        setPreviewPanelVisibility(false);
-        
+
+    public void filterPublicationByAuthorOfSelected(String authorName) {
+        setBackupPublications();
         List<Publication> publications = publicationManager.getPublicationOfAuthor(authorName);
-       
         publicationTable.cleanAndAddPublications(publications);
-        
     }
 
     private HorizontalLayout initMainHorizontalLayout() {
@@ -152,8 +139,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
 
         return hl;
     }
-    
-
 
     private void initRecentPanelContent() {
         recentPanel.setSizeFull();
@@ -162,8 +147,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         searchLayout.setSizeFull();
         searchLayout.addComponent(sourceDBCB);
         searchLayout.addComponent(dateCB);
-        searchLayout.addComponent(showAllBtn);
-        searchLayout.setComponentAlignment(showAllBtn, Alignment.BOTTOM_LEFT);
         searchLayout.addComponent(keywordFilter);
         searchLayout.setExpandRatio(keywordFilter, 1);
         searchLayout.setComponentAlignment(keywordFilter, Alignment.MIDDLE_RIGHT);
@@ -171,45 +154,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         publicationTable.setSizeFull();
         publicationTable.setSelectable(true);
         publicationTable.setImmediate(true);
-        publicationTable.addListener(new Property.ValueChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                Object id = event.getProperty().getValue();
-                if (id == null) {
-                    setPreviewPanelVisibility(false);
-                    return;
-                }
-
-                if (!isPreviewVisible)
-                    setPreviewPanelVisibility(true);
-                Publication recentlyPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
-                previewPanel.setContent(recentlyPublication);
-            }
-        });
-
-        Property.ValueChangeListener cbValueChangeListener = new Property.ValueChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                SourceDB sourceDB = (SourceDB) sourceDBCB.getValue();
-                Date date = (Date) dateCB.getValue();
-                if (sourceDB != null) {
-                    publicationTable.clear();
-                    final List<Publication> publications = publicationManager.getPublicationsBySourceDBAndDate(sourceDB, date);
-                    if (!publications.isEmpty()) {
-                        if (!publicationTable.isSelectable())
-                            publicationTable.setSelectable(true);
-                        publicationTable.addPublications(publications);
-                    } else {
-                        publicationTable.setSelectable(false);
-                        publicationTable.addMockPublication(new Publication(null, null, null, null, "No publication found", null, null, null, null, null, null, null, null, null, null));
-                    }
-                }
-            }
-        };
+        publicationTable.addListener(publicationTableChangeListener);
 
         dateCB.setNullSelectionAllowed(false);
         dateCB.setImmediate(true);
@@ -234,7 +179,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         bottomLayout.setSpacing(true);
         bottomLayout.setSizeFull();
         bottomLayout.addComponent(goBackBtn);
-        
+
         VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
         mainLayout.setSpacing(true);
@@ -243,7 +188,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         mainLayout.addComponent(publicationTable);
         mainLayout.addComponent(bottomLayout);
         recentPanel.setContent(mainLayout);
-
     }
 
     private void initPreviewPanelContent() {
@@ -255,104 +199,123 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         if (visible) {
             mainHorizontalLayout.addComponent(previewPanel);
             mainHorizontalLayout.setExpandRatio(previewPanel, 2);
-        } else
+        } else {
             mainHorizontalLayout.removeComponent(previewPanel);
+        }
     }
-    
-    public void changePreviePanelVisibility(){
+
+    public void changePreviePanelVisibility() {
         setPreviewPanelVisibility(!isPreviewVisible);
     }
-    
-    
-    public void setBackupPublication() {
-        if(previewPanel.isVisible())
-            activePublication = previewPanel.getActivePublication();
+
+    public void setBackupPublications() {
+        enableBackButon();
+        if (previewPanel.isVisible()) {
+            recentPublication = previewPanel.getActivePublication();
+        }
         backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
+        setPreviewPanelVisibility(false);
     }
     
+    public List<Publication> getBackupPublications() {
+        return backupPublications;
+    }
+
     public void enableBackButon() {
         goBackBtn.setEnabled(true);
     }
-    
-    private void setAuthorPublicationTableChangeListener()
-    {       
-        publicationTable.removeListener(publicationTableChangeListener);
-        publicationTable.addListener(authorPublicationTableChangeListener);
-    }
-    
-    private Property.ValueChangeListener authorPublicationTableChangeListener = new Property.ValueChangeListener() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                Object id = event.getProperty().getValue();
-                if (id == null) {
-                    setPreviewPanelVisibility(false);
-                    return;
-                }
-
-                if (!isPreviewVisible)
-                    setPreviewPanelVisibility(true);
-                Publication recentlyPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
-                previewPanel.setContentForAuthorPublications(recentlyPublication);
-            }
-        };
-    
-    private Property.ValueChangeListener publicationTableChangeListener = new Property.ValueChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                Object id = event.getProperty().getValue();
-                if (id == null) {
-                    setPreviewPanelVisibility(false);
-                    return;
-                }
-
-                if (!isPreviewVisible)
-                    setPreviewPanelVisibility(true);
-                Publication recentlyPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
-                previewPanel.setContent(recentlyPublication);
-            }
-        };
-    
-    
-        private void setPublicationTableChangeListener()
-    {        
+    private void setPublicationTableChangeListener() {
         publicationTable.removeListener(authorPublicationTableChangeListener);
         publicationTable.addListener(publicationTableChangeListener);
     }
+    
+    private void setAuthorPublicationTableChangeListener() {
+        publicationTable.removeListener(publicationTableChangeListener);
+        publicationTable.addListener(authorPublicationTableChangeListener);
+    }
+
     /*
-     * LISTENERS
-     */
-    private final Button.ClickListener showAllClickListener = new Button.ClickListener() {
+     *  LISTENERS
+     *              */
+    private Property.ValueChangeListener publicationTableChangeListener = new Property.ValueChangeListener() {
         private static final long serialVersionUID = 1L;
-        
+
         @Override
-        public void buttonClick(Button.ClickEvent event) {
-            publicationTable.restoreAllPublication();
+        public void valueChange(Property.ValueChangeEvent event) {
+            Object id = event.getProperty().getValue();
+            if (id == null) {
+                setPreviewPanelVisibility(false);
+                return;
+            }
+            if (!isPreviewVisible) {
+                setPreviewPanelVisibility(true);
+            }
+            Publication currentPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
+            previewPanel.setContent(currentPublication);
         }
     };
     
+    private Property.ValueChangeListener authorPublicationTableChangeListener = new Property.ValueChangeListener() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void valueChange(Property.ValueChangeEvent event) {
+            Object id = event.getProperty().getValue();
+            if (id == null) {
+                setPreviewPanelVisibility(false);
+                return;
+            }
+            if (!isPreviewVisible) {
+                setPreviewPanelVisibility(true);
+            }
+            Publication currentPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
+            previewPanel.setContentForAuthorPublications(currentPublication);
+        }
+    };
+    
+    private Property.ValueChangeListener cbValueChangeListener = new Property.ValueChangeListener() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void valueChange(Property.ValueChangeEvent event) {
+            SourceDB sourceDB = (SourceDB) sourceDBCB.getValue();
+            Date date = (Date) dateCB.getValue();
+            if (sourceDB != null) {
+                publicationTable.clear();
+                final List<Publication> publications = publicationManager.getPublicationsBySourceDBAndDate(sourceDB, date);
+                if (!publications.isEmpty()) {
+                    if (!publicationTable.isSelectable()) {
+                        publicationTable.setSelectable(true);
+                    }
+                    publicationTable.addPublications(publications);
+                } else {
+                    publicationTable.setSelectable(false);
+                    publicationTable.addMockPublication(new Publication(null, null, null, null, "No publication found", null, null, null, null, null, null, null, null, null, null));
+                }
+            }
+        }
+    };
+
+
     private final Button.ClickListener goBackBtnListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
-        
+
         @Override
         public void buttonClick(Button.ClickEvent event) {
             addPublicationsToTable(backupPublications);
-            previewPanel.setContent(activePublication);
+            previewPanel.setContent(recentPublication);
             setPreviewPanelVisibility(true);
-            goBackBtn.setEnabled(false);
+            goBackBtn.setEnabled(false);            //pytanie czy trzeba wylaczyc? mozna by odpalic, i skad tam i spowrotem
         }
     };
     
     private final Button.ClickListener goBackBtnToReadScreenPanelListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
-        
+
         @Override
         public void buttonClick(Button.ClickEvent event) {
-            getApplication().getMainWindow().setContent(((User)getApplication().getUser()).getScreenPanel(new ToReadScreenPanel()));
+            getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new ToReadScreenPanel()));
         }
     };
-    
 }
