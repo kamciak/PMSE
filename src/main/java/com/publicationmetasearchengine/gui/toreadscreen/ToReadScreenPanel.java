@@ -19,7 +19,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ChameleonTheme;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
@@ -57,11 +56,10 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
     private PMSEButton markAll = new PMSEButton("Select all");
     private PMSEButton generateBibTeX = new PMSEButton("Generate BibTeX");
     private PMSEButton showBibTeXPanel = new PMSEButton("Show/Hide BibTeX panel");
-    private PMSEButton saveBibTeX = new PMSEButton("Save BibTeX");
     private HorizontalLayout mainHorizontalLayout;
     private boolean isAllSelected = false;
     private boolean isPreviewVisible = false;
-    private List<String> bibtexStringList = new ArrayList<String>();
+    private List<String> bibtexStringList;
     private PMSEPanel bibtexPanel = new PMSEPanel();
     public ToReadScreenPanel(){
         super();
@@ -123,7 +121,6 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
         hl.addComponent(deleteSelected);
         hl.addComponent(generateBibTeX);
         hl.addComponent(showBibTeXPanel);
-        hl.addComponent(saveBibTeX);
         toReadPanelLayout.addComponent(hl);
         toReadPanelLayout.addComponent(bibtexPanel);
         bibtexPanel.setSizeFull();
@@ -267,8 +264,13 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                generateBibTeX();
+                bibtexStringList = BibTeXGenerator.generate(toReadTable.getSelectedPublications());
+                bibtexPanel.removeAllComponents();
                 bibtexPanel.setVisible(true);
+                for(String b : bibtexStringList){
+                    Label bibtexLabel = new Label(b, Label.CONTENT_PREFORMATTED);
+                    bibtexPanel.addComponent(bibtexLabel);
+                }
             }
         });
         showBibTeXPanel.addListener(new Button.ClickListener() {
@@ -279,26 +281,6 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
                 bibtexPanel.setVisible(!(bibtexPanel.isVisible()));
             }
         });
-        
-        saveBibTeX.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                BibTeXDownloader bibtexDownload = new BibTeXDownloader(getApplication(), (User)getApplication().getUser());
-                if(bibtexStringList.isEmpty())
-                    generateBibTeX();
-                bibtexDownload.downloadBibTex(bibtexStringList);
-            }
-        });
-    }
-    
-    private void generateBibTeX(){
-        bibtexStringList = BibTeXGenerator.generate(toReadTable.getSelectedPublications());
-        bibtexPanel.removeAllComponents();
-        for (String b : bibtexStringList) {
-            Label bibtexLabel = new Label(b, Label.CONTENT_PREFORMATTED);
-            bibtexPanel.addComponent(bibtexLabel);
-        }
     }
     
 }
