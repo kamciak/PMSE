@@ -179,12 +179,12 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         initAuthorButtons(publicationAuthors);
 
 
-        if (publication.getSourceTitle() == null && publication.getJournalRef() == null) {
+        if (publication.getSourceTitle() == null) {
             publicationSourceLabel.setValue("Published: " + DateUtils.formatDateOnly(publication.getPublicationDate()));
         } else {
             publicationSourceLabel.setValue(String.format("Published: %s in %s, %s%s/%s",
                     DateUtils.formatDateOnly(publication.getPublicationDate()),
-                    publication.getSourceTitle() != null? publication.getSourceTitle() : publication.getJournalRef(),
+                    publication.getSourceTitle(),
                     publication.getSourceVolume() != null ? publication.getSourceVolume() : "",
                     publication.getSourceIssue() != null ? "(" + publication.getSourceIssue() + ")" : "",
                     DateUtils.formatYearOnly(publication.getPublicationDate())));

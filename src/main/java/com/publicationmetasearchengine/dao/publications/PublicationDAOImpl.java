@@ -250,13 +250,6 @@ public class PublicationDAOImpl implements PublicationDAO {
                     mainComboCondition.addCondition(new InCondition(DBSchema.PUBLICATION_DOI_COLUMN, doi));
                 continue;
             }
-            if (filter.getFilterType() == FilterType.JOURNAL) {
-                if(filter.getValues().isEmpty())
-                    continue;
-                for(String journal : filter.getValues())
-                    mainComboCondition.addCondition(BinaryCondition.like(DBSchema.PUBLICATION_JOURNAL_REF_COLUMN, "%"+journal+"%"));
-                continue;
-            }
             
             ComboCondition filterComboCondition = new ComboCondition(filter.getOuterOperator());
             for(String andString : filter.getValues()) {
@@ -276,7 +269,6 @@ public class PublicationDAOImpl implements PublicationDAO {
             mainComboCondition.addCondition(new BinaryCondition(BinaryCondition.Op.GREATER_THAN_OR_EQUAL_TO, DBSchema.PUBLICATION_INSERT_DATE_COLUMN, DateUtils.formatDate(afterDate)));
         selectQuery.addCondition(mainComboCondition);
         selectQuery.addOrdering(DBSchema.PUBLICATION_PUBLICATION_DATE_COLUMN, OrderObject.Dir.DESCENDING);
-        
         return (ArrayList<Publication>) jdbcTemplate.query(selectQuery.toString(), new PublicationRowMapper(true, true));
     }
 

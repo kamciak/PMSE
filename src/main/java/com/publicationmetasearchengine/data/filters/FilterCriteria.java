@@ -24,20 +24,6 @@ public class FilterCriteria {
     public ArrayList<String> getValues() {
         return values;
     }
-    
-    public boolean isEmpty() {
-        return values.isEmpty();
-    }
-    
-    public boolean gotOnlyNulls() {
-        boolean onlyNulls = true;
-        for (String value : values) {
-            if (value != null) {
-                onlyNulls = false;
-            }
-        }
-        return onlyNulls;
-    }
 
     public ComboCondition.Op getInnerOperator() {
         return innerOperator;
