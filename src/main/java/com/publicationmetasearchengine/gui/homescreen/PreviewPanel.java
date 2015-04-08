@@ -6,8 +6,6 @@ import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesN
 import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
-import com.publicationmetasearchengine.gui.ScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
@@ -30,16 +28,18 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
 public class PreviewPanel extends PMSEPanel implements Serializable {
-
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(PreviewPanel.class);
+
     private static final String MARK_TO_READ_CAPTION = "Mark To Read";
     private static final String MARK_AS_READ_CAPTION = "Mark as Read";
+
     @Autowired
     private PublicationManager publicationManager;
     @Autowired
     private AuthorManager authorManager;
-    private ScreenPanel parentPanel;
+    
+    private HomeScreenPanel homePanel;
     private final Label titleLbl = new Label();
     private final Label authorsLbl = new Label();
     private final Label publicationSourceLabel = new Label();
@@ -52,10 +52,12 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private User activeUser;
     private VerticalLayout vl = new VerticalLayout();
     private CssLayout cl = new CssLayout();
-
-    public Publication getActivePublication() {
+    
+    public Publication getActivePublication(){
         return activePublication;
     }
+    
+    
     private final Button.ClickListener markAsReadListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
 
@@ -85,15 +87,15 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         }
     };
 
-    private void initCssLayout() {
+    private void initCssLayout(){
         cl.setMargin(false);
         cl.setWidth("100%");
         cl.setVisible(true);
     }
-
+    
     public PreviewPanel(String caption) {
         super(caption);
-
+        
         vl.setSizeFull();
         vl.setMargin(true);
         vl.setSpacing(true);
@@ -105,13 +107,13 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         vl.addComponent(doiLink);
         vl.addComponent(pdfLink);
         vl.addComponent(summaryPanel);
-
+        
         toReadBtn.setVisible(false);
         vl.addComponent(toReadBtn);
         vl.setExpandRatio(summaryPanel, 1);
-
+        
         setContent(vl);
-
+        
         titleLbl.setStyleName("boldTitle");
         VerticalLayout summaryPanelLayout = new VerticalLayout();
         summaryPanelLayout.addComponent(summaryLbl);
@@ -120,46 +122,44 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         summaryPanel.setContent(summaryPanelLayout);
         summaryPanel.setSizeFull();
         summaryPanel.setStyleName("borderless");
-
-
+        
+       
     }
-
-    public void initializeActiveUser() {
-        try {
-            activeUser = (User) getApplication().getUser();
-        } catch (NullPointerException e) {
+    
+    public void initializeActiveUser(){
+        try{
+            activeUser = (User)getApplication().getUser();
+        }
+        catch(NullPointerException e){
             LOGGER.debug("Unauthorized user");
         }
     }
-
-    public void showToReadBtn() {
+    
+    public void showToReadBtn(){
         toReadBtn.setVisible(true);
     }
-
-    public void hideToReadBtn() {
+    
+    public void hideToReadBtn(){
         toReadBtn.setVisible(false);
     }
-
-    public void setParentPanel(ScreenPanel panel) {
-        this.parentPanel = panel;
-    }
-
-    public List<Publication> findPublicationsBySelectedAuthor(String authorName) {
-        return publicationManager.getPublicationOfAuthor(authorName);
+    
+    public void setHomePanel(HomeScreenPanel panel){
+        this.homePanel = panel;
     }
 
     private void initializeToReadBtn() {
         showToReadBtn();
         toReadBtn.removeListener(markAsReadListener);
         toReadBtn.removeListener(markToReadListener);
-        if (activeUser == null) {
+        if (activeUser == null){
             hideToReadBtn();
             return;
         }
         if (publicationManager.isUserPublication(activeUser, activePublication)) {
             toReadBtn.setCaption(MARK_AS_READ_CAPTION);
             toReadBtn.addListener(markAsReadListener);
-        } else {
+        }
+        else {
             toReadBtn.setCaption(MARK_TO_READ_CAPTION);
             toReadBtn.addListener(markToReadListener);
         }
@@ -171,96 +171,89 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         ArrayList<Author> publicationAuthors = null;
         try {
             publicationAuthors = authorManager.getPublicationAuthors(publication);
-
+            
         } catch (PublicationWithNoAuthorException ex) {
             LOGGER.error(ex);
         }
         titleLbl.setValue(publication.getTitle());
         initAuthorButtons(publicationAuthors);
-
-
-        if (publication.getSourceTitle() == null) {
-            publicationSourceLabel.setValue("Published: " + DateUtils.formatDateOnly(publication.getPublicationDate()));
-        } else {
+        
+        
+        if (publication.getSourceTitle() == null)
+            publicationSourceLabel.setValue("Published: "+DateUtils.formatDateOnly(publication.getPublicationDate()));
+        else
             publicationSourceLabel.setValue(String.format("Published: %s in %s, %s%s/%s",
                     DateUtils.formatDateOnly(publication.getPublicationDate()),
                     publication.getSourceTitle(),
-                    publication.getSourceVolume() != null ? publication.getSourceVolume() : "",
-                    publication.getSourceIssue() != null ? "(" + publication.getSourceIssue() + ")" : "",
+                    publication.getSourceVolume()!=null?publication.getSourceVolume():"",
+                    publication.getSourceIssue()!=null?"("+publication.getSourceIssue()+")":"",
                     DateUtils.formatYearOnly(publication.getPublicationDate())));
-        }
 
         final String doiString = publication.getDoi();
         setLink(doiLink, doiString, String.format("https://www.google.pl/search?q=\"%s\"", doiString));
-        if (publication.getSourceDB().getShortName().equals(PMSEConstants.ARXIV_SHORT_NAME) && doiString == null) {
+        if (publication.getSourceDB().getShortName().equals(PMSEConstants.ARXIV_SHORT_NAME)&&doiString==null) {
             String arxivePageString = "arxiv.org/abs/" + publication.getArticleId();
-            setLink(doiLink, arxivePageString, "http://" + arxivePageString);
+            setLink(doiLink, arxivePageString, "http://"+arxivePageString);
         }
-        if (publication.getPdfLink() != null) {
+        if (publication.getPdfLink() != null )
             setLink(pdfLink, "PDF", publication.getPdfLink());
-        } else {
+        else
             pdfLink.setCaption("");
-        }
 
         summaryLbl.setValue(publication.getSummary());
 
         initializeToReadBtn();
     }
 
+    
     private void setLink(Link link, String caption, String resourceLink) {
         link.setCaption(caption);
         link.setResource(new ExternalResource(resourceLink));
     }
 
     /**
-     *
+     * 
      * @param authors List of authors
      * @return String of authors of publication (ex. M. Li, A. Barald, C. Winx)
      */
     private String concatAuthors(List<Author> authors) {
         StringBuilder sb = new StringBuilder(authors.get(0).getName());
-        for (int i = 1; i < authors.size(); ++i) {
+        for(int i = 1; i < authors.size(); ++i)
             sb.append(", ").append(authors.get(i).getName());
-        }
         return sb.toString();
     }
-
+    
     private void initAuthorButtons(ArrayList<Author> publicationAuthors) {
         cl.removeAllComponents();
-        authorsLbl.setValue(publicationAuthors != null ? "by: " : "");
+        authorsLbl.setValue(publicationAuthors!=null?"by: ":"");
         cl.addComponent(authorsLbl);
-
-        for (Author author : publicationAuthors) {
+        
+        for(Author author : publicationAuthors){
             PMSEButton button = new PMSEButton(author.getName());
             final String authorName = author.getName();
-
+            
             button.addListener(new Button.ClickListener() {
                 private static final long serialVersionUID = 1L;
-
+                
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-
-                    if (parentPanel instanceof HomeScreenPanel) {
-                        ((HomeScreenPanel) parentPanel).filterPublicationByAuthorOfSelected(authorName);
-                    } else {
-                        List<Publication> publications = findPublicationsBySelectedAuthor(authorName);
-                        getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), publications));
-
-                    }
+                    homePanel.filterPublicationByAuthorOfSelected(authorName);
                 }
             });
-
-            cl.addComponent(button);
-            button.setStyleName("link");
+            
+           cl.addComponent(button);
+           button.setStyleName("link");
         }
     }
+    
 
-    public void additionalMarkAsReadAction() {
+
+    public void additionalMarkAsReadAction(){
         toReadBtn.removeListener(markAsReadListener);
         toReadBtn.addListener(markToReadListener);
     }
 
-    public void additionalMarkToReadAction() {
+    public void additionalMarkToReadAction(){
         toReadBtn.removeListener(markToReadListener);
         toReadBtn.addListener(markAsReadListener);
     }
