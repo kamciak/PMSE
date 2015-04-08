@@ -154,7 +154,6 @@ public class ArxivDataCollector implements ServiceJobProvider, Serializable {
                         record.getTitle(),
                         record.getSummary(),
                         record.getDoi(),
-                        record.getJournalRef(),
                         null,
                         null,
                         null,

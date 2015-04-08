@@ -30,7 +30,6 @@ public enum DBSchema {
     public static DbColumn PUBLICATION_TITLE_COLUMN = PUBLICATION_TABLE.addColumn("title");
     public static DbColumn PUBLICATION_SUMMARY_COLUMN = PUBLICATION_TABLE.addColumn("summary");
     public static DbColumn PUBLICATION_DOI_COLUMN = PUBLICATION_TABLE.addColumn("doi");
-    public static DbColumn PUBLICATION_JOURNAL_REF_COLUMN = PUBLICATION_TABLE.addColumn("journalRef");
     public static DbColumn PUBLICATION_SOURCE_TITLE_ID_COLUMN = PUBLICATION_TABLE.addColumn("sourceTitleId");
     public static DbColumn PUBLICATION_SOURCE_VOLUME_COLUMN = PUBLICATION_TABLE.addColumn("sourceVolume");
     public static DbColumn PUBLICATION_SOURCE_ISSUE_COLUMN = PUBLICATION_TABLE.addColumn("sourceIssue");

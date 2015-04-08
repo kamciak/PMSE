@@ -15,7 +15,7 @@ import java.util.Map;
 public interface PublicationManager {
 
     Integer insertPublication(int sourceDBId, String articleId, int mainAuthorId,
-            String title, String summary, String doi, String journalRef, Integer sourceTitleId,
+            String title, String summary, String doi, Integer sourceTitleId,
             String sourceVolume, String sourceIssue, String sourcePageRange,
             Date publicationDate, String pdfLink) throws PublicationAlreadyExistException;
 

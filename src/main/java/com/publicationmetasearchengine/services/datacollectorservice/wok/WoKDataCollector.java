@@ -196,7 +196,6 @@ public class WoKDataCollector implements ServiceJobProvider, Serializable {
                         record.getTitle(),
                         record.getSummary(),
                         record.getDOI(),
-                        null, ///////////////////////////////////////JOURNAL_REF ????????
                         sourceTitleId,
                         record.getSourceInfo().getVolumeId(),
                         record.getSourceInfo().getIssueId(),

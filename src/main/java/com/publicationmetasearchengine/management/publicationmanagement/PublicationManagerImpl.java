@@ -38,11 +38,11 @@ public class PublicationManagerImpl implements PublicationManager {
 
     @Override
     public Integer insertPublication(int sourceDBId, String articleId, int mainAuthorId,
-            String title, String summary, String doi, String journalRef, Integer sourceTitleId,
+            String title, String summary, String doi, Integer sourceTitleId,
             String sourceVolume, String sourceIssue, String sourcePageRange,
             Date publicationDate, String pdfLink) throws PublicationAlreadyExistException {
         Integer result = publicationDAO.insertPublication(sourceDBId, articleId,
-                mainAuthorId, title, summary, doi, journalRef, sourceTitleId, sourceVolume,
+                mainAuthorId, title, summary, doi, sourceTitleId, sourceVolume,
                 sourceIssue, sourcePageRange, publicationDate, pdfLink);
         LOGGER.info(String.format("Publication [%d-%s] added to database under ID: %d", sourceDBId, articleId, result));
         return result;
