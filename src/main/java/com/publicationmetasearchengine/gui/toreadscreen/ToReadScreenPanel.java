@@ -18,7 +18,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ChameleonTheme;
 import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
@@ -55,7 +54,6 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
     private PMSEButton deleteSelected = new PMSEButton("Delete selected publications");
     private PMSEButton markAll = new PMSEButton("Select all");
     private PMSEButton generateBibTeX = new PMSEButton("Generate BibTeX");
-    private PMSEButton showBibTeXPanel = new PMSEButton("Show/Hide BibTeX panel");
     private HorizontalLayout mainHorizontalLayout;
     private boolean isAllSelected = false;
     private boolean isPreviewVisible = false;
@@ -108,27 +106,20 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
         toReadPanelLayout.setMargin(true);
         toReadPanelLayout.setSpacing(true);
         toReadPanelLayout.addComponent(toReadTable);
+
         
-        /*
-         * Buttons
-         */
-        HorizontalLayout hl = new HorizontalLayout();
-        hl.setSpacing(true);
-        markAll.setStyleName(ChameleonTheme.BUTTON_SMALL);
-        hl.addComponent(markAll);
-        hl.addComponent(downloadAll);
-        hl.addComponent(cleanList);
-        hl.addComponent(deleteSelected);
-        hl.addComponent(generateBibTeX);
-        hl.addComponent(showBibTeXPanel);
-        toReadPanelLayout.addComponent(hl);
+        
+        
         toReadPanelLayout.addComponent(bibtexPanel);
         bibtexPanel.setSizeFull();
-        bibtexPanel.setCaption("BibTeX");
-        bibtexPanel.setStyleName(ChameleonTheme.PANEL_BORDERLESS);
-        
+        toReadPanelLayout.addComponent(markAll);
+        toReadPanelLayout.addComponent(downloadAll);
+        toReadPanelLayout.addComponent(cleanList);
+        toReadPanelLayout.addComponent(deleteSelected);
+        toReadPanelLayout.addComponent(generateBibTeX);
+        toReadPanelLayout.setComponentAlignment(downloadAll, Alignment.TOP_RIGHT);
+        toReadPanelLayout.setComponentAlignment(cleanList, Alignment.TOP_RIGHT);
         toReadPanel.setContent(toReadPanelLayout);
-        bibtexPanel.setVisible(false);
     }
 
     private void loadUsersPublications(User user) {
@@ -154,7 +145,11 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
         markAll.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 1L;
             @Override
-            public void buttonClick(Button.ClickEvent event) {  
+            public void buttonClick(Button.ClickEvent event) {
+                            LOGGER.debug("getApplication().getMainWindow().getName(): " + getApplication().getMainWindow().getWindow().getClass().getName());
+            LOGGER.debug("getApplication().getMainWindow().getName(): " + getApplication().getMainWindow().getName());
+            LOGGER.debug("getApplication().getMainWindow().getName(): " + getApplication().getMainWindow().getWindow().getName());  
+            LOGGER.debug("getApplication().getMainWindow().getName(): " + getClass().getName());  
                 if(isAllSelected){
                     toReadTable.unselectAll();
                     isAllSelected = false;
@@ -265,20 +260,23 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 bibtexStringList = BibTeXGenerator.generate(toReadTable.getSelectedPublications());
+                
+                LOGGER.debug("==========================================\n\n B i b T e x   \n\n");
+                
                 bibtexPanel.removeAllComponents();
-                bibtexPanel.setVisible(true);
                 for(String b : bibtexStringList){
                     Label bibtexLabel = new Label(b, Label.CONTENT_PREFORMATTED);
+                    
+                    
                     bibtexPanel.addComponent(bibtexLabel);
+                    LOGGER.debug(b);
                 }
-            }
-        });
-        showBibTeXPanel.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                bibtexPanel.setVisible(!(bibtexPanel.isVisible()));
+                
+                
+                
+                        
+                        
+                
             }
         });
     }

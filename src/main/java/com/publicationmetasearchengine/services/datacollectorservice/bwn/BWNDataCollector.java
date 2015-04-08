@@ -78,7 +78,7 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                 + "search.pl?SearchTemplate=search_form.expert&search_field={DATE%%3D%s}&"
                 + "fields=Any&Database=elsevier_1990&Database=springer_1990&"
                 + "Category=all_categories&ArticleType=Article&Language=&"
-                + "daterange=yearsince&drsince=2000&drpast=none&fromyear=none&"
+                + "daterange=yearsince&drsince=1995&drpast=none&fromyear=none&"
                 + "toyear=none&Max=750&Start=1&Order=SORT+DATE+DESC&GetSearchResults=Submit+Query";
 
         @Autowired
@@ -253,7 +253,6 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
 
         private String getLinkForDate(Date date) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            LOGGER.info("WYSZUKUJE::::: " + String.format(SEARCH_TEMPLATE, sdf.format(date)));
             return String.format(SEARCH_TEMPLATE, sdf.format(date));
         }
 

@@ -36,6 +36,7 @@ public class ArxivParserTest {
      */
     @Test
     public void testGetEtnriesAfterDate() throws ParseException {
+        System.out.println("getEtnriesAfterDate");
         assertEquals(8, arxivParser.getEtnriesAfterDate(DateUtils.parseDateOnly("2014-03-12")).size());
         assertEquals(7, arxivParser.getEtnriesAfterDate(DateUtils.parseDate("2014-03-12 19:00:00")).size());
         assertEquals(3, arxivParser.getEtnriesAfterDate(DateUtils.parseDateOnly("2014-03-21")).size());
