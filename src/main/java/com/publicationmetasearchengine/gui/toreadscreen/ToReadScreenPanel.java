@@ -10,7 +10,6 @@ import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
-import com.publicationmetasearchengine.utils.BibTeXGenerator;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.ContentModelContainer;
 import com.vaadin.data.Property;
@@ -21,7 +20,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
-import java.util.Set;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -52,14 +50,9 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
     private VerticalLayout toReadPanelLayout;
     private PMSEButton downloadAll = new PMSEButton("Download all PDFs");
     private PMSEButton cleanList = new PMSEButton("Clean list");
-    private PMSEButton deleteSelected = new PMSEButton("Delete selected publications");
-    private PMSEButton markAll = new PMSEButton("Select all");
-    private PMSEButton generateBibTeX = new PMSEButton("Generate BibTeX");
     private HorizontalLayout mainHorizontalLayout;
-    private boolean isAllSelected = false;
-    private boolean isPreviewVisible = false;
-    private List<String> bibtexStringList;
-    private PMSEPanel bibtexPanel = new PMSEPanel();
+    boolean isPreviewVisible = false;
+
     public ToReadScreenPanel(){
         super();
         setMargin(true);
@@ -97,67 +90,10 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
 
     private void initToReadPanelContent() {
         toReadPanel.setSizeFull();
+
         toReadTable.setSizeFull();
         toReadTable.setSelectable(true);
-        toReadTable.setImmediate(true);
-        
-        
-        addListeners();
-        
-        toReadPanelLayout = new VerticalLayout();
-        toReadPanelLayout.setMargin(true);
-        toReadPanelLayout.setSpacing(true);
-        toReadPanelLayout.addComponent(toReadTable);
 
-        
-        
-        
-        toReadPanelLayout.addComponent(bibtexPanel);
-        bibtexPanel.setSizeFull();
-        toReadPanelLayout.addComponent(markAll);
-        toReadPanelLayout.addComponent(downloadAll);
-        toReadPanelLayout.addComponent(cleanList);
-        toReadPanelLayout.addComponent(deleteSelected);
-        toReadPanelLayout.addComponent(generateBibTeX);
-        toReadPanelLayout.setComponentAlignment(downloadAll, Alignment.TOP_RIGHT);
-        toReadPanelLayout.setComponentAlignment(cleanList, Alignment.TOP_RIGHT);
-        toReadPanel.setContent(toReadPanelLayout);
-    }
-
-    private void loadUsersPublications(User user) {
-        toReadTable.addPublications(publicationManager.getUserPublications(user));
-    }
-
-    private void initPreviewPanelContent() {
-        previewPanel.setSizeFull();
-    }
-
-    private void setPreviewPanelVisibility(boolean visible) {
-        isPreviewVisible = visible;
-        if (visible) {
-            mainHorizontalLayout.addComponent(previewPanel);
-            mainHorizontalLayout.setExpandRatio(previewPanel, 2);
-        } else {
-            mainHorizontalLayout.removeComponent(previewPanel);
-        }
-    }
-
-    private void addListeners() {
-        markAll.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                if(isAllSelected){
-                    toReadTable.unselectAll();
-                    isAllSelected = false;
-                } else {
-                    toReadTable.selectAll();
-                    isAllSelected = true;
-                }
-            }
-        });
-        
         toReadTable.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = 1L;
 
@@ -175,8 +111,7 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
                 previewPanel.setContent(publication);
             }
         });
-        
-        
+
         downloadAll.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 1L;
 
@@ -217,66 +152,46 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                new ConfirmWindow(getApplication(), "Question", "Do you want to remove all publications?") {
+                new ConfirmWindow(getApplication(), "Question", "Do you want to remove marked publications?") {
 
                     @Override
                     public void yesButtonClick() {
                         final User user = (User) getApplication().getUser();
                         publicationManager.removeUserPublications(user);
                         toReadTable.clear();
-                        Notificator.showNotification(getApplication(), "Info", "All publications have been removed.", Notificator.NotificationType.HUMANIZED);
-                    }
-                };
-            }
-        });
-        
-        deleteSelected.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                new ConfirmWindow(getApplication(), "Question", "Do you want to remove marked publications?") {
-
-                    @Override
-                    public void yesButtonClick() {
-                        final User user = (User) getApplication().getUser();
-                        Set<Object> selectedIds = toReadTable.getSelectedItemIds();
-                        publicationManager.removeUserSelectedPublications(user, toReadTable.getSelectedPublications());
-                        for(Object selectedItem : selectedIds){
-                            toReadTable.removeItem(selectedItem);
-                        }
-                        toReadTable.removeSelectedItemsIds(selectedIds);
                         Notificator.showNotification(getApplication(), "Info", "All marked publications have been removed.", Notificator.NotificationType.HUMANIZED);
                     }
                 };
             }
         });
-        
-        generateBibTeX.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                bibtexStringList = BibTeXGenerator.generate(toReadTable.getSelectedPublications());
-                
-                LOGGER.debug("==========================================\n\n B i b T e x   \n\n");
-                
-                bibtexPanel.removeAllComponents();
-                for(String b : bibtexStringList){
-                    Label bibtexLabel = new Label(b, Label.CONTENT_PREFORMATTED);
-                    
-                    
-                    bibtexPanel.addComponent(bibtexLabel);
-                    LOGGER.debug(b);
-                }
-                
-                
-                
-                        
-                        
-                
-            }
-        });
+        toReadPanelLayout = new VerticalLayout();
+        toReadPanelLayout.setMargin(true);
+        toReadPanelLayout.setSpacing(true);
+        toReadPanelLayout.addComponent(toReadTable);
+        toReadPanelLayout.addComponent(downloadAll);
+        toReadPanelLayout.addComponent(cleanList);
+        toReadPanelLayout.setComponentAlignment(downloadAll, Alignment.TOP_RIGHT);
+        toReadPanelLayout.setComponentAlignment(cleanList, Alignment.TOP_RIGHT);
+        toReadPanel.setContent(toReadPanelLayout);
     }
-    
+
+
+    private void loadUsersPublications(User user) {
+        toReadTable.addPublications(publicationManager.getUserPublications(user));
+    }
+
+    private void initPreviewPanelContent() {
+        previewPanel.setSizeFull();
+    }
+
+    private void setPreviewPanelVisibility(boolean visible) {
+        isPreviewVisible = visible;
+        if (visible) {
+            mainHorizontalLayout.addComponent(previewPanel);
+            mainHorizontalLayout.setExpandRatio(previewPanel, 2);
+        } else {
+            mainHorizontalLayout.removeComponent(previewPanel);
+        }
+    }
 }
