@@ -24,14 +24,12 @@ public abstract class FiltersPanel  extends PMSEPanel {
     private final AndOrFilterPanel summrayFilterPanel = new AndOrFilterPanel("Summary", FilterType.SUMMARY);
     private final DateFilterPanel dateFilterPanel = new DateFilterPanel("Publication date", FilterType.PUBLICATION_DATE);
     private final ListFiterPanel authorFilterPanel = new ListFiterPanel("Author", FilterType.AUTHOR);
-    private final ListFiterPanel doiFilterPanel = new ListFiterPanel("DOI", FilterType.DOI);
     private final List<Filter> filters = new ArrayList<Filter>();
     {
         filters.add(authorFilterPanel);
         filters.add(titleFilterPanel);
         filters.add(summrayFilterPanel);
         filters.add(dateFilterPanel);
-        filters.add(doiFilterPanel);
     };
 
     private final PMSEButton searchBtn = new PMSEButton("Search");
