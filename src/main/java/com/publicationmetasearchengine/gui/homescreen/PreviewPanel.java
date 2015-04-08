@@ -12,8 +12,11 @@ import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
+import com.publicationmetasearchengine.services.ServiceJobProvider;
+import com.publicationmetasearchengine.services.croneservice.CroneService;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
 import com.publicationmetasearchengine.utils.DateUtils;
+import com.publicationmetasearchengine.utils.Notificator;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
@@ -23,7 +26,10 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import javax.crypto.Cipher;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -31,6 +37,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 @Configurable(preConstruction = true)
 public class PreviewPanel extends PMSEPanel implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(PreviewPanel.class);
     private static final String MARK_TO_READ_CAPTION = "Mark To Read";
@@ -54,6 +61,44 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private CssLayout cl = new CssLayout();
     private final String confirmationText = "Searching in external libraries can take up to few minutes. Do you want to continue?";
     
+    public Publication getActivePublication() {
+        return activePublication;
+    }
+    private final Button.ClickListener markAsReadListener = new Button.ClickListener() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            try {
+                publicationManager.removeUserPublication(activeUser, activePublication);
+                toReadBtn.setCaption(MARK_TO_READ_CAPTION);
+                additionalMarkAsReadAction();
+            } catch (RelationDoesNotExistException ex) {
+                LOGGER.error(ex);
+            }
+        }
+    };
+    private final Button.ClickListener markToReadListener = new Button.ClickListener() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            try {
+                publicationManager.insertUserPublication(activeUser, activePublication);
+                toReadBtn.setCaption(MARK_AS_READ_CAPTION);
+                additionalMarkToReadAction();
+            } catch (RelationAlreadyExistException ex) {
+                LOGGER.error(ex);
+            }
+        }
+    };
+
+    private void initCssLayout() {
+        cl.setMargin(false);
+        cl.setWidth("100%");
+        cl.setVisible(true);
+    }
+
     public PreviewPanel(String caption) {
         super(caption);
 
@@ -83,14 +128,10 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         summaryPanel.setContent(summaryPanelLayout);
         summaryPanel.setSizeFull();
         summaryPanel.setStyleName("borderless");
+
+
     }
-    
-    private void initCssLayout() {
-        cl.setMargin(false);
-        cl.setWidth("100%");
-        cl.setVisible(true);
-    }
-    
+
     public void initializeActiveUser() {
         try {
             activeUser = (User) getApplication().getUser();
@@ -151,6 +192,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         } catch (PublicationWithNoAuthorException ex) {
             LOGGER.error(ex);
         }
+
         prepareContent(publication, publicationAuthors);
     }
     
@@ -203,6 +245,19 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         link.setResource(new ExternalResource(resourceLink));
     }
 
+    /**
+     *
+     * @param authors List of authors
+     * @return String of authors of publication (ex. M. Li, A. Barald, C. Winx)
+     */
+    private String concatAuthors(List<Author> authors) {
+        StringBuilder sb = new StringBuilder(authors.get(0).getName());
+        for (int i = 1; i < authors.size(); ++i) {
+            sb.append(", ").append(authors.get(i).getName());
+        }
+        return sb.toString();
+    }
+
     private void initAuthorButtons(List<Author> publicationAuthors) {
         cl.removeAllComponents();
         authorsLbl.setValue(publicationAuthors != null ? "by: " : "");
@@ -224,6 +279,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                     } else {
                         List<Publication> publications = findPublicationsBySelectedAuthor(authorName);
                         getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), publications));
+
                     }
                 }
             });
@@ -240,7 +296,8 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                                 authorCollector.downloadAuthorPublications();
 
                                 if (parentPanel instanceof HomeScreenPanel) {
-                                    ((HomeScreenPanel) parentPanel).setBackupPublications();
+                                    ((HomeScreenPanel) parentPanel).setBackupPublication();
+                                    ((HomeScreenPanel) parentPanel).enableBackButon();
                                     ((HomeScreenPanel) parentPanel).addAuthorPublicationsToTable(authorCollector.getPublication());
                                 } else {
                                     getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), authorCollector.getPublication()));
@@ -265,37 +322,4 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         toReadBtn.removeListener(markToReadListener);
         toReadBtn.addListener(markAsReadListener);
     } 
-    
-    public Publication getActivePublication() {
-        return activePublication;
-    }
-    private final Button.ClickListener markAsReadListener = new Button.ClickListener() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            try {
-                publicationManager.removeUserPublication(activeUser, activePublication);
-                toReadBtn.setCaption(MARK_TO_READ_CAPTION);
-                additionalMarkAsReadAction();
-            } catch (RelationDoesNotExistException ex) {
-                LOGGER.error(ex);
-            }
-        }
-    };
-    
-    private final Button.ClickListener markToReadListener = new Button.ClickListener() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            try {
-                publicationManager.insertUserPublication(activeUser, activePublication);
-                toReadBtn.setCaption(MARK_AS_READ_CAPTION);
-                additionalMarkToReadAction();
-            } catch (RelationAlreadyExistException ex) {
-                LOGGER.error(ex);
-            }
-        }
-    };
 }
