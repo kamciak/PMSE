@@ -15,6 +15,7 @@ import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
@@ -33,6 +34,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
 
     private static final String MARK_TO_READ_CAPTION = "Mark To Read";
     private static final String MARK_AS_READ_CAPTION = "Mark as Read";
+    private static final String SHOW_OTHER_PUBLICATION_OF_AUTHOR = "Show more of this author";
 
     @Autowired
     private PublicationManager publicationManager;
@@ -48,10 +50,27 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private final Label summaryLbl = new Label();
     private final Panel summaryPanel = new Panel();
     private final PMSEButton toReadBtn = new PMSEButton();
+    private final PMSEButton showMoreBtn = new PMSEButton();
     private Publication activePublication;
     private User activeUser;
     private VerticalLayout vl = new VerticalLayout();
     private CssLayout cl = new CssLayout();
+    private final Button.ClickListener showOtherPublicationListener = new Button.ClickListener() {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            List<Publication> publications = publicationManager.getPublicationOfAuthor(activePublication.getMainAuthor());
+            LOGGER.debug(String.format("Found %d publications of author", publications.size()));
+            for (Publication publication : publications){
+                LOGGER.debug("Found publications: "+ publication.getTitle());
+                }
+            homePanel.filterPublicationByAuthorOfSelected(activePublication.getMainAuthor());
+            
+            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    };
+    
     
     public Publication getActivePublication(){
         return activePublication;
@@ -110,6 +129,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         
         toReadBtn.setVisible(false);
         vl.addComponent(toReadBtn);
+        vl.addComponent(showMoreBtn);
         vl.setExpandRatio(summaryPanel, 1);
         
         setContent(vl);
@@ -203,6 +223,8 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         summaryLbl.setValue(publication.getSummary());
 
         initializeToReadBtn();
+        showMoreBtn.setCaption(SHOW_OTHER_PUBLICATION_OF_AUTHOR);
+        showMoreBtn.addListener(showOtherPublicationListener);
     }
 
     
@@ -211,11 +233,6 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         link.setResource(new ExternalResource(resourceLink));
     }
 
-    /**
-     * 
-     * @param authors List of authors
-     * @return String of authors of publication (ex. M. Li, A. Barald, C. Winx)
-     */
     private String concatAuthors(List<Author> authors) {
         StringBuilder sb = new StringBuilder(authors.get(0).getName());
         for(int i = 1; i < authors.size(); ++i)

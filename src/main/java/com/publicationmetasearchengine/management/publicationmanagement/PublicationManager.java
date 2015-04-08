@@ -7,7 +7,6 @@ import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.SourceDB;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +38,6 @@ public interface PublicationManager {
     void removeUserPublication(User user, Publication publication) throws RelationDoesNotExistException;
 
     void removeUserPublications(User user);
-    
-    void removeUserSelectedPublications(User user, List<Publication> publicationList);
 
     Map<Date, List<Publication>> getUserPublications(User user);
 }
