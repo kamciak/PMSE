@@ -2,13 +2,10 @@ package com.publicationmetasearchengine.services.datacollectorservice.bwn.parser
 
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.parts.Author;
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.parts.SourceInfo;
-import com.publicationmetasearchengine.utils.DateUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,24 +49,6 @@ public class ContentTableParser {
         if (link==null || link.isEmpty())
             return null;
         return "http://vls2.icm.edu.pl"+link;
-    }
-
-    public String getJournalRef() {
-        String result;
-        try {
-            SourceInfo sourceInfo = getSourceInfo();
-            result = String.format("%s, %s%s/%s",
-                    sourceInfo.getTitle(),
-                    sourceInfo.getVolumeId() != null ? sourceInfo.getVolumeId(): "",
-                    sourceInfo.getIssueId()!= null ? "(" + sourceInfo.getIssueId()+ ")" : "",
-                    DateUtils.formatYearOnly(sourceInfo.getPublicationDate()));
-        } catch (ParseException ex) {
-            Logger.getLogger(ContentTableParser.class.getName()).log(Level.SEVERE, null, ex);
-            Element sourceJournalParent = tableDoc.select("img[alt]").get(2).parents().get(1);
-            result = sourceJournalParent.select("a").text();
-        }
-        
-        return result;   
     }
 
     public String getDOI() {

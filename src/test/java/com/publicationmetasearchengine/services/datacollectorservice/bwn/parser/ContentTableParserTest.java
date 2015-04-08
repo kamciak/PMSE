@@ -98,18 +98,6 @@ public class ContentTableParserTest {
             assertEquals(expResult[i], contentTableParsers.get(i).getPDFLink());
         }
     }
-    
-    /**
-     * Test for getJournalRef method, of class ContentTableParser
-     */
-    @Test
-    public void testGetJournalRef(){
-        String expResult[] = {"Theoretical Computer Science, 525/2014", "Theoretical Computer Science, 69(52)/2014"};
-        for (int i = 0; i < contentTableParsers.size(); ++i) {
-            System.out.println(contentTableParsers.get(i).getJournalRef());
-            assertEquals(expResult[i], contentTableParsers.get(i).getJournalRef());
-            }
-    }
 
     /**
      * Test of getSourceInfo method, of class ContentTableParser.
