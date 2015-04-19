@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
 public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
-
     private static final long serialVersionUID = 1L;
     private final MenuBar menuBar;
     private final PMSEPanel recentPanel = new PMSEPanel("Recent publications");
@@ -75,16 +74,18 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         menuBar = new MainMenuBarAuthorizedUser();
         initHomeScreenPanel();
         goBackBtn.setEnabled(false);
+        setPublicationTableChangeListener();
     }
 
     public HomeScreenPanel(MenuBar menuBar, List<Publication> publications) {
         super();
         this.menuBar = menuBar;
         initHomeScreenPanel();
-        publicationTable.cleanAndAddPublications(publications);
         goBackBtn.setEnabled(true);
         goBackBtn.removeListener(goBackBtnListener);
         goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
+        setPublicationTableChangeListener();
+        publicationTable.cleanAndAddPublications(publications);
     }
 
     private void initHomeScreenPanel() {
@@ -155,7 +156,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         publicationTable.setSelectable(true);
         publicationTable.setImmediate(true);
         publicationTable.addListener(publicationTableChangeListener);
-
+        
         dateCB.setNullSelectionAllowed(false);
         dateCB.setImmediate(true);
         for (Map.Entry<String, Date> entry : dateMap.entrySet()) {
@@ -164,7 +165,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         }
         dateCB.select(dateMap.get("Day"));
         dateCB.addListener(cbValueChangeListener);
-
+        
         List<SourceDB> allSourceDBS = sourceDbDAO.getAllSourceDBS();
         for (SourceDB sourceDB : allSourceDBS) {
             sourceDBCB.addItem(sourceDB);
@@ -174,7 +175,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         sourceDBCB.setNullSelectionAllowed(false);
         sourceDBCB.addListener(cbValueChangeListener);
         sourceDBCB.select(allSourceDBS.get(0));
-
+        
         HorizontalLayout bottomLayout = new HorizontalLayout();
         bottomLayout.setSpacing(true);
         bottomLayout.setSizeFull();

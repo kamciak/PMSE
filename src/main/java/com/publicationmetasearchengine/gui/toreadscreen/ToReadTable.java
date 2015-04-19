@@ -4,7 +4,6 @@ import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.utils.DateUtils;
 import com.vaadin.data.Property;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,7 +112,7 @@ public class ToReadTable extends Table {
         }
         sort();
     }
-
+    
     public List<Publication> getPublications() {
         ArrayList<Publication> publications = new ArrayList<Publication>();
         for (Object id : getItemIds())
