@@ -77,7 +77,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         setPublicationTableChangeListener();
     }
 
-    public HomeScreenPanel(MenuBar menuBar, List<Publication> publications, boolean externalPublications) {
+    public HomeScreenPanel(MenuBar menuBar, List<Publication> publications) {
         super();
         this.menuBar = menuBar;
         initHomeScreenPanel();
@@ -86,8 +86,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
         setPublicationTableChangeListener();
         publicationTable.cleanAndAddPublications(publications);
-        if(externalPublications)
-            previewPanel.addMarkToReadAndAddToDBListener();
     }
 
     private void initHomeScreenPanel() {
