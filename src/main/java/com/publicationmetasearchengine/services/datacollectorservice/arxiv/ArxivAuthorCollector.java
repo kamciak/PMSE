@@ -4,16 +4,10 @@
  */
 package com.publicationmetasearchengine.services.datacollectorservice.arxiv;
 
-import com.publicationmetasearchengine.dao.authors.exceptions.AuthorAlreadyExistException;
-import com.publicationmetasearchengine.dao.authors.exceptions.AuthorDoesNotExistException;
-import com.publicationmetasearchengine.dao.publications.exceptions.PublicationAlreadyExistException;
-import com.publicationmetasearchengine.dao.publications.exceptions.PublicationWithNoAuthorException;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.dao.sourcedbs.exceptions.SourceDbDoesNotExistException;
 import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
-import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
-import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.ArxivParser;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.RawEntry;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.querybuilder.QueryBuilder;
@@ -44,10 +38,6 @@ public class ArxivAuthorCollector implements Serializable {
     private static int tmp = 1;
     @Autowired
     private SourceDbDAO sourceDbDAO;
-    @Autowired
-    private PublicationManager publicationManager;
-    @Autowired
-    private AuthorManager authorManager;
 
     private String authorName;
     public ArxivAuthorCollector(String author)
@@ -129,8 +119,6 @@ public class ArxivAuthorCollector implements Serializable {
         }
     }
 
-
-    
     private String downloadHTML(String htmlLink) throws IOException {
         return Jsoup.connect(htmlLink).timeout(120 * 1000).ignoreContentType(true).get().html();
     }

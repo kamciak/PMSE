@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Publication {
 
-    private Integer id;
+    private final Integer id;
     private Integer sourceDbId;
     private SourceDB sourceDB;
     private final String articleId;
@@ -127,9 +127,4 @@ public class Publication {
     public void setAuthors(List<Author> authors) {
         this.authors = authors;
     }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
-            
 }
