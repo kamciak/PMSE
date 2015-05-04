@@ -168,25 +168,6 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
             }
         });
         
-        toReadTable.addListener(new Property.ValueChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                Object id = event.getProperty().getValue();
-                if (id == null) {
-                    setPreviewPanelVisibility(false);
-                    return;
-                }
-
-                if (!isPreviewVisible)
-                    setPreviewPanelVisibility(true);
-                Publication publication = (Publication) toReadTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
-                previewPanel.setContent(publication);
-            }
-        });
-        
-        
         downloadAll.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 1L;
 
@@ -288,6 +269,24 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
                 if(bibtexStringList.isEmpty())
                     generateBibTeX();
                 bibtexDownload.downloadBibTex(bibtexStringList);
+            }
+        });
+        
+                toReadTable.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                Object id = event.getProperty().getValue();
+                if (id == null) {
+                    setPreviewPanelVisibility(false);
+                    return;
+                }
+
+                if (!isPreviewVisible)
+                    setPreviewPanelVisibility(true);
+                Publication publication = (Publication) toReadTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
+                previewPanel.setContent(publication);
             }
         });
     }
