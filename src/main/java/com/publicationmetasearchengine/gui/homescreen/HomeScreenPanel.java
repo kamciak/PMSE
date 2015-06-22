@@ -38,9 +38,8 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     private Publication recentPublication;
     private final PublicationTable publicationTable = new PublicationTable();
     private HorizontalLayout mainHorizontalLayout;
-    private boolean selectDateCB = true;
     boolean isPreviewVisible = false;
-    
+
     {
         DateTime now = new DateTime();
         dateMap.put("Day", now.minusDays(1).toDate());
@@ -48,7 +47,6 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         dateMap.put("Month", now.minusMonths(1).toDate());
         dateMap.put("Half Year", now.minusMonths(6).toDate());
     }
-    
     @Autowired
     private PublicationManager publicationManager;
     @Autowired
@@ -76,17 +74,17 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         menuBar = new MainMenuBarAuthorizedUser();
         initHomeScreenPanel();
         goBackBtn.setEnabled(false);
+        setPublicationTableChangeListener();
     }
 
     public HomeScreenPanel(MenuBar menuBar, List<Publication> publications) {
         super();
         this.menuBar = menuBar;
-        this.selectDateCB = false;
         initHomeScreenPanel();
         goBackBtn.setEnabled(true);
         goBackBtn.removeListener(goBackBtnListener);
         goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
-        
+        setPublicationTableChangeListener();
         publicationTable.cleanAndAddPublications(publications);
     }
 
@@ -109,9 +107,17 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     private void setHomePanelForPreviewPanel() {
         previewPanel.setParentPanel(this);
     }
-    
+
     public void addPublicationsToTable(List<Publication> publications) {
+        //setBackupPublications();
         publicationTable.cleanAndAddPublications(publications);
+        setPublicationTableChangeListener();
+    }
+
+    public void addAuthorPublicationsToTable(List<Publication> publications) {
+        //setBackupPublications();
+        publicationTable.cleanAndAddPublications(publications);
+        setAuthorPublicationTableChangeListener();
     }
 
     public void filterPublicationByAuthorOfSelected(String authorName) {
@@ -157,8 +163,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
             dateCB.addItem(entry.getValue());
             dateCB.setItemCaption(entry.getValue(), entry.getKey());
         }
-        
-        dateCB.select(dateMap.get("Month"));
+        dateCB.select(dateMap.get("Day"));
         dateCB.addListener(cbValueChangeListener);
         
         List<SourceDB> allSourceDBS = sourceDbDAO.getAllSourceDBS();
@@ -169,8 +174,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         sourceDBCB.setImmediate(true);
         sourceDBCB.setNullSelectionAllowed(false);
         sourceDBCB.addListener(cbValueChangeListener);
-        if(selectDateCB)
-            sourceDBCB.select(allSourceDBS.get(0));
+        sourceDBCB.select(allSourceDBS.get(0));
         
         HorizontalLayout bottomLayout = new HorizontalLayout();
         bottomLayout.setSpacing(true);
@@ -217,16 +221,21 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     public List<Publication> getBackupPublications() {
         return backupPublications;
     }
-   
-    private void setPublicationTableChangeListener()
-    {
-        publicationTable.addListener(publicationTableChangeListener);
-    }
-    
+
     public void enableBackButon() {
         goBackBtn.setEnabled(true);
     }
+
+    private void setPublicationTableChangeListener() {
+        publicationTable.removeListener(authorPublicationTableChangeListener);
+        publicationTable.addListener(publicationTableChangeListener);
+    }
     
+    private void setAuthorPublicationTableChangeListener() {
+        publicationTable.removeListener(publicationTableChangeListener);
+        publicationTable.addListener(authorPublicationTableChangeListener);
+    }
+
     /*
      *  LISTENERS
      *              */
@@ -245,6 +254,24 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
             }
             Publication currentPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
             previewPanel.setContent(currentPublication);
+        }
+    };
+    
+    private Property.ValueChangeListener authorPublicationTableChangeListener = new Property.ValueChangeListener() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void valueChange(Property.ValueChangeEvent event) {
+            Object id = event.getProperty().getValue();
+            if (id == null) {
+                setPreviewPanelVisibility(false);
+                return;
+            }
+            if (!isPreviewVisible) {
+                setPreviewPanelVisibility(true);
+            }
+            Publication currentPublication = (Publication) publicationTable.getItem(id).getItemProperty(PublicationTable.TABLE_PUBLICATION_COLUMN).getValue();
+            previewPanel.setContentForAuthorPublications(currentPublication);
         }
     };
     

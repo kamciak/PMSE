@@ -2,12 +2,10 @@ package com.publicationmetasearchengine.management.publicationmanagement;
 
 import com.publicationmetasearchengine.dao.publications.PublicationDAO;
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationAlreadyExistException;
-import com.publicationmetasearchengine.dao.publications.exceptions.PublicationWithNoAuthorException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationAlreadyExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesNotExistException;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.dao.sourcedbs.exceptions.SourceDbDoesNotExistException;
-import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.SourceDB;
 import com.publicationmetasearchengine.data.User;
@@ -56,13 +54,8 @@ public class PublicationManagerImpl implements PublicationManager {
         for(Publication publication: publications)
             try {
             publication.setSourceDB(sourceDbDAO.getSourceDBById(publication.getSourceDbId()));
-            publication.setAuthors(authorManager.getPublicationAuthors(publication));
         } catch (SourceDbDoesNotExistException ex) {
             
-        } catch (PublicationWithNoAuthorException ex)
-        {
-            publication.setAuthors(new ArrayList<Author>());
-            LOGGER.warn("\n#\n#\nPublication without authors\n#\n#\n", ex);
         }
         return publications;
     }
@@ -73,13 +66,8 @@ public class PublicationManagerImpl implements PublicationManager {
         for (Publication publication : publications)
             try {
                 publication.setSourceDB(sourceDbDAO.getSourceDBById(publication.getSourceDbId()));
-                publication.setAuthors(authorManager.getPublicationAuthors(publication));
             } catch (SourceDbDoesNotExistException ex) {
                 LOGGER.error("Should not occure!!", ex);
-            } catch (PublicationWithNoAuthorException ex)
-            {
-                publication.setAuthors(new ArrayList<Author>());
-                LOGGER.warn("\n#\n#\nPublication without authors\n#\n#\n", ex);
             }
         LOGGER.debug(String.format("Found %d publications for SourceDB: %s newer than %s", publications.size(), sourceDB.getShortName(), DateUtils.formatDateOnly(dateFrom)));
         return publications;
@@ -91,12 +79,8 @@ public class PublicationManagerImpl implements PublicationManager {
         for (Publication publication : publications)
             try {
                 publication.setSourceDB(sourceDbDAO.getSourceDBById(publication.getSourceDbId()));
-                publication.setAuthors(authorManager.getPublicationAuthors(publication));
             } catch (SourceDbDoesNotExistException ex) {
                 LOGGER.error("Should not occure!!", ex);
-            } catch (PublicationWithNoAuthorException ex)
-            {
-                LOGGER.warn("\n#\n#\nPublication without authors\n#\n#\n", ex);
             }
         LOGGER.debug(String.format("Found %d publications of author", publications.size()));
         return publications;
@@ -109,12 +93,8 @@ public class PublicationManagerImpl implements PublicationManager {
         for (Publication publication : publications)
             try {
                 publication.setSourceDB(sourceDbDAO.getSourceDBById(publication.getSourceDbId()));
-                publication.setAuthors(authorManager.getPublicationAuthors(publication));
             } catch (SourceDbDoesNotExistException ex) {
                 LOGGER.error("Should not occure!!", ex);
-            } catch (PublicationWithNoAuthorException ex)
-            {
-                LOGGER.warn("\n#\n#\nPublication without authors\n#\n#\n", ex);
             }
         LOGGER.debug(String.format("Found %d publications", publications.size()));
         return publications;
@@ -178,12 +158,8 @@ public class PublicationManagerImpl implements PublicationManager {
         final List<Publication> publicationsByIds = publicationDAO.getPublicationsByIds(new ArrayList<Integer>(userPublicationsIds.keySet()));
         for (Publication publication : publicationsByIds) {
             try {
-                publication.setAuthors(authorManager.getPublicationAuthors(publication));
                 publication.setSourceDB(sourceDbDAO.getSourceDBById(publication.getSourceDbId()));
             } catch (SourceDbDoesNotExistException ex) {
-            } catch (PublicationWithNoAuthorException ex)
-            {
-                LOGGER.warn("\n#\n#\nPublication without authors\n#\n#\n", ex);
             }
             Date date = userPublicationsIds.get(publication.getId());
             if (result.get(date)== null)

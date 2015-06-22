@@ -10,7 +10,6 @@ import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
-import com.publicationmetasearchengine.gui.toreadscreen.ToReadScreenPanel;
 import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
@@ -132,11 +131,22 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             toReadBtn.addListener(markToReadListener);
         }
     }
+
+    public void setContentForAuthorPublications(Publication publication)
+    {
+        List<Author> publicationAuthors = null;
+        try{    
+            publicationAuthors = publication.getAuthors();
+        } catch (PublicationWithNoAuthorException ex) {
+            LOGGER.error(ex);
+        }
+        prepareContent(publication, publicationAuthors);
+    }
     
     public void setContent(Publication publication) {
         List<Author> publicationAuthors = null;
         try {
-            publicationAuthors = publication.getAuthors();
+            publicationAuthors = authorManager.getPublicationAuthors(publication);
 
         } catch (PublicationWithNoAuthorException ex) {
             LOGGER.error(ex);
@@ -231,7 +241,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
 
                                 if (parentPanel instanceof HomeScreenPanel) {
                                     ((HomeScreenPanel) parentPanel).setBackupPublications();
-                                    ((HomeScreenPanel) parentPanel).addPublicationsToTable(authorCollector.getPublication());
+                                    ((HomeScreenPanel) parentPanel).addAuthorPublicationsToTable(authorCollector.getPublication());
                                 } else {
                                     getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), authorCollector.getPublication()));
                                 }
