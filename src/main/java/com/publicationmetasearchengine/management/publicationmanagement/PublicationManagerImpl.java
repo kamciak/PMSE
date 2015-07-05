@@ -2,6 +2,7 @@ package com.publicationmetasearchengine.management.publicationmanagement;
 
 import com.publicationmetasearchengine.dao.publications.PublicationDAO;
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationAlreadyExistException;
+import com.publicationmetasearchengine.dao.publications.exceptions.PublicationDoesNotExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationAlreadyExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesNotExistException;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
@@ -176,4 +177,15 @@ public class PublicationManagerImpl implements PublicationManager {
         LOGGER.debug(String.format("Newest date for sourceDb: %d is %s", sourceDbId, date));
         return date;
     }
+    
+    @Override
+    public Publication getPublicationByArticleId(String articleId) throws PublicationDoesNotExistException {
+        return publicationDAO.getPublicationByArticleId(articleId);
+    }
+    
+    @Override
+    public Publication getPublicationById(Integer id) throws PublicationDoesNotExistException {
+        return publicationDAO.getPublication(id);
+    }
+            
 }

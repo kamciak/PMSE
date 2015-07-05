@@ -11,6 +11,8 @@ import java.util.List;
 public interface AuthorManager {
 
     Integer addNewAuthor(String name) throws AuthorAlreadyExistException;
+    
+    Integer addNewAuthor(Author author) throws AuthorAlreadyExistException;
 
     Integer getAuthorIdByName(String name) throws AuthorDoesNotExistException;
 

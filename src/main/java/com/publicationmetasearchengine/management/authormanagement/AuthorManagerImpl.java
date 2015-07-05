@@ -28,6 +28,11 @@ public class AuthorManagerImpl implements AuthorManager {
         LOGGER.info(String.format("Author %s added to database under ID: %d", name, result));
         return result;
     }
+    
+    @Override
+    public Integer addNewAuthor(Author author) throws AuthorAlreadyExistException {
+        return addNewAuthor(author.getName());
+    }
 
     @Override
     public Author getAuthorById(int authorId) throws AuthorDoesNotExistException {
@@ -46,8 +51,6 @@ public class AuthorManagerImpl implements AuthorManager {
     @Override
     public ArrayList<Author> getPublicationAuthors(Publication publication) throws PublicationWithNoAuthorException {
         final ArrayList<Author> authors = authorDAO.getPublicationAuthorsById(publication.getId());
-        if(authors != null)
-            LOGGER.debug(String.format("Found %d authors for publication %s", authors.size(), publication));
         return authors;
     }
 

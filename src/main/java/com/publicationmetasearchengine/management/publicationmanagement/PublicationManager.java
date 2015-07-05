@@ -1,13 +1,13 @@
 package com.publicationmetasearchengine.management.publicationmanagement;
 
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationAlreadyExistException;
+import com.publicationmetasearchengine.dao.publications.exceptions.PublicationDoesNotExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationAlreadyExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesNotExistException;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.SourceDB;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,4 +43,8 @@ public interface PublicationManager {
     void removeUserSelectedPublications(User user, List<Publication> publicationList);
 
     Map<Date, List<Publication>> getUserPublications(User user);
+    
+    Publication getPublicationByArticleId(String articleId) throws PublicationDoesNotExistException;
+    
+    Publication getPublicationById(Integer id) throws PublicationDoesNotExistException;
 }

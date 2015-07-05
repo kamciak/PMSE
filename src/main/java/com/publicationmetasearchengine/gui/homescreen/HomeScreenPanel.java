@@ -4,11 +4,11 @@ import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.SourceDB;
 import com.publicationmetasearchengine.data.User;
-import com.publicationmetasearchengine.gui.ScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
+import com.publicationmetasearchengine.gui.PublicationScreenPanel;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.gui.toreadscreen.ToReadScreenPanel;
+import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.vaadin.data.Property;
 import com.vaadin.ui.Alignment;
@@ -16,30 +16,31 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
+public class HomeScreenPanel extends VerticalLayout implements PublicationScreenPanel {
     private static final long serialVersionUID = 1L;
     private final MenuBar menuBar;
     private final PMSEPanel recentPanel = new PMSEPanel("Recent publications");
     private final PreviewPanel previewPanel = new PreviewPanel("Content");
     private final Map<String, Date> dateMap = new LinkedHashMap<String, Date>();
     private final PMSEButton goBackBtn = new PMSEButton("Go back");
-    private List<Publication> backupPublications = new ArrayList<Publication>();
-    private Publication recentPublication;
+    //private List<Publication> backupPublications = new ArrayList<Publication>();
+    //private Publication recentPublication;
     private final PublicationTable publicationTable = new PublicationTable();
     private HorizontalLayout mainHorizontalLayout;
     boolean isPreviewVisible = false;
-
+    private static final Logger LOGGER = Logger.getLogger(PreviewPanel.class);
     {
         DateTime now = new DateTime();
         dateMap.put("Day", now.minusDays(1).toDate());
@@ -47,12 +48,16 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         dateMap.put("Month", now.minusMonths(1).toDate());
         dateMap.put("Half Year", now.minusMonths(6).toDate());
     }
+    private boolean isExternalPublication = false;
+    @Autowired
+    private SourceDbDAO sourceDbDAO;
     @Autowired
     private PublicationManager publicationManager;
     @Autowired
-    private SourceDbDAO sourceDbDAO;
+    private BackupManager backupManager;
     private final NativeSelect sourceDBCB = new NativeSelect("Source");
     private final NativeSelect dateCB = new NativeSelect("Period");
+    private final PMSEButton refreshBtn = new PMSEButton("Refresh");
     private final KeywordFilter keywordFilter = new KeywordFilter("Title keywords") {
         private static final long serialVersionUID = 1L;
 
@@ -66,28 +71,30 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         super();
         this.menuBar = menuBar;
         initHomeScreenPanel();
-        this.goBackBtn.setEnabled(false);
+        goBackBtn.setEnabled(false);
     }
-
+/*
     public HomeScreenPanel() {
         super();
         menuBar = new MainMenuBarAuthorizedUser();
         initHomeScreenPanel();
         goBackBtn.setEnabled(false);
-        setPublicationTableChangeListener();
-    }
+//        setPublicationTableChangeListener();
+    }*/
 
-    public HomeScreenPanel(MenuBar menuBar, List<Publication> publications) {
+    public HomeScreenPanel(MenuBar menuBar, List<Publication> publications, boolean isExternal) {
         super();
         this.menuBar = menuBar;
+        isExternalPublication = isExternal;
         initHomeScreenPanel();
         goBackBtn.setEnabled(true);
         goBackBtn.removeListener(goBackBtnListener);
-        goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
-        setPublicationTableChangeListener();
         publicationTable.cleanAndAddPublications(publications);
-    }
+        publicationTable.setSelectable(true);
 
+        goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
+    }
+    
     private void initHomeScreenPanel() {
         setMargin(true);
         setSpacing(true);
@@ -102,6 +109,7 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
 
         goBackBtn.addListener(goBackBtnListener);
         setHomePanelForPreviewPanel();
+        backupManager.setIsExternalPublication(isExternalPublication);
     }
 
     private void setHomePanelForPreviewPanel() {
@@ -109,19 +117,21 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     }
 
     public void addPublicationsToTable(List<Publication> publications) {
-        //setBackupPublications();
         publicationTable.cleanAndAddPublications(publications);
-        setPublicationTableChangeListener();
     }
 
-    public void addAuthorPublicationsToTable(List<Publication> publications) {
-        //setBackupPublications();
-        publicationTable.cleanAndAddPublications(publications);
-        setAuthorPublicationTableChangeListener();
+    public void setProperPublicationsTableListener()
+    {
+        removeGoBackBtnToReadScreenPanelListener();
+        goBackBtn.addListener(goBackBtnListener);
+        if(isExternalPublication)
+            setAuthorPublicationTableChangeListener();
+        else
+            setPublicationTableChangeListener();
     }
-
+    
     public void filterPublicationByAuthorOfSelected(String authorName) {
-        setBackupPublications();
+        //setBackupPublications();
         List<Publication> publications = publicationManager.getPublicationOfAuthor(authorName);
         publicationTable.cleanAndAddPublications(publications);
     }
@@ -148,6 +158,10 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         searchLayout.setSizeFull();
         searchLayout.addComponent(sourceDBCB);
         searchLayout.addComponent(dateCB);
+        searchLayout.addComponent(refreshBtn);
+        refreshBtn.addListener(refreshBtnListener);
+        searchLayout.setComponentAlignment(refreshBtn, Alignment.BOTTOM_LEFT);
+        
         searchLayout.addComponent(keywordFilter);
         searchLayout.setExpandRatio(keywordFilter, 1);
         searchLayout.setComponentAlignment(keywordFilter, Alignment.MIDDLE_RIGHT);
@@ -155,8 +169,8 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
         publicationTable.setSizeFull();
         publicationTable.setSelectable(true);
         publicationTable.setImmediate(true);
-        publicationTable.addListener(publicationTableChangeListener);
-        
+        //publicationTable.addListener(publicationTableChangeListener);
+        setProperPublicationsTableListener();
         dateCB.setNullSelectionAllowed(false);
         dateCB.setImmediate(true);
         for (Map.Entry<String, Date> entry : dateMap.entrySet()) {
@@ -208,32 +222,77 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
     public void changePreviePanelVisibility() {
         setPreviewPanelVisibility(!isPreviewVisible);
     }
-
-    public void setBackupPublications() {
-        enableBackButon();
-        if (previewPanel.isVisible()) {
-            recentPublication = previewPanel.getActivePublication();
-        }
-        backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
-        setPreviewPanelVisibility(false);
+  
+    @Override
+    public List<Publication> getPanelPublications()
+    {
+        return publicationTable.getAllPublication();
     }
     
+    @Override
+    public Publication getCurrentPublication()
+    {
+        return previewPanel.getActivePublication();
+    }
+    
+    @Override
+    public void setBackup()
+    {
+        enableBackButon();
+    }
+    
+    @Override
+    public Table getPublicationTable()
+    {
+        return publicationTable;
+    }
+    /*
+    @Override
+    public void setBackupPublications(List<Publication> publications){
+        enableBackButon();
+        if (previewPanel.isVisible()) {
+            backupManager.setPreviousPublication(previewPanel.getActivePublication());
+            //recentPublication = previewPanel.getActivePublication();
+        }
+        //backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
+        backupManager.setBackupPublications(publications);
+        setPreviewPanelVisibility(false); 
+    }
+*/
+    /*
+    private void setBackupPublications() {
+        enableBackButon();
+        if (previewPanel.isVisible()) {
+            backupManager.setPreviousPublication(previewPanel.getActivePublication());
+            //recentPublication = previewPanel.getActivePublication();
+        }
+        //backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
+        backupManager.setBackupPublications(getPanelPublications());
+        setPreviewPanelVisibility(false);
+    }*/
+    /*
     public List<Publication> getBackupPublications() {
         return backupPublications;
-    }
+    }*/
 
-    public void enableBackButon() {
+    private void enableBackButon() {
         goBackBtn.setEnabled(true);
     }
 
+    
     private void setPublicationTableChangeListener() {
-        publicationTable.removeListener(authorPublicationTableChangeListener);
+        removeAllPublicationTableChangeListeners();
         publicationTable.addListener(publicationTableChangeListener);
     }
     
     private void setAuthorPublicationTableChangeListener() {
-        publicationTable.removeListener(publicationTableChangeListener);
+        removeAllPublicationTableChangeListeners();
         publicationTable.addListener(authorPublicationTableChangeListener);
+    }
+    
+    public void removeAllPublicationTableChangeListeners(){
+        publicationTable.removeListener(publicationTableChangeListener);
+        publicationTable.removeListener(authorPublicationTableChangeListener);
     }
 
     /*
@@ -304,10 +363,24 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
 
         @Override
         public void buttonClick(Button.ClickEvent event) {
-            addPublicationsToTable(backupPublications);
-            previewPanel.setContent(recentPublication);
+            boolean isExternalPublicationTmp = backupManager.isExternalPublication();
+            backupManager.setIsExternalPublication(isExternalPublication);
+            setIsExternalPublication(isExternalPublicationTmp);
+            
+            publicationTable.cleanAndAddPublications(backupManager.getBackupPublications());
+            
             setPreviewPanelVisibility(true);
-            goBackBtn.setEnabled(false);            //pytanie czy trzeba wylaczyc? mozna by odpalic, i skad tam i spowrotem
+            goBackBtn.setEnabled(false);
+            if(isExternalPublication())
+            {
+                setAuthorPublicationTableChangeListener();
+                previewPanel.setContentForAuthorPublications(backupManager.getPreviousPublication());    
+            }
+            else
+            {
+                setPublicationTableChangeListener();
+                previewPanel.setContent(backupManager.getPreviousPublication());
+            }
         }
     };
     
@@ -319,4 +392,43 @@ public class HomeScreenPanel extends VerticalLayout implements ScreenPanel {
             getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new ToReadScreenPanel()));
         }
     };
+ 
+    private final Button.ClickListener refreshBtnListener = new Button.ClickListener() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            SourceDB sourceDB = (SourceDB) sourceDBCB.getValue();
+            Date date = (Date) dateCB.getValue();
+            if (sourceDB != null) {
+                publicationTable.clear();
+                final List<Publication> publications = publicationManager.getPublicationsBySourceDBAndDate(sourceDB, date);
+                if (!publications.isEmpty()) {
+                    if (!publicationTable.isSelectable()) {
+                        publicationTable.setSelectable(true);
+                    }
+                    publicationTable.addPublications(publications);
+                } else {
+                    publicationTable.setSelectable(false);
+                    publicationTable.addMockPublication(new Publication(null, null, null, null, "No publication found", null, null, null, null, null, null, null, null, null, null));
+                }
+            }
+        }
+    };
+    
+    public void setIsExternalPublication(boolean externalPublication)
+    {
+        isExternalPublication = externalPublication;
+    }
+    
+    public boolean isExternalPublication()
+    {
+        return isExternalPublication;
+    }
+
+    private void removeGoBackBtnToReadScreenPanelListener()
+    {
+        goBackBtn.removeListener(goBackBtnToReadScreenPanelListener);
+    }
+
 }

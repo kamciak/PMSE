@@ -35,7 +35,7 @@ public class PublicationTable extends Table {
         allPublications.clear();
     }
 
-    private void addPublicationToTable(Publication publication) {
+    public void addPublicationToTable(Publication publication) {
         Object id = addItem();
         getItem(id).getItemProperty(TABLE_SOURCE_COLUMN).setValue(publication.getSourceDB().getShortName());
         getItem(id).getItemProperty(TABLE_LEAD_AUTHOR_COLUMN).setValue(publication.getMainAuthor());

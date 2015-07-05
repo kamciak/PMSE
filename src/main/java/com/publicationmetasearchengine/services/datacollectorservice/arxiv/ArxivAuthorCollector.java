@@ -90,6 +90,8 @@ public class ArxivAuthorCollector implements Serializable {
     private void addToList(RawEntry record) {
         try {
             //TMP - identyfikator nieistotny na ten czas, podczas wrzucania do bazy bedzie podmienany, wymyslisc inny sposob, moze dodatkowy konsruktor?
+            if(!record.getAuthors().isEmpty())
+                authorName = record.getAuthors().get(0);
             Publication publication = new Publication(++tmp,
                     sourceDbDAO.getSourceDBById(sourceDbDAO.getSourceIdByShortName(PMSEConstants.ARXIV_SHORT_NAME)),
                     record.getId(),
@@ -106,6 +108,7 @@ public class ArxivAuthorCollector implements Serializable {
                     record.getPdfLink(),
                     null);
             
+            publication.setSourceDbId(sourceDbDAO.getSourceIdByShortName(PMSEConstants.ARXIV_SHORT_NAME));
             //ZNOWU TROCHE BEZ SENSU, ALE AUTORZY POTRZEBNI DO PREVIEW, BO NIE POBIERANI BEZPOSREDNIO Z PUBLIKACJI
             List<Author> authorList = new ArrayList<Author>();
             for(String author : record.getAuthors()){

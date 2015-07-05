@@ -19,6 +19,8 @@ public interface PublicationDAO {
             Date publicationDate, String pdfLink) throws PublicationAlreadyExistException;
 
     Publication getPublication(int sourceDbId, String articleId) throws PublicationDoesNotExistException;
+    
+    Publication getPublication(int id) throws PublicationDoesNotExistException;
 
     List<Publication> getPublicationsBySourceDbIdDate(int sourceDbId, Date date);
 
@@ -43,4 +45,6 @@ public interface PublicationDAO {
     void removeUserPublications(int userId) throws RelationDoesNotExistException;
 
     Map<Integer, Date> getUserPublicationsIds(int userId);
+    
+    Publication getPublicationByArticleId(String articleId) throws PublicationDoesNotExistException;
 }

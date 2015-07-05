@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -154,6 +155,23 @@ public class PublicationDAOImpl implements PublicationDAO {
             throw new PublicationDoesNotExistException(String.format("[%d-%s]", sourceDbId, articleId));
         }
     }
+    
+    @Override
+    public Publication getPublication(int id)throws PublicationDoesNotExistException {
+        String selectQuery = new SelectQuery()
+                .addFromTable(DBSchema.PUBLICATION_TABLE)
+                .addAllColumns()
+                .addCondition(new ComboCondition(ComboCondition.Op.AND,
+                    new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_ID_COLUMN, id)
+                ))
+                .toString();
+        try {
+            return (Publication) jdbcTemplate.queryForObject(selectQuery, new PublicationRowMapper(false, false));
+        } catch (EmptyResultDataAccessException ex) {
+            throw new PublicationDoesNotExistException(String.format("[%d]", id));
+        }
+        
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -196,8 +214,6 @@ public class PublicationDAOImpl implements PublicationDAO {
     public List<Publication> getPublicationOfAuthor(String authorName){
         String selectQuery = new SelectQuery()
                 .addAllColumns()
-                
-                
                 .addJoin(SelectQuery.JoinType.INNER, DBSchema.PUBLICATION_TABLE, DBSchema.PUBLICATIONAUTHORS_TABLE, new ComboCondition(ComboCondition.Op.AND,
                     new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATIONAUTHORS_PUBLICATION_ID_COLUMN, DBSchema.PUBLICATION_ID_COLUMN)
                 )).addJoin(SelectQuery.JoinType.INNER, DBSchema.PUBLICATION_TABLE, DBSchema.AUTHOR_TABLE, new ComboCondition(ComboCondition.Op.AND,
@@ -335,8 +351,20 @@ public class PublicationDAOImpl implements PublicationDAO {
             jdbcTemplate.queryForInt(selectQuery);
             return true;
         }catch (DataAccessException ex) {
-            return false;
+            return checkUserPublicationByArticleId(userId, publicationId);
         }
+    }
+    
+    private boolean checkUserPublicationByArticleId(int userId, int publicationId)
+    {
+        try {
+            for(Integer userPublicationId : getUserPublicationsIds(userId).keySet())
+            {
+                if((getPublication(publicationId).getTitle()).equalsIgnoreCase(getPublication(userPublicationId).getTitle()))
+                    return true;
+            }
+        } catch (PublicationDoesNotExistException ex) { }
+        return false;
     }
 
     @Override
@@ -401,5 +429,20 @@ public class PublicationDAOImpl implements PublicationDAO {
                 .addJoins(SelectQuery.JoinType.LEFT_OUTER, DBSchema.PUBLICATION_SOURCETITLE_JOIN).toString();
         
         return (ArrayList<Publication>) jdbcTemplate.query(selectQuery, new PublicationRowMapper(true, true));
+    }
+    
+    @Override
+    public Publication getPublicationByArticleId(String articleId) throws PublicationDoesNotExistException{
+        String selectQuery = new SelectQuery()
+                .addAllTableColumns(DBSchema.PUBLICATION_TABLE)
+                .addColumns(DBSchema.AUTHOR_NAME_COLUMN)
+                .addAliasedColumn(DBSchema.SOURCETITLE_TITLE_COLUMN, SOURCE_TITLE_COLUMN_ALIAS)
+                .addColumns(DBSchema.AUTHOR_NAME_COLUMN)
+                .addFromTable(DBSchema.PUBLICATION_TABLE)
+                .addJoins(SelectQuery.JoinType.INNER, DBSchema.PUBLICATION_MAINAUTHOR_JOIN)
+                .addJoins(SelectQuery.JoinType.LEFT_OUTER, DBSchema.PUBLICATION_SOURCETITLE_JOIN)
+                .addCondition(new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_ARTICLE_ID_COLUMN, articleId))
+                .toString();
+        return (Publication) jdbcTemplate.queryForObject(selectQuery, new PublicationRowMapper(false, false));
     }
 }

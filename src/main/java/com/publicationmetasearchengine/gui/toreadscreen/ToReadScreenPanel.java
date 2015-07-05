@@ -5,10 +5,12 @@ import com.publicationmetasearchengine.gui.homescreen.*;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.ConfirmWindow;
+import com.publicationmetasearchengine.gui.PublicationScreenPanel;
 import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
+import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.utils.BibTeXGenerator;
 import com.publicationmetasearchengine.utils.Notificator;
@@ -17,6 +19,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ChameleonTheme;
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
+public class ToReadScreenPanel extends VerticalLayout implements PublicationScreenPanel {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ToReadScreenPanel.class);
 
@@ -36,6 +39,8 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
 
     @Autowired
     private PublicationManager publicationManager;
+    @Autowired
+    private BackupManager backupManager;
 
     private final PMSEPanel toReadPanel = new PMSEPanel("Publications marked to read");
     private final PreviewPanel previewPanel = new PreviewPanel("Content") {
@@ -301,4 +306,28 @@ public class ToReadScreenPanel extends VerticalLayout implements ScreenPanel {
         }
     }
     
+    @Override
+    public List<Publication> getPanelPublications()
+    {
+        return toReadTable.getPublications();
+    }
+    
+    @Override
+    public Publication getCurrentPublication()
+    {
+        return previewPanel.getActivePublication();
+    }
+    
+    @Override
+    public void setBackup()
+    {
+        backupManager.setBackupPublications(getPanelPublications());
+        backupManager.setPreviousPublication(getCurrentPublication());
+    }
+    
+    @Override
+    public Table getPublicationTable()
+    {
+        return toReadTable;
+    }
 }
