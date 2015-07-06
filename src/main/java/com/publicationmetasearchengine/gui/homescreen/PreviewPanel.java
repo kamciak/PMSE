@@ -20,6 +20,7 @@ import com.publicationmetasearchengine.management.backupmanagement.BackupManager
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.RawEntry;
+import com.publicationmetasearchengine.services.datacollectorservice.bwn.BWNAuthorCollector;
 import com.publicationmetasearchengine.utils.DateUtils;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.data.Property;
@@ -285,8 +286,12 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                     @Override
                     public void onClose(ConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
-                            ArxivAuthorCollector authorCollector = new ArxivAuthorCollector(authorName);
-                            authorCollector.downloadAuthorPublications();
+                            ArxivAuthorCollector arxivAuthorCollector = new ArxivAuthorCollector(authorName);
+                            arxivAuthorCollector.downloadAuthorPublications();
+                            BWNAuthorCollector bwnAuthorCollector = new BWNAuthorCollector(authorName);
+                            bwnAuthorCollector.downloadAuthorPublications();
+                            List<Publication> allPublications = arxivAuthorCollector.getPublication();
+                            allPublications.addAll(bwnAuthorCollector.getPublication());
 
                             if (parentPanel instanceof HomeScreenPanel)
                             {
@@ -294,12 +299,12 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                                 backupManager.setBackupPublications(parentPanel.getPanelPublications());
                                 backupManager.setPreviousPublication(getActivePublication());
                                 parentPanel.setBackup();
-                                ((HomeScreenPanel) parentPanel).addPublicationsToTable(authorCollector.getPublication());
+                                ((HomeScreenPanel) parentPanel).addPublicationsToTable(allPublications);
                                 ((HomeScreenPanel)parentPanel).setIsExternalPublication(true);
                                 ((HomeScreenPanel)parentPanel).setProperPublicationsTableListener();
                             } else {
                                 backupManager.setIsExternalPublication(true);
-                                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), authorCollector.getPublication(), true));
+                                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), allPublications, true));
                             }
                         }
                     }
@@ -398,7 +403,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                         activePublication.getSummary(),
                         activePublication.getDoi(),
                         activePublication.getJournalRef(),
-                        null,
+                        null,                                   //tutaj jakis sourceTitleId powinien byc dla BWN napewno
                         null,
                         null,
                         null,
