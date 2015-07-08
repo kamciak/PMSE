@@ -8,6 +8,8 @@ import com.publicationmetasearchengine.dao.properties.PropertiesManager;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.dao.sourcedbs.exceptions.SourceDbDoesNotExistException;
 import com.publicationmetasearchengine.dao.sourcetitles.SourceTitleDAO;
+import com.publicationmetasearchengine.dao.sourcetitles.exceptions.SourceTitleAlreadyExists;
+import com.publicationmetasearchengine.dao.sourcetitles.exceptions.SourceTitleDoesNotExists;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParser;
 import com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.MainTableParser;
@@ -139,15 +141,16 @@ public class BWNAuthorCollector {
             if (!record.getAuthors().isEmpty()) {
                 authorName = record.getAuthors().get(0).toString();
             }
+ 
             Publication publication = new Publication(++tmp,
                     sourceDbDAO.getSourceDBById(sourceDBId),
-                    record.getDOI(), //tu co innego chyba
+                    record.getDOI(),
                     authorName,
                     record.getTitle(),
                     record.getSummary(),
                     record.getDOI(),
                     record.getJournalRef(),
-                    null, // poprawinic zeby byl title a nie id
+                    record.getSourceInfo().getTitle(),
                     record.getSourceInfo().getVolumeId(),
                     record.getSourceInfo().getIssueId(),
                     record.getSourceInfo().getPageRange(),

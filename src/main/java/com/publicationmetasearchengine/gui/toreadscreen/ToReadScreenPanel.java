@@ -6,7 +6,6 @@ import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.ConfirmWindow;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
-import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;

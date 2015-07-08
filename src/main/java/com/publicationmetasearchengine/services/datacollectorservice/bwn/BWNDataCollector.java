@@ -204,7 +204,7 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                 return ;
             }
 
-            Integer publicationId = null;
+            Integer publicationId;
             try {
                 publicationId = publicationManager.insertPublication(
                         sourceDBId,

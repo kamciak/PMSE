@@ -7,11 +7,14 @@ import com.publicationmetasearchengine.dao.publications.exceptions.PublicationDo
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationWithNoAuthorException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationAlreadyExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesNotExistException;
+import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
+import com.publicationmetasearchengine.dao.sourcetitles.SourceTitleDAO;
+import com.publicationmetasearchengine.dao.sourcetitles.exceptions.SourceTitleAlreadyExists;
+import com.publicationmetasearchengine.dao.sourcetitles.exceptions.SourceTitleDoesNotExists;
 import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
-import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
@@ -19,15 +22,11 @@ import com.publicationmetasearchengine.management.authormanagement.AuthorManager
 import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
-import com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser.RawEntry;
 import com.publicationmetasearchengine.services.datacollectorservice.bwn.BWNAuthorCollector;
 import com.publicationmetasearchengine.utils.DateUtils;
 import com.publicationmetasearchengine.utils.PMSEConstants;
-import com.vaadin.data.Property;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.FileResource;
-import com.vaadin.terminal.Resource;
-import com.vaadin.terminal.StreamResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
@@ -47,6 +46,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 @Configurable(preConstruction = true)
 public class PreviewPanel extends PMSEPanel implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(PreviewPanel.class);
     private static final String MARK_TO_READ_CAPTION = "Mark To Read";
@@ -57,6 +57,10 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private AuthorManager authorManager;
     @Autowired
     private BackupManager backupManager;
+    @Autowired
+    private SourceTitleDAO sourceTitleDAO;
+    @Autowired
+    private SourceDbDAO sourceDbDAO;
     private PublicationScreenPanel parentPanel;
     private final Label titleLbl = new Label();
     private final Label authorsLbl = new Label();
@@ -71,7 +75,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private VerticalLayout vl = new VerticalLayout();
     private CssLayout cl = new CssLayout();
     private final String confirmationText = "Searching in external libraries can take up to few minutes. Do you want to continue?";
-    
+
     public PreviewPanel(String caption) {
         super(caption);
 
@@ -102,13 +106,13 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         summaryPanel.setSizeFull();
         summaryPanel.setStyleName("borderless");
     }
-    
+
     private void initCssLayout() {
         cl.setMargin(false);
         cl.setWidth("100%");
         cl.setVisible(true);
     }
-    
+
     public void initializeActiveUser() {
         try {
             activeUser = (User) getApplication().getUser();
@@ -150,17 +154,16 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         }
     }
 
-    public void setContentForAuthorPublications(Publication publication)
-    {
+    public void setContentForAuthorPublications(Publication publication) {
         List<Author> publicationAuthors = null;
-        try{    
+        try {
             publicationAuthors = publication.getAuthors();
         } catch (PublicationWithNoAuthorException ex) {
             LOGGER.error(ex);
         }
         prepareContent(publication, publicationAuthors);
     }
-    
+
     public void setContent(Publication publication) {
         List<Author> publicationAuthors = null;
         try {
@@ -171,7 +174,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         }
         prepareContent(publication, publicationAuthors);
     }
-    
+
     private void prepareContent(Publication publication, List<Author> publicationAuthors) {
         initializeActiveUser();
         initAuthorButtons(publicationAuthors);
@@ -185,20 +188,20 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
 
         initializeToReadBtn();
     }
-    
+
     private void setPublicationSourceLabel(Publication publication) {
         if (publication.getSourceTitle() == null && publication.getJournalRef() == null) {
             publicationSourceLabel.setValue("Published: " + DateUtils.formatDateOnly(publication.getPublicationDate()));
         } else {
             publicationSourceLabel.setValue(String.format("Published: %s in %s, %s%s/%s",
                     DateUtils.formatDateOnly(publication.getPublicationDate()),
-                    publication.getSourceTitle() != null? publication.getSourceTitle() : publication.getJournalRef(),
+                    publication.getSourceTitle() != null ? publication.getSourceTitle() : publication.getJournalRef(),
                     publication.getSourceVolume() != null ? publication.getSourceVolume() : "",
                     publication.getSourceIssue() != null ? "(" + publication.getSourceIssue() + ")" : "",
                     DateUtils.formatYearOnly(publication.getPublicationDate())));
         }
     }
-    
+
     private void setDoiLink(Publication publication) {
         final String doiString = publication.getDoi();
         setLink(doiLink, doiString, String.format("https://www.google.pl/search?q=\"%s\"", doiString));
@@ -207,7 +210,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             setLink(doiLink, arxivePageString, "http://" + arxivePageString);
         }
     }
-    
+
     private void setPdfLink(Publication publication) {
         if (publication.getPdfLink() != null) {
             setLink(pdfLink, "PDF", publication.getPdfLink());
@@ -232,7 +235,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                 PMSEButton searchForAllAuthorsPublication = new PMSEButton();
                 searchForAllAuthorsPublication.setStyleName(BaseTheme.BUTTON_LINK);
                 String basepath = getApplication().getContext().getBaseDirectory().getAbsolutePath();
-                FileResource resource = new FileResource(new File(basepath+"/WEB-INF/images/search-icon-md.png"), getApplication());
+                FileResource resource = new FileResource(new File(basepath + "/WEB-INF/images/search-icon-md.png"), getApplication());
                 searchForAllAuthorsPublication.setIcon(resource);
                 final String authorName = author.getName();
 
@@ -247,9 +250,9 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             authorsLbl.setValue("");
         }
     }
-    
+
     //LOCAL
-        private void handleSearchForLocalPublicationOfAuthor(PMSEButton button, final String authorName) {
+    private void handleSearchForLocalPublicationOfAuthor(PMSEButton button, final String authorName) {
         button.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 1L;
 
@@ -259,16 +262,16 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                 if (parentPanel instanceof HomeScreenPanel) {
                     backupManager.setBackupPublications(parentPanel.getPanelPublications());
                     backupManager.setPreviousPublication(getActivePublication());
-                    
-                    
-                    backupManager.setIsExternalPublication(((HomeScreenPanel)parentPanel).isExternalPublication());
-                    ((HomeScreenPanel)parentPanel).setIsExternalPublication(false);
-                    
+
+
+                    backupManager.setIsExternalPublication(((HomeScreenPanel) parentPanel).isExternalPublication());
+                    ((HomeScreenPanel) parentPanel).setIsExternalPublication(false);
+
                     parentPanel.setBackup();
-                    
-                    ((HomeScreenPanel)parentPanel).filterPublicationByAuthorOfSelected(authorName);
-                    ((HomeScreenPanel)parentPanel).setProperPublicationsTableListener();
-                    
+
+                    ((HomeScreenPanel) parentPanel).filterPublicationByAuthorOfSelected(authorName);
+                    ((HomeScreenPanel) parentPanel).setProperPublicationsTableListener();
+
                 } else {
                     List<Publication> publications = findPublicationsBySelectedAuthor(authorName);
                     getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), publications, false));
@@ -277,7 +280,8 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         });
     }
     //EXTERNAL
-        private void handleSearchForExternalPublicationOfAuthor(PMSEButton searchForAllAuthorsPublication, final String authorName) {
+
+    private void handleSearchForExternalPublicationOfAuthor(PMSEButton searchForAllAuthorsPublication, final String authorName) {
         searchForAllAuthorsPublication.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -293,15 +297,14 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                             List<Publication> allPublications = arxivAuthorCollector.getPublication();
                             allPublications.addAll(bwnAuthorCollector.getPublication());
 
-                            if (parentPanel instanceof HomeScreenPanel)
-                            {
-                                backupManager.setIsExternalPublication(((HomeScreenPanel)parentPanel).isExternalPublication());
+                            if (parentPanel instanceof HomeScreenPanel) {
+                                backupManager.setIsExternalPublication(((HomeScreenPanel) parentPanel).isExternalPublication());
                                 backupManager.setBackupPublications(parentPanel.getPanelPublications());
                                 backupManager.setPreviousPublication(getActivePublication());
                                 parentPanel.setBackup();
                                 ((HomeScreenPanel) parentPanel).addPublicationsToTable(allPublications);
-                                ((HomeScreenPanel)parentPanel).setIsExternalPublication(true);
-                                ((HomeScreenPanel)parentPanel).setProperPublicationsTableListener();
+                                ((HomeScreenPanel) parentPanel).setIsExternalPublication(true);
+                                ((HomeScreenPanel) parentPanel).setProperPublicationsTableListener();
                             } else {
                                 backupManager.setIsExternalPublication(true);
                                 getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), allPublications, true));
@@ -312,9 +315,6 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             }
         });
     }
-    
-    
-
 
     public void additionalMarkAsReadAction() {
         toReadBtn.removeListener(markAsReadListener);
@@ -324,8 +324,8 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     public void additionalMarkToReadAction() {
         toReadBtn.removeListener(markToReadListener);
         toReadBtn.addListener(markAsReadListener);
-    } 
-    
+    }
+
     public Publication getActivePublication() {
         return activePublication;
     }
@@ -343,7 +343,6 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             }
         }
     };
-    
     private final Button.ClickListener markToReadListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
 
@@ -370,64 +369,85 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         }
     };
 
-    
     private Integer insertActivePublicationIntoDB() {
         Integer publicationId = null;
         try {
             LOGGER.debug("Inserting " + activePublication.getTitle());
-            List<Integer> authorIds = new ArrayList<Integer>();
-            
-            for (Author author : activePublication.getAuthors())
-            {
-                try{
-                    authorIds.add(authorManager.addNewAuthor(author));
-                } catch (AuthorAlreadyExistException ex){
-                    try {
-                        authorIds.add(authorManager.getAuthorIdByName(author.getName()));
-                    } catch(AuthorDoesNotExistException ex1) {
-                        if (author.getName().length() > PMSEConstants.AUTHOR_MAX_NAME_LENGHT)
-                            LOGGER.warn(String.format("Author name [%s] is to long", author.getName()));
-                        else
-                          LOGGER.fatal("Should not occure !!", ex1);
-                        return publicationId;
-                    }
-                }
-            }
-
-            try {
-                publicationId = publicationManager.insertPublication(
-                        activePublication.getSourceDbId(),
-                        activePublication.getArticleId(),
-                        authorIds.get(0),
-                        activePublication.getTitle(),
-                        activePublication.getSummary(),
-                        activePublication.getDoi(),
-                        activePublication.getJournalRef(),
-                        null,                                   //tutaj jakis sourceTitleId powinien byc dla BWN napewno
-                        null,
-                        null,
-                        null,
-                        activePublication.getPublicationDate(),
-                        activePublication.getPdfLink()
-                );
-            } catch (PublicationAlreadyExistException ex) {
-                LOGGER.warn(String.format("Publication [Arxiv - %s (%s)] already exists", activePublication.getId(), activePublication.getTitle()));
-                try {
-                    publicationId = publicationManager.getPublicationByArticleId(activePublication.getArticleId()).getId();
-                } catch (PublicationDoesNotExistException ex1) {
-                    LOGGER.warn(String.format("Publication [Arxiv, articleId - %s (%s)] doesn't exist. Shouldn't occure.", activePublication.getArticleId(), activePublication.getTitle()));
-                }
-                return publicationId;
-            }
+            List<Integer> authorIds = insertPublicationAuthorsToDb();
+            Integer sourceTitleId = insertSourceTitleToDb();
+            publicationId = insertPublicationToDb(authorIds, sourceTitleId);
             authorManager.setPublicationAuthorsIds(publicationId, authorIds);
         } catch (PublicationWithNoAuthorException ex) {
             java.util.logging.Logger.getLogger(PreviewPanel.class.getName()).log(Level.SEVERE, null, ex);
             LOGGER.warn(String.format("Publication [Arxiv - %s (%s)] withour authors", activePublication.getArticleId(), activePublication.getTitle()));
         }
         return publicationId;
+    }
+
+    private Integer insertSourceTitleToDb() {
+        Integer sourceTitleId = null;
+        if (activePublication.getSourceTitle() != null) {
+            String sourceTitle = activePublication.getSourceTitle();
+            try {
+                sourceTitleId = sourceTitleDAO.addTitle(sourceTitle);
+            } catch (SourceTitleAlreadyExists ex) {
+                try {
+                    sourceTitleId = sourceTitleDAO.getTitleIdByTitle(sourceTitle);
+                } catch (SourceTitleDoesNotExists ex1) {
+                    LOGGER.fatal("Should not occure", ex1);
+                }
+            }
+
         }
+        return sourceTitleId;
+    }
 
+    private List<Integer> insertPublicationAuthorsToDb() throws PublicationWithNoAuthorException {
+        List<Integer> authorIds = new ArrayList<Integer>();
+        for (Author author : activePublication.getAuthors()) {
+            try {
+                authorIds.add(authorManager.addNewAuthor(author));
+            } catch (AuthorAlreadyExistException ex) {
+                try {
+                    authorIds.add(authorManager.getAuthorIdByName(author.getName()));
+                } catch (AuthorDoesNotExistException ex1) {
+                    if (author.getName().length() > PMSEConstants.AUTHOR_MAX_NAME_LENGHT) {
+                        LOGGER.warn(String.format("Author name [%s] is to long", author.getName()));
+                    } else {
+                        LOGGER.fatal("Should not occure !!", ex1);
+                    }
+                }
+            }
+        }
+        return authorIds;
+    }
 
-
-
+    private int insertPublicationToDb(List<Integer> authorIds, Integer sourceTitleId) {
+        Integer publicationId = null;
+        try {
+            publicationId = publicationManager.insertPublication(
+                    activePublication.getSourceDbId(),
+                    activePublication.getArticleId(),
+                    authorIds.get(0),
+                    activePublication.getTitle(),
+                    activePublication.getSummary(),
+                    activePublication.getDoi(),
+                    activePublication.getJournalRef(),
+                    sourceTitleId,
+                    null,
+                    null,
+                    null,
+                    activePublication.getPublicationDate(),
+                    activePublication.getPdfLink());
+            return publicationId;
+        } catch (PublicationAlreadyExistException ex) {
+            LOGGER.warn(String.format("Publication [Arxiv - %s (%s)] already exists", activePublication.getId(), activePublication.getTitle()));
+            try {
+                publicationId = publicationManager.getPublicationByArticleId(activePublication.getArticleId()).getId();
+            } catch (PublicationDoesNotExistException ex1) {
+                LOGGER.warn(String.format("Publication [Arxiv, articleId - %s (%s)] doesn't exist. Shouldn't occure.", activePublication.getArticleId(), activePublication.getTitle()));
+            }
+            return publicationId;
+        }
+    }
 }
