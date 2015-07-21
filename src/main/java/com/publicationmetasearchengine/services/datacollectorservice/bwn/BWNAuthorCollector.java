@@ -7,9 +7,6 @@ package com.publicationmetasearchengine.services.datacollectorservice.bwn;
 import com.publicationmetasearchengine.dao.properties.PropertiesManager;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.dao.sourcedbs.exceptions.SourceDbDoesNotExistException;
-import com.publicationmetasearchengine.dao.sourcetitles.SourceTitleDAO;
-import com.publicationmetasearchengine.dao.sourcetitles.exceptions.SourceTitleAlreadyExists;
-import com.publicationmetasearchengine.dao.sourcetitles.exceptions.SourceTitleDoesNotExists;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.ContentTableParser;
 import com.publicationmetasearchengine.services.datacollectorservice.bwn.parser.MainTableParser;
@@ -36,7 +33,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class BWNAuthorCollector {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BWNDataCollector.class);
+    private static final Logger LOGGER = Logger.getLogger(BWNAuthorCollector.class);
     private String authorName;
     private static final String SEARCH_TEMPLATE = "http://vls2.icm.edu.pl/cgi-bin/"
             + "search.pl?SearchTemplate=search_form.expert&search_field=%s&"
@@ -46,8 +43,7 @@ public class BWNAuthorCollector {
             + "toyear=none&Max=750&Start=1&Order=SORT+DATE+DESC&GetSearchResults=Submit+Query";
     @Autowired
     private SourceDbDAO sourceDbDAO;
-    @Autowired
-    private SourceTitleDAO sourceTitleDAO;
+
     private String SOCKSproxyHostPort;
     private int mainTableDownloadTimeout;
     private int contentDownloadTimeout;
@@ -63,10 +59,8 @@ public class BWNAuthorCollector {
     }
 
     private String prepareAuthorNameForSearch(String authorName) {
-        List<String> authorData = new LinkedList<String>(Arrays.asList(authorName.replace("-", "_").split(" ")));
-        String authorSurename = authorData.remove(0);
-        char firstLetterOfAuthorName = authorData.remove(0).charAt(0);
-        return authorSurename + "_" + firstLetterOfAuthorName;
+        List<String> authorData = new ArrayList<String>(Arrays.asList(authorName.replace("-", "_").split(" ")));
+        return authorData.get(0)+ "_" + authorData.get(1);
     }
 
     private void initialize() {
@@ -174,7 +168,7 @@ public class BWNAuthorCollector {
         }
     }
 
-    public List<Publication> getPublication() {
+    public List<Publication> getPublications() {
         return publicationList;
     }
 

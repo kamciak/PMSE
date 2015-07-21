@@ -15,6 +15,7 @@ import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
+import com.publicationmetasearchengine.gui.dialog.CheckboxConfirmDialog;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
@@ -23,6 +24,7 @@ import com.publicationmetasearchengine.management.backupmanagement.BackupManager
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
 import com.publicationmetasearchengine.services.datacollectorservice.bwn.BWNAuthorCollector;
+import com.publicationmetasearchengine.services.datacollectorservice.wok.WoKAuthorCollector;
 import com.publicationmetasearchengine.utils.DateUtils;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.terminal.ExternalResource;
@@ -42,7 +44,7 @@ import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.dialogs.ConfirmDialog;
+//import org.vaadin.dialogs.ConfirmDialog;
 
 @Configurable(preConstruction = true)
 public class PreviewPanel extends PMSEPanel implements Serializable {
@@ -285,18 +287,22 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         searchForAllAuthorsPublication.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                ConfirmDialog.show(getWindow(), confirmationText,
-                        new ConfirmDialog.Listener() {
+                CheckboxConfirmDialog.show(getWindow(), confirmationText,
+                        new CheckboxConfirmDialog.Listener() {
                     @Override
-                    public void onClose(ConfirmDialog dialog) {
+                    public void onClose(CheckboxConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
-                            ArxivAuthorCollector arxivAuthorCollector = new ArxivAuthorCollector(authorName);
-                            arxivAuthorCollector.downloadAuthorPublications();
-                            BWNAuthorCollector bwnAuthorCollector = new BWNAuthorCollector(authorName);
-                            bwnAuthorCollector.downloadAuthorPublications();
-                            List<Publication> allPublications = arxivAuthorCollector.getPublication();
-                            allPublications.addAll(bwnAuthorCollector.getPublication());
 
+                            List<Publication> allPublications = new ArrayList<Publication>();
+                            if (dialog.searchInArxiv()) {
+                                allPublications.addAll(getArxivAuthorPublications(authorName));
+                            }
+                            if (dialog.searchInBwn()) {
+                                allPublications.addAll(getBWNAuthorPublications(authorName));
+                            }
+                            if (dialog.searchInWoK()) {
+                                allPublications.addAll(getWoKAuthorPublications(authorName));
+                            }
                             if (parentPanel instanceof HomeScreenPanel) {
                                 backupManager.setIsExternalPublication(((HomeScreenPanel) parentPanel).isExternalPublication());
                                 backupManager.setBackupPublications(parentPanel.getPanelPublications());
@@ -314,6 +320,24 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                 });
             }
         });
+    }
+
+    private List<Publication> getArxivAuthorPublications(String authorName) {
+        ArxivAuthorCollector arxivAuthorCollector = new ArxivAuthorCollector(authorName);
+        arxivAuthorCollector.downloadAuthorPublications();
+        return arxivAuthorCollector.getPublications();
+    }
+
+    private List<Publication> getBWNAuthorPublications(String authorName) {
+        BWNAuthorCollector bwnAuthorCollector = new BWNAuthorCollector(authorName);
+        bwnAuthorCollector.downloadAuthorPublications();
+        return bwnAuthorCollector.getPublications();
+    }
+
+    private List<Publication> getWoKAuthorPublications(String authorName) {
+        WoKAuthorCollector wokAuthorCollector = new WoKAuthorCollector(authorName);
+        wokAuthorCollector.downloadAuthorPublications();
+        return wokAuthorCollector.getPublications();
     }
 
     public void additionalMarkAsReadAction() {

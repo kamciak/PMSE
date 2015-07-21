@@ -1,22 +1,22 @@
 package com.publicationmetasearchengine.services.datacollectorservice.wok.parser;
 
+import com.publicationmetasearchengine.services.datacollectorservice.wok.WoKAuthorCollector;
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.parts.RawRecord;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class WOKParser {
 
-
+    private static final Logger LOGGER = Logger.getLogger(WOKParser.class);
     private final Document wokDoc;
 
     public WOKParser(String xmlResponse) {
         wokDoc = Jsoup.parse(xmlResponse);
-        System.out.println("WOKParser::\n" + wokDoc.toString());
-        System.out.println("\n===========================================\n");
     }
 
     public List<RawRecord> getRecords() {
@@ -25,7 +25,7 @@ public class WOKParser {
             try {
                 records.add(new RecordParser(rawRecord.toString()).getRecord());
             } catch (ParseException ex) {
-                System.out.println(ex);
+                LOGGER.debug(ex);
             }
 
         return records;

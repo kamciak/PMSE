@@ -58,7 +58,7 @@ public class ArxivAuthorCollector implements Serializable {
         fetchAuthor(authorData);
     }
 
-    public List<Publication> getPublication() {
+    public List<Publication> getPublications() {
         return publicationList;
     }
 

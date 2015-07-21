@@ -147,11 +147,11 @@ public class WoKDataCollector implements ServiceJobProvider, Serializable {
         private int getDaysBackwardsToDownload() {
             Date lastestDateFromDb = publicationManager.getNewestPublicationDate(sourceDBId);
             if (lastestDateFromDb == null)
-                return maxDaysBackwardsToDownload;
+                return maxDaysBackwardsToDownload;  
             int daysBetween = Days.daysBetween(
                     (new DateTime(lastestDateFromDb)).withTimeAtStartOfDay(),
                     (new DateTime()).withTimeAtStartOfDay()).getDays();
-            LOGGER.debug("Number of days between today and last date in DB: " + daysBetween);
+            LOGGER.debug("Number of days between today and last date in DB: " + daysBetween);    
             return daysBetween-1;
         }
 
@@ -196,7 +196,7 @@ public class WoKDataCollector implements ServiceJobProvider, Serializable {
                         record.getTitle(),
                         record.getSummary(),
                         record.getDOI(),
-                        null, ///////////////////////////////////////JOURNAL_REF ????????
+                        record.getJournalRef(),
                         sourceTitleId,
                         record.getSourceInfo().getVolumeId(),
                         record.getSourceInfo().getIssueId(),
@@ -249,6 +249,7 @@ public class WoKDataCollector implements ServiceJobProvider, Serializable {
                 ts.setEnd(queryDateString);
             qp.setTimeSpan(ts);
             qp.setQueryLanguage("en");
+            
             return qp;
         }
 

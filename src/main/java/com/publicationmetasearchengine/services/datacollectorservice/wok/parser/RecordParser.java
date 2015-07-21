@@ -6,6 +6,7 @@ import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.parts.SourceInfo;
 import com.publicationmetasearchengine.utils.DateUtils;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;
@@ -26,6 +27,13 @@ public class RecordParser {
 
     public String getTitle() {
         return wokDoc.select("title[type=item]").first().text();
+    }
+    
+    public String getJournalRef() throws ParseException {        
+        return getSourceInfo().getTitle() + ", "+
+               "vol. " + getSourceInfo().getVolumeId() + ", "+
+               "pages: " + getSourceInfo().getPageRange() + ", "+
+               new SimpleDateFormat("yyyy-MM-dd").format(getSourceInfo().getPublicationDate());
     }
 
     public SourceInfo getSourceInfo() throws ParseException {
@@ -83,7 +91,8 @@ public class RecordParser {
                 getAuthors(),
                 getCategoryInfo(),
                 getAbstract(),
-                getDOI());
+                getDOI(),
+                getJournalRef());
     }
 
 }

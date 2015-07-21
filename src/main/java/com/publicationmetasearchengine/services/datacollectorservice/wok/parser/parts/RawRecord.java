@@ -11,8 +11,9 @@ public class RawRecord {
     private final CategoryInfo categoryInfo;
     private final String summary;
     private final String DOI;
+    private final String journalRef;
 
-    public RawRecord(String id, String title, SourceInfo sourceInfo, List<Author> authors, CategoryInfo categoryInfo, String summary, String DOI) {
+    public RawRecord(String id, String title, SourceInfo sourceInfo, List<Author> authors, CategoryInfo categoryInfo, String summary, String DOI, String journalRef) {
         this.id = id;
         this.title = title;
         this.sourceInfo = sourceInfo;
@@ -20,6 +21,7 @@ public class RawRecord {
         this.categoryInfo = categoryInfo;
         this.summary = summary;
         this.DOI = DOI;
+        this.journalRef = journalRef;
     }
 
     public String getId() {
@@ -48,6 +50,10 @@ public class RawRecord {
 
     public String getDOI() {
         return DOI;
+    }
+    
+    public String getJournalRef() {
+        return journalRef;
     }
 
 }

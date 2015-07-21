@@ -35,8 +35,6 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
     private final PreviewPanel previewPanel = new PreviewPanel("Content");
     private final Map<String, Date> dateMap = new LinkedHashMap<String, Date>();
     private final PMSEButton goBackBtn = new PMSEButton("Go back");
-    //private List<Publication> backupPublications = new ArrayList<Publication>();
-    //private Publication recentPublication;
     private final PublicationTable publicationTable = new PublicationTable();
     private HorizontalLayout mainHorizontalLayout;
     boolean isPreviewVisible = false;
@@ -73,14 +71,6 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
         initHomeScreenPanel();
         goBackBtn.setEnabled(false);
     }
-/*
-    public HomeScreenPanel() {
-        super();
-        menuBar = new MainMenuBarAuthorizedUser();
-        initHomeScreenPanel();
-        goBackBtn.setEnabled(false);
-//        setPublicationTableChangeListener();
-    }*/
 
     public HomeScreenPanel(MenuBar menuBar, List<Publication> publications, boolean isExternal) {
         super();
@@ -259,17 +249,17 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
         setPreviewPanelVisibility(false); 
     }
 */
-    /*
+    
     private void setBackupPublications() {
         enableBackButon();
+        backupManager.setIsExternalPublication(isExternalPublication);
         if (previewPanel.isVisible()) {
             backupManager.setPreviousPublication(previewPanel.getActivePublication());
             //recentPublication = previewPanel.getActivePublication();
         }
         //backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
         backupManager.setBackupPublications(getPanelPublications());
-        setPreviewPanelVisibility(false);
-    }*/
+    }
     /*
     public List<Publication> getBackupPublications() {
         return backupPublications;
@@ -398,6 +388,9 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
 
         @Override
         public void buttonClick(Button.ClickEvent event) {
+            setBackupPublications();
+            isExternalPublication = false;
+            setProperPublicationsTableListener();
             SourceDB sourceDB = (SourceDB) sourceDBCB.getValue();
             Date date = (Date) dateCB.getValue();
             if (sourceDB != null) {
