@@ -400,7 +400,6 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
             List<Integer> authorIds = insertPublicationAuthorsToDb();
             Integer sourceTitleId = insertSourceTitleToDb();
             publicationId = insertPublicationToDb(authorIds, sourceTitleId);
-            authorManager.setPublicationAuthorsIds(publicationId, authorIds);
         } catch (PublicationWithNoAuthorException ex) {
             java.util.logging.Logger.getLogger(PreviewPanel.class.getName()).log(Level.SEVERE, null, ex);
             LOGGER.warn(String.format("Publication [Arxiv - %s (%s)] withour authors", activePublication.getArticleId(), activePublication.getTitle()));
@@ -463,6 +462,8 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                     null,
                     activePublication.getPublicationDate(),
                     activePublication.getPdfLink());
+            
+            authorManager.setPublicationAuthorsIds(publicationId, authorIds);
             return publicationId;
         } catch (PublicationAlreadyExistException ex) {
             LOGGER.warn(String.format("Publication [Arxiv - %s (%s)] already exists", activePublication.getId(), activePublication.getTitle()));
