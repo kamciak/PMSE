@@ -45,34 +45,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 public class BWNDataCollector implements ServiceJobProvider, Serializable {
-    private static final long serialVersionUID = 1L;
 
+    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BWNDataCollector.class);
 
     @Configurable(preConstruction = true)
     public static class BWNDataCollectorJob implements Job {
-
-        public class ContentDownloader implements Runnable {
-
-            private static final String LINK_PREFIX = "http://vls2.icm.edu.pl/";
-            private final String contentLink;
-
-            public ContentDownloader(String contentLink) {
-                this.contentLink = contentLink;
-            }
-
-            @Override
-            public void run() {
-                try {
-                    LOGGER.info(String.format("Downloading content %s%s started..", LINK_PREFIX, contentLink));
-                    addContentToQueue(downloadHTML(LINK_PREFIX+contentLink, contentDownloadTimeout));
-                    LOGGER.debug(String.format("Downloading content %s%s ended..", LINK_PREFIX, contentLink));
-                } catch (IOException ex) {
-                    LOGGER.error("Downloading content failed", ex);
-                }
-            }
-
-        }
 
         private static final String SEARCH_TEMPLATE = "http://vls2.icm.edu.pl/cgi-bin/"
                 + "search.pl?SearchTemplate=search_form.expert&search_field={DATE%%3D%s}&"
@@ -80,7 +58,6 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                 + "Category=all_categories&ArticleType=Article&Language=&"
                 + "daterange=yearsince&drsince=2000&drpast=none&fromyear=none&"
                 + "toyear=none&Max=750&Start=1&Order=SORT+DATE+DESC&GetSearchResults=Submit+Query";
-
         @Autowired
         private PublicationManager publicationManager;
         @Autowired
@@ -89,7 +66,6 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
         private SourceDbDAO sourceDbDAO;
         @Autowired
         private SourceTitleDAO sourceTitleDAO;
-
         private String SOCKSproxyHostPort;
         private int mainTableDownloadTimeout;
         private int contentDownloadTimeout;
@@ -97,7 +73,6 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
         private int contentThreadPoolSize;
         private Queue<String> contentLinksQueue = new LinkedList<String>();
         private Queue<String> contentsQueue = new LinkedList<String>();
-
         private Integer sourceDBId = null;
 
         @Override
@@ -125,22 +100,25 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
 
             LOGGER.info("Fetching publications list started...");
             try {
-                for (int dayBack = daysCountToFetch; dayBack > 0; --dayBack)
+                for (int dayBack = daysCountToFetch; dayBack > 0; --dayBack) {
                     downloadDay(dayBack);
+                }
             } catch (IOException ex) {
                 LOGGER.error(ex);
             }
             LOGGER.info("Fetching publications list ended...");
             LOGGER.info("Fetching content started...");
             ExecutorService executor = Executors.newFixedThreadPool(contentThreadPoolSize);
-            for(String contentLink = getContentLink();;) {
-                if (contentLink == null) break;
-                ContentDownloader contentDownloader = new ContentDownloader(contentLink);
+            for (String contentLink = getContentLink();;) {
+                if (contentLink == null) {
+                    break;
+                }
+                ContentDownloader contentDownloader = new ContentDownloader(contentLink, contentDownloadTimeout, contentsQueue);
                 executor.execute(contentDownloader);
                 contentLink = getContentLink();
             }
             executor.shutdown();
-            while(!executor.isTerminated()) {
+            while (!executor.isTerminated()) {
             }
             if (SOCKSproxyHostPort != null) {
                 LOGGER.debug("Unsetting SOCKS proxy");
@@ -149,18 +127,15 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
             }
             LOGGER.info("Fetching content ended...");
 
-            while(!contentsQueue.isEmpty())
+            while (!contentsQueue.isEmpty()) {
                 insertRecordIntoDB(new ContentTableParser(contentsQueue.poll()));
+            }
 
             LOGGER.info("Fetching publications ended...");
         }
 
         private synchronized String getContentLink() {
-            return contentLinksQueue.isEmpty()?null:contentLinksQueue.poll();
-        }
-
-        private synchronized void addContentToQueue(String content) {
-            contentsQueue.add(content);
+            return contentLinksQueue.isEmpty() ? null : contentLinksQueue.poll();
         }
 
         private void insertRecordIntoDB(ContentTableParser record) {
@@ -174,17 +149,18 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                     try {
                         authorIds.add(authorManager.getAuthorIdByName(authorString));
                     } catch (AuthorDoesNotExistException ex1) {
-                        if (authorString.length() > PMSEConstants.AUTHOR_MAX_NAME_LENGHT)
+                        if (authorString.length() > PMSEConstants.AUTHOR_MAX_NAME_LENGHT) {
                             LOGGER.warn(String.format("Author name [%s] is to long", authorString));
-                        else
-                          LOGGER.fatal("Should not occure !!", ex1);
+                        } else {
+                            LOGGER.fatal("Should not occure !!", ex1);
+                        }
                         return;
                     }
                 }
             }
             if (authorIds.isEmpty()) {
                 LOGGER.warn("There is no author... Skipping this publication...");
-                return ;
+                return;
             }
 
             Integer sourceTitleId = null;
@@ -201,7 +177,7 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                 }
             } catch (ParseException ex) {
                 LOGGER.warn(String.format("Unparsable date [%s]. Skipping this publication...", ex.getMessage()));
-                return ;
+                return;
             }
 
             Integer publicationId;
@@ -213,41 +189,42 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                         record.getTitle(),
                         record.getSummary(),
                         record.getDOI(),
-                        record.getJournalRef(), ////////////////////////////////////////////JOURNAL_REF ?????????????
+                        record.getJournalRef(),
                         sourceTitleId,
                         record.getSourceInfo().getVolumeId(),
                         record.getSourceInfo().getIssueId(),
                         record.getSourceInfo().getPageRange(),
                         record.getSourceInfo().getPublicationDate(),
-                        record.getPDFLink()
-                );
+                        record.getPDFLink());
             } catch (PublicationAlreadyExistException ex) {
                 LOGGER.warn(String.format("Publication [BWN - %s (%s)] already exists", record.getDOI(), record.getTitle()));
                 return;
             } catch (ParseException ex) {
                 LOGGER.fatal("Should not occure...", ex);
-                return ;
+                return;
             }
             authorManager.setPublicationAuthorsIds(publicationId, authorIds);
         }
 
         private int getDaysBackwardsToDownload() {
             Date lastestDateFromDb = publicationManager.getNewestPublicationDate(sourceDBId);
-            if (lastestDateFromDb == null)
+            if (lastestDateFromDb == null) {
                 return maxDaysBackwardsToDownload;
+            }
             int daysBetween = Days.daysBetween(
                     (new DateTime(lastestDateFromDb)).withTimeAtStartOfDay(),
                     (new DateTime()).withTimeAtStartOfDay()).getDays();
             LOGGER.debug("Number of days between today and last date in DB: " + daysBetween);
-            return daysBetween-1;
+            return daysBetween - 1;
         }
 
         private void downloadDay(int dayBackCount) throws IOException {
             Date dateToDownload = (new DateTime()).minusDays(dayBackCount).toDate();
             LOGGER.info(String.format("Fetching publications list for %s started...", DateUtils.formatDateOnly(dateToDownload)));
             MainTableParser mainTableParser = new MainTableParser(downloadHTML(getLinkForDate(dateToDownload), mainTableDownloadTimeout));
-            for(String contentLink : mainTableParser.getContentLinks())
+            for (String contentLink : mainTableParser.getContentLinks()) {
                 contentLinksQueue.add(contentLink);
+            }
             LOGGER.info(String.format("Fetching publications list for %s ended... Downloaded %d content links.", DateUtils.formatDateOnly(dateToDownload), mainTableParser.getContentLinks().size()));
         }
 
@@ -258,7 +235,7 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
         }
 
         private String downloadHTML(String htmlLink, int timeout) throws IOException {
-            return Jsoup.connect(htmlLink).timeout(timeout*1000).get().html();
+            return Jsoup.connect(htmlLink).timeout(timeout * 1000).get().html();
         }
 
         public void setSOCKSproxyHostPort(String SOCKSproxyHostPort) {
@@ -281,7 +258,6 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
             this.contentThreadPoolSize = contentThreadPoolSize;
         }
     }
-
     private String schedule;
     private String SOCKSproxyHostPort;
     private int mainTableDownloadTimeout;
@@ -293,8 +269,8 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
     public void initialize(String settingsPrefix) throws InitializationException {
         final PropertiesManager pm = PropertiesManager.getInstance();
         schedule = pm.getProperty(settingsPrefix + "schedule");
-        SOCKSproxyHostPort = pm.getProperty(settingsPrefix + "SOCKSproxy.enabled", "0").equals("1")?
-            pm.getProperty(settingsPrefix + "SOCKSproxy.HostPort") : null;
+        SOCKSproxyHostPort = pm.getProperty(settingsPrefix + "SOCKSproxy.enabled", "0").equals("1")
+                ? pm.getProperty(settingsPrefix + "SOCKSproxy.HostPort") : null;
         validateSOCKSproxyHostPort();
         mainTableDownloadTimeout = Integer.parseInt(pm.getProperty(settingsPrefix + "download.publicationList.timeout", "120"));
         contentDownloadTimeout = Integer.parseInt(pm.getProperty(settingsPrefix + "download.content.timeout", "120"));
@@ -311,11 +287,13 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
     }
 
     private void validateSOCKSproxyHostPort() throws InitializationException {
-        if (SOCKSproxyHostPort == null)
-            return ;
+        if (SOCKSproxyHostPort == null) {
+            return;
+        }
         String[] parts = SOCKSproxyHostPort.split(":");
-        if (parts.length != 2)
+        if (parts.length != 2) {
             throw new InitializationException(String.format("SOCKSproxyHostPort [%s] is invalid", SOCKSproxyHostPort));
+        }
         try {
             Integer.parseInt(parts[1]);
         } catch (NumberFormatException ex) {
@@ -342,5 +320,5 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
                 .withSchedule(cronSchedule(schedule))
                 .build();
     }
-
+    
 }

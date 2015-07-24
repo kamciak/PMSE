@@ -1,6 +1,5 @@
 package com.publicationmetasearchengine.services.datacollectorservice.wok.parser;
 
-import com.publicationmetasearchengine.services.datacollectorservice.wok.WoKAuthorCollector;
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.parts.RawRecord;
 import java.text.ParseException;
 import java.util.ArrayList;

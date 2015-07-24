@@ -48,10 +48,10 @@ public class DefaultCheckboxConfirmDialogFactory implements Factory {
     protected static final String DEFAULT_CANCEL_CAPTION = "Cancel";
 
     // System wide defaults
-    private static final double MIN_WIDTH = 20d;
-    private static final double MAX_WIDTH = 40d;
-    private static final double MIN_HEIGHT = 1d;
-    private static final double MAX_HEIGHT = 30d;
+    private static final double MIN_WIDTH = 30d;
+    private static final double MAX_WIDTH = 50d;
+    private static final double MIN_HEIGHT = 5d;
+    private static final double MAX_HEIGHT = 40d;
     private static final double BUTTON_HEIGHT = 2.5;
 
 
@@ -129,6 +129,7 @@ public class DefaultCheckboxConfirmDialogFactory implements Factory {
         VerticalLayout checkBoxes = new VerticalLayout();
         c.addComponent(checkBoxes);
         checkBoxes.setSpacing(true);
+        checkBoxes.setWidth("100%");
         
         checkBoxes.addComponent(checkBoxArxiv);
         checkBoxes.addComponent(checkBoxBwn);
@@ -210,6 +211,7 @@ public class DefaultCheckboxConfirmDialogFactory implements Factory {
         // Based on Reindeer style:
         double chrW = 0.5d;
         double chrH = 1.5d;
+        double checkBoxes = 5d;
         double length = chrW * message.length();
         double rows = Math.ceil(length / MAX_WIDTH);
 
@@ -223,7 +225,7 @@ public class DefaultCheckboxConfirmDialogFactory implements Factory {
 
         // Obey maximum size
         double width = Math.min(MAX_WIDTH, length);
-        double height = Math.ceil(Math.min(MAX_HEIGHT, rows * chrH));
+        double height = Math.ceil(Math.min(MAX_HEIGHT, rows * chrH + checkBoxes));
 
         // Obey the minimum size
         width = Math.max(width, MIN_WIDTH);

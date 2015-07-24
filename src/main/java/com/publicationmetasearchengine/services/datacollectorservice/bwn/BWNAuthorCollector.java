@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.publicationmetasearchengine.data.Author;
 import com.thoughtworks.xstream.InitializationException;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -43,7 +45,6 @@ public class BWNAuthorCollector {
             + "toyear=none&Max=750&Start=1&Order=SORT+DATE+DESC&GetSearchResults=Submit+Query";
     @Autowired
     private SourceDbDAO sourceDbDAO;
-
     private String SOCKSproxyHostPort;
     private int mainTableDownloadTimeout;
     private int contentDownloadTimeout;
@@ -53,6 +54,7 @@ public class BWNAuthorCollector {
     private static final String LINK_PREFIX = "http://vls2.icm.edu.pl/";
     private List<Publication> publicationList = new ArrayList<Publication>();
     private static int tmp = 1;
+    private int contentThreadPoolSize;
 
     public BWNAuthorCollector(String authorName) {
         this.authorName = authorName;
@@ -60,7 +62,7 @@ public class BWNAuthorCollector {
 
     private String prepareAuthorNameForSearch(String authorName) {
         List<String> authorData = new ArrayList<String>(Arrays.asList(authorName.replace("-", "_").split(" ")));
-        return authorData.get(0)+ "_" + authorData.get(1);
+        return authorData.get(0) + "_" + authorData.get(1);
     }
 
     private void initialize() {
@@ -71,6 +73,7 @@ public class BWNAuthorCollector {
         validateSOCKSproxyHostPort();
         mainTableDownloadTimeout = Integer.parseInt(pm.getProperty(collectorPrefix + "download.publicationList.timeout", "120"));
         contentDownloadTimeout = Integer.parseInt(pm.getProperty(collectorPrefix + "download.content.timeout", "120"));
+        contentThreadPoolSize = Integer.parseInt(pm.getProperty(collectorPrefix + "download.content.threadPoolSize", "10"));
 
         authorName = prepareAuthorNameForSearch(authorName);
         setSourceDBId();
@@ -99,12 +102,28 @@ public class BWNAuthorCollector {
             downloadAuthors();
             LOGGER.info("Fetching publications list ended...");
             LOGGER.info("Fetching content started...");
+
+
+            ExecutorService executor = Executors.newFixedThreadPool(contentThreadPoolSize);
+            for (String contentLink = getContentLink();;) {
+                if (contentLink == null) {
+                    break;
+                }
+                ContentDownloader contentDownloader = new ContentDownloader(contentLink, contentDownloadTimeout, contentsQueue);
+                executor.execute(contentDownloader);
+                contentLink = getContentLink();
+            }
+            executor.shutdown();
+            while (!executor.isTerminated()) {
+            }
+
             for (String contentLink : contentLinksQueue) {
                 addContentToQueue(downloadHTML(LINK_PREFIX + contentLink, contentDownloadTimeout));
             }
         } catch (IOException ex) {
             LOGGER.error(ex);
         }
+        unsetProxy();
 
         while (!contentsQueue.isEmpty()) {
             addToList(new ContentTableParser(contentsQueue.poll()));
@@ -121,6 +140,10 @@ public class BWNAuthorCollector {
         LOGGER.info(String.format("Fetching publications list for %s ended... Downloaded %d content links.", authorName, mainTableParser.getContentLinks().size()));
     }
 
+    private synchronized String getContentLink() {
+        return contentLinksQueue.isEmpty() ? null : contentLinksQueue.poll();
+    }
+
     private String getLinkForAuthor() {
         return String.format(SEARCH_TEMPLATE, authorName);
     }
@@ -135,7 +158,7 @@ public class BWNAuthorCollector {
             if (!record.getAuthors().isEmpty()) {
                 authorName = record.getAuthors().get(0).toString();
             }
- 
+
             Publication publication = new Publication(++tmp,
                     sourceDbDAO.getSourceDBById(sourceDBId),
                     record.getDOI(),
@@ -181,6 +204,14 @@ public class BWNAuthorCollector {
             LOGGER.debug("Setting SOCKS proxy to " + SOCKSproxyHostPort);
             System.setProperty("socksProxyHost", SOCKSproxyHostPort.split(":")[0]);
             System.setProperty("socksProxyPort", SOCKSproxyHostPort.split(":")[1]);
+        }
+    }
+
+    private void unsetProxy() {
+        if (SOCKSproxyHostPort != null) {
+            LOGGER.debug("Unsetting SOCKS proxy");
+            System.clearProperty("socksProxyHost");
+            System.clearProperty("socksProxyPort");
         }
     }
 
