@@ -40,8 +40,6 @@ public class CleanerService implements ServiceJobProvider, Serializable{
         
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
-            
-            LOGGER.debug("\n\nmaxYearsOfPublication:: " + maxYearsOfPublication);
             publicationManager.removePublicationBeforeDate(new DateTime().minusYears(maxYearsOfPublication));
         }
         

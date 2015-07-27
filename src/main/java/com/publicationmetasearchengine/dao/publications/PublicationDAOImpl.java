@@ -441,8 +441,6 @@ public class PublicationDAOImpl implements PublicationDAO {
     
     public void decrementMarkToReadOfUserPublications(int userId)
     {
-
-
        String selectQuery = new SelectQuery()
                 .addFromTable(DBSchema.USERPUBLICATIONS_TABLE)
                 .addColumns(DBSchema.USERPUBLICATIONS_PUBLICATION_ID_COLUMN, DBSchema.USERPUBLICATIONS_INSERT_DATE_COLUMN)
@@ -535,10 +533,7 @@ public class PublicationDAOImpl implements PublicationDAO {
                         new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_MARK_TO_READ_COUNTER, 0))
                 )
                 .toString();
-
         
-        LOGGER.debug(("\n\n=====================\n" + deleteQuery + "\n\n==========\n\n"));
-        //jdbcTemplate.update(deleteQuery);
-
+        jdbcTemplate.update(deleteQuery);
     }
 }
