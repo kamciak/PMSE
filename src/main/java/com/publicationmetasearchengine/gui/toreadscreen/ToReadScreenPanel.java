@@ -236,7 +236,7 @@ public class ToReadScreenPanel extends VerticalLayout implements PublicationScre
                     @Override
                     public void yesButtonClick() {
                         final User user = (User) getApplication().getUser();
-                        publicationManager.removeUserPublications(user);
+                        publicationManager.removeUserPublications(user); //decrement wewnatrz
                         toReadTable.clear();
                         Notificator.showNotification(getApplication(), "Info", "All publications have been removed.", Notificator.NotificationType.HUMANIZED);
                     }

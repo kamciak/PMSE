@@ -1,5 +1,7 @@
 package com.publicationmetasearchengine.management.usermanagement;
 
+import com.publicationmetasearchengine.dao.publications.PublicationDAO;
+import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesNotExistException;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.dao.users.UserDAO;
 import com.publicationmetasearchengine.services.mailingservice.MailingService;
@@ -25,6 +27,8 @@ public class UserManagerImpl implements UserManager{
     private UserDAO userDAO;
     @Autowired
     private MailingService mailingService;
+    @Autowired
+    private PublicationDAO publicationDAO;
 
     @Override
     public User getUserByLoginAndPassword(String login, String password) throws InvalidCredentialsException {
@@ -53,6 +57,11 @@ public class UserManagerImpl implements UserManager{
 
     @Override
     public void deleteUser(User user) throws UserDoesNotExistException {
+        try {
+            publicationDAO.removeUserPublications(user.getId());
+        } catch (RelationDoesNotExistException ex) {
+            LOGGER.info(String.format("User [%s] without publications marked to read", user.toString()));
+        }
         userDAO.deleteUserByUserId(user.getId());
         LOGGER.info(String.format("User [%s] deleted", user.toString()));
     }

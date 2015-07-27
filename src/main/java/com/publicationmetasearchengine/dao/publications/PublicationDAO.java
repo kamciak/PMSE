@@ -10,6 +10,7 @@ import com.publicationmetasearchengine.data.filters.FilterCriteria;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.DateTime;
 
 public interface PublicationDAO {
 
@@ -47,4 +48,8 @@ public interface PublicationDAO {
     Map<Integer, Date> getUserPublicationsIds(int userId);
     
     Publication getPublicationByArticleId(String articleId) throws PublicationDoesNotExistException;
+    
+    int getMarkToReadCounter(int publicationId) throws PublicationDoesNotExistException;
+    
+    void removePublicationBeforeDate(DateTime date);
 }

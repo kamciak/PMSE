@@ -18,8 +18,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
@@ -186,6 +186,12 @@ public class PublicationManagerImpl implements PublicationManager {
     @Override
     public Publication getPublicationById(Integer id) throws PublicationDoesNotExistException {
         return publicationDAO.getPublication(id);
+    }
+    
+    @Override
+    public void removePublicationBeforeDate(DateTime date)
+    {
+        publicationDAO.removePublicationBeforeDate(date);
     }
             
 }

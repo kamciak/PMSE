@@ -38,6 +38,7 @@ public enum DBSchema {
     public static DbColumn PUBLICATION_PUBLICATION_DATE_COLUMN = PUBLICATION_TABLE.addColumn("publicationDate");
     public static DbColumn PUBLICATION_PDF_LINK_COLUMN = PUBLICATION_TABLE.addColumn("pdfLink");
     public static DbColumn PUBLICATION_INSERT_DATE_COLUMN = PUBLICATION_TABLE.addColumn("insertDate");
+    public static DbColumn PUBLICATION_MARK_TO_READ_COUNTER = PUBLICATION_TABLE.addColumn("markToReadCounter");
 
     public static DbTable AUTHOR_TABLE = DBSCHEMA.addTable("author");
     public static DbColumn AUTHOR_ID_COLUMN = AUTHOR_TABLE.addColumn("id");

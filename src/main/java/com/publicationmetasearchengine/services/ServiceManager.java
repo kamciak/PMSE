@@ -1,6 +1,7 @@
 package com.publicationmetasearchengine.services;
 
 import com.publicationmetasearchengine.dao.properties.PropertiesManager;
+import com.publicationmetasearchengine.services.cleaner.CleanerService;
 import com.publicationmetasearchengine.services.croneservice.CroneService;
 import com.publicationmetasearchengine.services.notificationservice.NotificationService;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ public class ServiceManager implements ServletContextListener{
     private static final String COLLECTORS_ARRAY = "datacollectors";
     private static final String SETTINGS_SEPARATOR = ".";
     private static final String NOTIFICATION_SERVICE_PREFIX = "notificationservice" + SETTINGS_SEPARATOR;
+    private static final String CLEANER_SERVICE_PREFIX = "cleanerservice" + SETTINGS_SEPARATOR;
     private static final String COLLECTOR_PREFIX = "datacollector" + SETTINGS_SEPARATOR;
     private static final String CLASS_SETTING = "class";
     
@@ -62,6 +64,13 @@ public class ServiceManager implements ServletContextListener{
             croneService.scheduleJob(notificationService.getJobDetail(), notificationService.getTrigger());
         else
             LOGGER.info("Notificaton Service Disabled");
+        
+        CleanerService cleanerService = new CleanerService();
+        cleanerService.initialize(CLEANER_SERVICE_PREFIX);
+        if (pm.getProperty(CLEANER_SERVICE_PREFIX+"enabled", "0").equals("1"))
+            croneService.scheduleJob(cleanerService.getJobDetail(), cleanerService.getTrigger());
+        else
+            LOGGER.info("Cleaner Service Disabled");
 
         if (croneService.getJobCout() > 0)
             croneService.start();

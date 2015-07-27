@@ -2,12 +2,12 @@ package com.publicationmetasearchengine.dao.publications;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.ComboCondition;
-import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.DeleteQuery;
 import com.healthmarketscience.sqlbuilder.InCondition;
 import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
+import com.healthmarketscience.sqlbuilder.UpdateQuery;
 import com.publicationmetasearchengine.dao.DBSchema;
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationAlreadyExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationDoesNotExistException;
@@ -27,9 +27,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -77,6 +79,8 @@ public class PublicationDAOImpl implements PublicationDAO {
             return result;
         }
     }
+    
+    
 
     private class UserPublicationsRowMapper implements RowMapper {
 
@@ -91,6 +95,11 @@ public class PublicationDAOImpl implements PublicationDAO {
 
         public Map<Integer, Date> getDateIdMap() {
             return dateIdMap;
+        }
+        
+        public Set<Integer> getUserPublicationsIds()
+        {
+            return dateIdMap.keySet();
         }
     }
 
@@ -331,8 +340,57 @@ public class PublicationDAOImpl implements PublicationDAO {
                 .toString();
         try{
             jdbcTemplate.execute(insertQuery);
+            incrementMarkToReadCounter(publicationId);
         } catch (DataIntegrityViolationException ex) {
             throw new RelationAlreadyExistException("" + userId + " - " + publicationId);
+        } 
+    }
+    
+    private void incrementMarkToReadCounter(int publicationId) {
+        try {
+            int markToReadCounter = getMarkToReadCounter(publicationId);
+            String updateQuery = new UpdateQuery(DBSchema.PUBLICATION_TABLE)
+                    .addSetClause(DBSchema.PUBLICATION_MARK_TO_READ_COUNTER, ++markToReadCounter)
+                    .addCondition(new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_ID_COLUMN, publicationId))
+                    .toString();
+
+            jdbcTemplate.update(updateQuery);
+        } catch (PublicationDoesNotExistException ex) {
+        }
+
+
+    }
+
+    private void decrementMarkToReadCounter(int publicationId) {
+        try {
+            int markToReadCounter = getMarkToReadCounter(publicationId);
+            if (markToReadCounter > 0) {
+            String updateQuery = new UpdateQuery(DBSchema.PUBLICATION_TABLE)
+                    .addSetClause(DBSchema.PUBLICATION_MARK_TO_READ_COUNTER, --markToReadCounter)
+                    .addCondition(new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_ID_COLUMN, publicationId))
+                    .toString();
+            
+            LOGGER.debug("Bede decrementowal:");
+            LOGGER.debug(updateQuery);
+                jdbcTemplate.update(updateQuery);
+            }
+        } catch (PublicationDoesNotExistException ex) {
+        }
+
+    }
+
+    @Override
+    public int getMarkToReadCounter(int publicationId) throws PublicationDoesNotExistException {
+        String selectQuery = new SelectQuery()
+                .addFromTable(DBSchema.PUBLICATION_TABLE)
+                .addColumns(DBSchema.PUBLICATION_MARK_TO_READ_COUNTER)
+                .addCondition(new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_ID_COLUMN, publicationId))
+                .toString();
+
+        try {
+            return jdbcTemplate.queryForInt(selectQuery);
+        } catch (DataAccessException ex) {
+            throw new PublicationDoesNotExistException();
         }
     }
 
@@ -376,8 +434,29 @@ public class PublicationDAOImpl implements PublicationDAO {
                         new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.USERPUBLICATIONS_PUBLICATION_ID_COLUMN, publicationId)
                     )
                 ).toString();
-        if (jdbcTemplate.update(deleteQuery) ==0 )
+        decrementMarkToReadCounter(publicationId);
+        if (jdbcTemplate.update(deleteQuery) == 0 )
             throw new RelationDoesNotExistException("" + userId + " - " + publicationId);
+    }
+    
+    public void decrementMarkToReadOfUserPublications(int userId)
+    {
+
+
+       String selectQuery = new SelectQuery()
+                .addFromTable(DBSchema.USERPUBLICATIONS_TABLE)
+                .addColumns(DBSchema.USERPUBLICATIONS_PUBLICATION_ID_COLUMN, DBSchema.USERPUBLICATIONS_INSERT_DATE_COLUMN)
+                .addCondition(new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.USERPUBLICATIONS_USER_ID_COLUMN, userId))
+                .toString();
+
+        UserPublicationsRowMapper userPublicationsRowMapper = new UserPublicationsRowMapper();
+        jdbcTemplate.query(selectQuery, userPublicationsRowMapper);
+
+        LOGGER.debug("Uzytkownik ma: " + userPublicationsRowMapper.getUserPublicationsIds().size() + " publikacji do przeczytania");
+        for(Integer publicationId : userPublicationsRowMapper.getUserPublicationsIds())
+        {
+            decrementMarkToReadCounter(publicationId);
+        }
     }
 
     @Override
@@ -388,6 +467,7 @@ public class PublicationDAOImpl implements PublicationDAO {
                         new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.USERPUBLICATIONS_USER_ID_COLUMN, userId)
                     )
                 ).toString();
+        decrementMarkToReadOfUserPublications(userId);
         if (jdbcTemplate.update(deleteQuery) ==0 )
             throw new RelationDoesNotExistException(""+userId);
     }
@@ -444,5 +524,21 @@ public class PublicationDAOImpl implements PublicationDAO {
                 .addCondition(new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_ARTICLE_ID_COLUMN, articleId))
                 .toString();
         return (Publication) jdbcTemplate.queryForObject(selectQuery, new PublicationRowMapper(false, false));
+    }
+    
+    @Override
+    public void removePublicationBeforeDate(DateTime date) {
+        String deleteQuery = new DeleteQuery(DBSchema.PUBLICATION_TABLE)
+                .addCondition(
+                    new ComboCondition(ComboCondition.Op.AND,
+                        new BinaryCondition(BinaryCondition.Op.LESS_THAN, DBSchema.PUBLICATION_PUBLICATION_DATE_COLUMN, date),
+                        new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_MARK_TO_READ_COUNTER, 0))
+                )
+                .toString();
+
+        
+        LOGGER.debug(("\n\n=====================\n" + deleteQuery + "\n\n==========\n\n"));
+        //jdbcTemplate.update(deleteQuery);
+
     }
 }
