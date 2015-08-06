@@ -7,6 +7,7 @@ import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
+import com.publicationmetasearchengine.gui.searchscreen.SearchScreenPanel;
 import com.publicationmetasearchengine.gui.toreadscreen.ToReadScreenPanel;
 import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
@@ -32,6 +33,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
     private static final long serialVersionUID = 1L;
     private final MenuBar menuBar;
     private final PMSEPanel recentPanel = new PMSEPanel("Recent publications");
+    HorizontalLayout searchLayout = new HorizontalLayout();
     private final PreviewPanel previewPanel = new PreviewPanel("Content");
     private final Map<String, Date> dateMap = new LinkedHashMap<String, Date>();
     private final PMSEButton goBackBtn = new PMSEButton("Go back");
@@ -83,6 +85,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
         publicationTable.setSelectable(true);
 
         goBackBtn.addListener(goBackBtnToReadScreenPanelListener);
+        searchLayout.setEnabled(false);
     }
     
     private void initHomeScreenPanel() {
@@ -108,6 +111,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
 
     public void addPublicationsToTable(List<Publication> publications) {
         publicationTable.cleanAndAddPublications(publications);
+        searchLayout.setEnabled(false);
     }
 
     public void setProperPublicationsTableListener()
@@ -124,6 +128,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
         //setBackupPublications();
         List<Publication> publications = publicationManager.getPublicationOfAuthor(authorName);
         publicationTable.cleanAndAddPublications(publications);
+        searchLayout.setEnabled(false);
     }
 
     private HorizontalLayout initMainHorizontalLayout() {
@@ -143,7 +148,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
 
     private void initRecentPanelContent() {
         recentPanel.setSizeFull();
-        HorizontalLayout searchLayout = new HorizontalLayout();
+        //HorizontalLayout searchLayout = new HorizontalLayout();
         searchLayout.setSpacing(true);
         searchLayout.setSizeFull();
         searchLayout.addComponent(sourceDBCB);
@@ -155,6 +160,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
         searchLayout.addComponent(keywordFilter);
         searchLayout.setExpandRatio(keywordFilter, 1);
         searchLayout.setComponentAlignment(keywordFilter, Alignment.MIDDLE_RIGHT);
+        
 
         publicationTable.setSizeFull();
         publicationTable.setSelectable(true);
@@ -228,6 +234,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
     @Override
     public void setBackup()
     {
+        backupManager.setBackupScreen(this);
         enableBackButon();
     }
     
@@ -259,6 +266,7 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
         }
         //backupPublications = new ArrayList<Publication>(publicationTable.getAllPublication());
         backupManager.setBackupPublications(getPanelPublications());
+        
     }
     /*
     public List<Publication> getBackupPublications() {
@@ -356,18 +364,15 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
             boolean isExternalPublicationTmp = backupManager.isExternalPublication();
             backupManager.setIsExternalPublication(isExternalPublication);
             setIsExternalPublication(isExternalPublicationTmp);
-            
+
             publicationTable.cleanAndAddPublications(backupManager.getBackupPublications());
-            
+
             setPreviewPanelVisibility(true);
             goBackBtn.setEnabled(false);
-            if(isExternalPublication())
-            {
+            if (isExternalPublication()) {
                 setAuthorPublicationTableChangeListener();
-                previewPanel.setContentForAuthorPublications(backupManager.getPreviousPublication());    
-            }
-            else
-            {
+                previewPanel.setContentForAuthorPublications(backupManager.getPreviousPublication());
+            } else {
                 setPublicationTableChangeListener();
                 previewPanel.setContent(backupManager.getPreviousPublication());
             }
@@ -379,7 +384,13 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
 
         @Override
         public void buttonClick(Button.ClickEvent event) {
-            getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new ToReadScreenPanel()));
+            //boolean isExternalPublicationTmp = backupManager.isExternalPublication();
+            backupManager.setIsExternalPublication(isExternalPublication);
+            PublicationScreenPanel previousPanel = backupManager.getBackupScreen();
+            if(previousPanel instanceof ToReadScreenPanel)
+                getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new ToReadScreenPanel(false)));
+            else if(previousPanel instanceof SearchScreenPanel)
+                getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new SearchScreenPanel(false)));
         }
     };
  
@@ -409,11 +420,13 @@ public class HomeScreenPanel extends VerticalLayout implements PublicationScreen
         }
     };
     
+    @Override
     public void setIsExternalPublication(boolean externalPublication)
     {
         isExternalPublication = externalPublication;
     }
     
+    @Override
     public boolean isExternalPublication()
     {
         return isExternalPublication;

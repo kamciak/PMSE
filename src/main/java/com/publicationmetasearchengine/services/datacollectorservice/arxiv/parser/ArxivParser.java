@@ -1,8 +1,10 @@
 package com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser;
 
+import com.publicationmetasearchengine.services.ServiceManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,9 +12,11 @@ import org.jsoup.nodes.Element;
 public class ArxivParser {
 
     private final Document arxivDoc;
-
+    private static final Logger LOGGER = Logger.getLogger(ArxivParser.class);
     public ArxivParser(String xmlString) {
         this.arxivDoc = Jsoup.parse(xmlString);
+        LOGGER.debug("\n=====ARXIV DOC========\n");
+        LOGGER.debug(arxivDoc);
     }
 
     public List<RawEntry> getEtnriesAfterDate(Date afterDate) {

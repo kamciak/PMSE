@@ -521,7 +521,12 @@ public class PublicationDAOImpl implements PublicationDAO {
                 .addJoins(SelectQuery.JoinType.LEFT_OUTER, DBSchema.PUBLICATION_SOURCETITLE_JOIN)
                 .addCondition(new BinaryCondition(BinaryCondition.Op.EQUAL_TO, DBSchema.PUBLICATION_ARTICLE_ID_COLUMN, articleId))
                 .toString();
-        return (Publication) jdbcTemplate.queryForObject(selectQuery, new PublicationRowMapper(false, false));
+        try {
+            return (Publication) jdbcTemplate.queryForObject(selectQuery, new PublicationRowMapper(false, false));
+        } catch(EmptyResultDataAccessException ex)
+        {
+            throw new PublicationDoesNotExistException(String.format("[%s]",  articleId));        
+        }
     }
     
     @Override

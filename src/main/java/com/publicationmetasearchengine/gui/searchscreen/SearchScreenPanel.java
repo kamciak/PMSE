@@ -2,29 +2,36 @@ package com.publicationmetasearchengine.gui.searchscreen;
 
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
+import com.publicationmetasearchengine.gui.PublicationScreenPanel;
 import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.homescreen.PreviewPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
+import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.data.Property;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
+public class SearchScreenPanel extends VerticalLayout implements PublicationScreenPanel {
     private static final Logger LOGGER = Logger.getLogger(SearchScreenPanel.class);
     private static final long serialVersionUID = 1L;
-
+    private boolean isExternalPublication = false;
     @Autowired
     PublicationManager publicationManager;
+    @Autowired
+    private BackupManager backupManager;
 
     private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
+    private List<Publication> allPublications = new ArrayList<Publication>();
 
     private FiltersPanel filtersPanel = new FiltersPanel("Filters") {
         private static final long serialVersionUID = 1L;
@@ -50,16 +57,14 @@ public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
 
     public SearchScreenPanel() {
         super();
-        setMargin(true);
-        setSpacing(true);
-        setSizeFull();
-
-        mainHorizontalLayout = initMainHorizontalLayout();
-
-        addComponent(menuBar);
-        addComponent(mainHorizontalLayout);
-        setExpandRatio(menuBar, 0);
-        setExpandRatio(mainHorizontalLayout, 1);
+        initSearchScreenPanel();
+    }
+    
+    public SearchScreenPanel(boolean isExternalPublication)
+    {
+        super();
+        initSearchScreenPanel();
+        this.isExternalPublication = isExternalPublication;
     }
 
     private HorizontalLayout initMainHorizontalLayout() {
@@ -72,6 +77,7 @@ public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
         filtersPanel.setWidth("320px");
         initResultPanel();
         previewPanel.setSizeFull();
+        previewPanel.setParentPanel(this);
 
 
         hl.addComponent(filtersPanel);
@@ -133,5 +139,61 @@ public class SearchScreenPanel extends VerticalLayout implements ScreenPanel {
                     isEmpty = false;
         }
         return isEmpty;
+    }
+    
+ @Override
+    public List<Publication> getPanelPublications()
+    {
+        for(Object id: resultTable.getItemIds())
+        {
+            allPublications.add((Publication) resultTable.getItem(id).getItemProperty(ResultTable.TABLE_PUBLICATION_COLUMN).getValue());
+        }
+
+        return allPublications;
+    }
+    
+    @Override
+    public Publication getCurrentPublication()
+    {
+        return previewPanel.getActivePublication();
+    }
+    
+    @Override
+    public void setBackup()
+    {
+        backupManager.setBackupPublications(getPanelPublications());
+        backupManager.setPreviousPublication(getCurrentPublication());
+        backupManager.setBackupScreen(this);
+    }
+    
+    @Override
+    public Table getPublicationTable()
+    {
+        return resultTable;
+    }
+    
+    @Override
+    public boolean isExternalPublication()
+    {
+        return isExternalPublication;
+    }
+    
+    @Override
+    public void setIsExternalPublication(boolean externalPublication)
+    {
+        isExternalPublication = externalPublication;
+    }
+
+    private void initSearchScreenPanel() {
+        setMargin(true);
+        setSpacing(true);
+        setSizeFull();
+
+        mainHorizontalLayout = initMainHorizontalLayout();
+
+        addComponent(menuBar);
+        addComponent(mainHorizontalLayout);
+        setExpandRatio(menuBar, 0);
+        setExpandRatio(mainHorizontalLayout, 1);
     }
 }

@@ -16,6 +16,8 @@ public class WOKParser {
 
     public WOKParser(String xmlResponse) {
         wokDoc = Jsoup.parse(xmlResponse);
+        LOGGER.debug("\n=====WOK DOC========\n");
+        LOGGER.debug(wokDoc);
     }
 
     public List<RawRecord> getRecords() {

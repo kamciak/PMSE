@@ -224,6 +224,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private void setLink(Link link, String caption, String resourceLink) {
         link.setCaption(caption);
         link.setResource(new ExternalResource(resourceLink));
+        link.setTargetName("_blank");
     }
 
     private void initAuthorButtons(List<Author> publicationAuthors) {
@@ -260,20 +261,14 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-
+                parentPanel.setBackup();
+                parentPanel.setIsExternalPublication(false);
+                backupManager.setBackupPublications(parentPanel.getPanelPublications());
+                backupManager.setPreviousPublication(getActivePublication());
+                backupManager.setIsExternalPublication(parentPanel.isExternalPublication());
                 if (parentPanel instanceof HomeScreenPanel) {
-                    backupManager.setBackupPublications(parentPanel.getPanelPublications());
-                    backupManager.setPreviousPublication(getActivePublication());
-
-
-                    backupManager.setIsExternalPublication(((HomeScreenPanel) parentPanel).isExternalPublication());
-                    ((HomeScreenPanel) parentPanel).setIsExternalPublication(false);
-
-                    parentPanel.setBackup();
-
                     ((HomeScreenPanel) parentPanel).filterPublicationByAuthorOfSelected(authorName);
                     ((HomeScreenPanel) parentPanel).setProperPublicationsTableListener();
-
                 } else {
                     List<Publication> publications = findPublicationsBySelectedAuthor(authorName);
                     getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), publications, false));
@@ -287,6 +282,12 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         searchForAllAuthorsPublication.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                backupManager.setIsExternalPublication(parentPanel.isExternalPublication());
+                                backupManager.setBackupPublications(parentPanel.getPanelPublications());
+                                backupManager.setPreviousPublication(getActivePublication());
+                                parentPanel.setBackup();
+                parentPanel.setIsExternalPublication(true);
+                
                 CheckboxConfirmDialog.show(getWindow(), confirmationText,
                         new CheckboxConfirmDialog.Listener() {
                     @Override
@@ -303,16 +304,10 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                             if (dialog.searchInWoK()) {
                                 allPublications.addAll(getWoKAuthorPublications(authorName));
                             }
-                            if (parentPanel instanceof HomeScreenPanel) {
-                                backupManager.setIsExternalPublication(((HomeScreenPanel) parentPanel).isExternalPublication());
-                                backupManager.setBackupPublications(parentPanel.getPanelPublications());
-                                backupManager.setPreviousPublication(getActivePublication());
-                                parentPanel.setBackup();
+                            if (parentPanel instanceof HomeScreenPanel) {         
                                 ((HomeScreenPanel) parentPanel).addPublicationsToTable(allPublications);
-                                ((HomeScreenPanel) parentPanel).setIsExternalPublication(true);
                                 ((HomeScreenPanel) parentPanel).setProperPublicationsTableListener();
                             } else {
-                                backupManager.setIsExternalPublication(true);
                                 getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), allPublications, true));
                             }
                         }
@@ -373,7 +368,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         @Override
         public void buttonClick(Button.ClickEvent event) {
             try {
-                if (((HomeScreenPanel) parentPanel).isExternalPublication()) {
+                if (parentPanel instanceof HomeScreenPanel && parentPanel.isExternalPublication()) {
                     Integer publicationId = insertActivePublicationIntoDB();
                     if (publicationId != null) {
                         try {

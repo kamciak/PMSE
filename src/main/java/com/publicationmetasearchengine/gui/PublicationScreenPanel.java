@@ -17,4 +17,6 @@ public interface PublicationScreenPanel extends ScreenPanel{
     Publication getCurrentPublication();
     Table getPublicationTable();
     void setBackup();
+    boolean isExternalPublication();
+    void setIsExternalPublication(boolean externalPublication);
 }

@@ -59,6 +59,15 @@ public class EntryParser {
     public String getPDFLink() {
         return String.format("http://arxiv.org/pdf/%s.pdf", getID());
     }
+    
+    public String getOriginalPDFLink() {
+        return entryDoc.select("link[title=pdf").first().attr("abs:href");
+    }
+    
+    public String getPDF()
+    {
+        return !getOriginalPDFLink().isEmpty() ? getOriginalPDFLink() : getPDFLink();
+    }
 
     public RawEntry getRawEntry() {
         return new RawEntry(
@@ -69,7 +78,7 @@ public class EntryParser {
                 getJournalRef(),
                 getPublicationDate(),
                 getAuthorStrings(),
-                getPDFLink()
+                getPDF()
             );
     }
 

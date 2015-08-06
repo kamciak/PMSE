@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class ToReadScreenPanel extends VerticalLayout implements PublicationScreenPanel {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ToReadScreenPanel.class);
-
+    private boolean isExternalPublication = false;
 
     private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
 
@@ -69,15 +69,14 @@ public class ToReadScreenPanel extends VerticalLayout implements PublicationScre
     private PMSEPanel bibtexPanel = new PMSEPanel();
     public ToReadScreenPanel(){
         super();
-        setMargin(true);
-        setSpacing(true);
-        setSizeFull();
-        mainHorizontalLayout = initMainHorizontalLayout();
-
-        addComponent(menuBar);
-        addComponent(mainHorizontalLayout);
-        setExpandRatio(menuBar, 0);
-        setExpandRatio(mainHorizontalLayout, 1);
+        initToReadScreenPanel();
+    }
+    
+    public ToReadScreenPanel(boolean isExternalPublication)
+    {
+        super();
+        initToReadScreenPanel();
+        this.isExternalPublication = isExternalPublication;
     }
 
     @Override
@@ -322,11 +321,36 @@ public class ToReadScreenPanel extends VerticalLayout implements PublicationScre
     {
         backupManager.setBackupPublications(getPanelPublications());
         backupManager.setPreviousPublication(getCurrentPublication());
+        backupManager.setBackupScreen(this);
     }
     
     @Override
     public Table getPublicationTable()
     {
         return toReadTable;
+    }
+    
+        @Override
+    public boolean isExternalPublication()
+    {
+        return isExternalPublication;
+    }
+    
+    @Override
+    public void setIsExternalPublication(boolean externalPublication)
+    {
+        isExternalPublication = externalPublication;
+    }
+
+    private void initToReadScreenPanel() {
+        setMargin(true);
+        setSpacing(true);
+        setSizeFull();
+        mainHorizontalLayout = initMainHorizontalLayout();
+
+        addComponent(menuBar);
+        addComponent(mainHorizontalLayout);
+        setExpandRatio(menuBar, 0);
+        setExpandRatio(mainHorizontalLayout, 1);
     }
 }

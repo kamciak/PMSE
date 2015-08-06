@@ -48,8 +48,8 @@ public class ArxivAuthorCollector implements Serializable {
     private String prepareAuthorNameForSearch(String authorName) {
         List<String> authorData = new LinkedList<String>(Arrays.asList(authorName.replace("-", "_").split(" ")));
         String authorSurename = authorData.remove(0);
-        char firstLetterOfAuthorName = authorData.remove(0).charAt(0);
-        return authorSurename + "_" + firstLetterOfAuthorName;
+        String authorFirstName = authorData.remove(0);
+        return authorSurename + "_" + authorFirstName;
     }
 
 
