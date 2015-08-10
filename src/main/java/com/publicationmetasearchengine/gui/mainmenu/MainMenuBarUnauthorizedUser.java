@@ -3,10 +3,13 @@ import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.gui.loginscreen.LoginScreenPanel;
 import org.springframework.beans.factory.annotation.Configurable;
 
+
 @Configurable(preConstruction = true)
 public class MainMenuBarUnauthorizedUser extends MainMenuBar{
 
-    public MainMenuBarUnauthorizedUser() {
+
+    public MainMenuBarUnauthorizedUser()
+    {
         super();
         initHomeMenuItem();
         initLoginMenuItem();
@@ -18,7 +21,7 @@ public class MainMenuBarUnauthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarUnauthorizedUser()));
+                navigator.navigateTo(HomeScreenPanel.class);
             }
         });
     }
@@ -29,7 +32,7 @@ public class MainMenuBarUnauthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(new LoginScreenPanel());
+                navigator.navigateTo(LoginScreenPanel.class);
             }
         });
     }

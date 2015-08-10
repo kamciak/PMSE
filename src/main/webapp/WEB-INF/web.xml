@@ -30,8 +30,8 @@
         <listener-class>com.publicationmetasearchengine.services.ServiceManager</listener-class>
     </listener>
 
-    <servlet>
-        <servlet-name>PMSEApplication</servlet-name>
+    <!--<servlet>
+       <servlet-name>PMSEApplication</servlet-name>
         <servlet-class>
             com.vaadin.terminal.gwt.server.ApplicationServlet
         </servlet-class>
@@ -42,10 +42,39 @@
                 com.publicationmetasearchengine.PMSEApplication
             </param-value>
         </init-param>
-    </servlet>
+    </servlet>-->
+<!--    <servlet>
+        <servlet-name>PMSENavigableApplication</servlet-name>
+        <servlet-class>org.vaadin.navigator7.NavigableApplicationServlet</servlet-class>
+        <init-param>
+            <param-name>PMSENavigableApplication</param-name>
+            <param-value>com.publicationmetasearchengine.PMSENavigableApplication</param-value>
+        </init-param>  
+        <init-param>
+            <description>Navigator7 WebApplication class to start (optionnal)</description>
+            <param-name>PMSEWebApplication</param-name>
+            <param-value>com.publicationmetasearchengine.PMSEWebApplication</param-value>
+        </init-param>
+    </servlet>-->
+    <servlet>
+        <servlet-name>vaadin</servlet-name>
+        <servlet-class>org.vaadin.navigator7.NavigableApplicationServlet</servlet-class>
+        <init-param>
+            <description>Vaadin application class to start</description>
+            <param-name>application</param-name>
+            <param-value>
+                com.publicationmetasearchengine.PMSENavigableApplication
+            </param-value>
+        </init-param>
+                        <init-param>
+                        <description>Navigator7 WebApplication class to start (optionnal)</description>
+                        <param-name>webApplication</param-name>
+                        <param-value>com.publicationmetasearchengine.PMSEWebApplication</param-value>
+                </init-param>
 
+    </servlet>
     <servlet-mapping>
-        <servlet-name>PMSEApplication</servlet-name>
+        <servlet-name>vaadin</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
     

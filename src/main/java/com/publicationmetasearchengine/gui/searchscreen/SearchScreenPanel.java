@@ -11,6 +11,7 @@ import com.publicationmetasearchengine.management.backupmanagement.BackupManager
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.data.Property;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class SearchScreenPanel extends VerticalLayout implements PublicationScreenPanel {
+public class SearchScreenPanel extends CustomComponent implements PublicationScreenPanel {
     private static final Logger LOGGER = Logger.getLogger(SearchScreenPanel.class);
     private static final long serialVersionUID = 1L;
     private boolean isExternalPublication = false;
@@ -30,7 +31,7 @@ public class SearchScreenPanel extends VerticalLayout implements PublicationScre
     @Autowired
     private BackupManager backupManager;
 
-    private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
+    //private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
     private List<Publication> allPublications = new ArrayList<Publication>();
 
     private FiltersPanel filtersPanel = new FiltersPanel("Filters") {
@@ -58,6 +59,7 @@ public class SearchScreenPanel extends VerticalLayout implements PublicationScre
     public SearchScreenPanel() {
         super();
         initSearchScreenPanel();
+        setCompositionRoot(mainHorizontalLayout);
     }
     
     public SearchScreenPanel(boolean isExternalPublication)
@@ -65,6 +67,7 @@ public class SearchScreenPanel extends VerticalLayout implements PublicationScre
         super();
         initSearchScreenPanel();
         this.isExternalPublication = isExternalPublication;
+        setCompositionRoot(mainHorizontalLayout);
     }
 
     private HorizontalLayout initMainHorizontalLayout() {
@@ -185,15 +188,16 @@ public class SearchScreenPanel extends VerticalLayout implements PublicationScre
     }
 
     private void initSearchScreenPanel() {
-        setMargin(true);
-        setSpacing(true);
+//        setMargin(true);
+//        setSpacing(true);
         setSizeFull();
 
         mainHorizontalLayout = initMainHorizontalLayout();
 
-        addComponent(menuBar);
-        addComponent(mainHorizontalLayout);
-        setExpandRatio(menuBar, 0);
-        setExpandRatio(mainHorizontalLayout, 1);
+//        addComponent(menuBar);
+//        addComponent(mainHorizontalLayout);
+        
+//        setExpandRatio(menuBar, 0);
+//        setExpandRatio(mainHorizontalLayout, 1);
     }
 }

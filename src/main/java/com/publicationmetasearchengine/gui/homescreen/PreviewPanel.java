@@ -15,16 +15,11 @@ import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
-import com.publicationmetasearchengine.gui.dialog.CheckboxConfirmDialog;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
 import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
-import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
-import com.publicationmetasearchengine.services.datacollectorservice.bwn.BWNAuthorCollector;
-import com.publicationmetasearchengine.services.datacollectorservice.wok.WoKAuthorCollector;
 import com.publicationmetasearchengine.utils.DateUtils;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.vaadin.terminal.ExternalResource;
@@ -35,7 +30,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.BaseTheme;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,7 +38,7 @@ import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-//import org.vaadin.dialogs.ConfirmDialog;
+import org.vaadin.navigator7.uri.ParamPageResource;
 
 @Configurable(preConstruction = true)
 public class PreviewPanel extends PMSEPanel implements Serializable {
@@ -58,11 +52,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     @Autowired
     private AuthorManager authorManager;
     @Autowired
-    private BackupManager backupManager;
-    @Autowired
     private SourceTitleDAO sourceTitleDAO;
-    @Autowired
-    private SourceDbDAO sourceDbDAO;
     private PublicationScreenPanel parentPanel;
     private final Label titleLbl = new Label();
     private final Label authorsLbl = new Label();
@@ -76,7 +66,6 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private User activeUser;
     private VerticalLayout vl = new VerticalLayout();
     private CssLayout cl = new CssLayout();
-    private final String confirmationText = "Searching in external libraries can take up to few minutes. Do you want to continue?";
 
     public PreviewPanel(String caption) {
         super(caption);
@@ -230,109 +219,32 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
     private void initAuthorButtons(List<Author> publicationAuthors) {
         cl.removeAllComponents();
         cl.addComponent(authorsLbl);
-
         if (publicationAuthors != null) {
             authorsLbl.setValue("by: ");
             for (Author author : publicationAuthors) {
-                PMSEButton button = new PMSEButton(author.getName());
-                PMSEButton searchForAllAuthorsPublication = new PMSEButton();
-                searchForAllAuthorsPublication.setStyleName(BaseTheme.BUTTON_LINK);
+                Link button;
+                Link searchForAllAuthorsPublication = new Link();
+                if (!(parentPanel instanceof HomeScreenPanel)) {
+                    button = new Link(author.getName(), new ParamPageResource(HomeScreenPanel.class, "DL#" + author.getName())); //$1 - Enable/Disable goBackBtn, //$2 - Local/External search
+                    searchForAllAuthorsPublication.setResource(new ParamPageResource(HomeScreenPanel.class, "DE#" + author.getName()));
+                } else {
+                    button = new Link(author.getName(), new ParamPageResource(HomeScreenPanel.class, "EL#" + author.getName()));
+                    searchForAllAuthorsPublication.setResource(new ParamPageResource(HomeScreenPanel.class, "EE#" + author.getName()));
+                }
+
+                button.setStyleName("v-button v-button-link link");
+
+                searchForAllAuthorsPublication.setStyleName("v-button v-button-link link");
                 String basepath = getApplication().getContext().getBaseDirectory().getAbsolutePath();
                 FileResource resource = new FileResource(new File(basepath + "/WEB-INF/images/search-icon-md.png"), getApplication());
                 searchForAllAuthorsPublication.setIcon(resource);
-                final String authorName = author.getName();
 
-                handleSearchForLocalPublicationOfAuthor(button, authorName);
-
-                handleSearchForExternalPublicationOfAuthor(searchForAllAuthorsPublication, authorName);
                 cl.addComponent(button);
                 cl.addComponent(searchForAllAuthorsPublication);
-                button.setStyleName("link");
             }
         } else {
             authorsLbl.setValue("");
         }
-    }
-
-    //LOCAL
-    private void handleSearchForLocalPublicationOfAuthor(PMSEButton button, final String authorName) {
-        button.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                parentPanel.setBackup();
-                parentPanel.setIsExternalPublication(false);
-                backupManager.setBackupPublications(parentPanel.getPanelPublications());
-                backupManager.setPreviousPublication(getActivePublication());
-                backupManager.setIsExternalPublication(parentPanel.isExternalPublication());
-                if (parentPanel instanceof HomeScreenPanel) {
-                    ((HomeScreenPanel) parentPanel).filterPublicationByAuthorOfSelected(authorName);
-                    ((HomeScreenPanel) parentPanel).setProperPublicationsTableListener();
-                } else {
-                    List<Publication> publications = findPublicationsBySelectedAuthor(authorName);
-                    getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), publications, false));
-                }
-            }
-        });
-    }
-    //EXTERNAL
-
-    private void handleSearchForExternalPublicationOfAuthor(PMSEButton searchForAllAuthorsPublication, final String authorName) {
-        searchForAllAuthorsPublication.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                backupManager.setIsExternalPublication(parentPanel.isExternalPublication());
-                                backupManager.setBackupPublications(parentPanel.getPanelPublications());
-                                backupManager.setPreviousPublication(getActivePublication());
-                                parentPanel.setBackup();
-                parentPanel.setIsExternalPublication(true);
-                
-                CheckboxConfirmDialog.show(getWindow(), confirmationText,
-                        new CheckboxConfirmDialog.Listener() {
-                    @Override
-                    public void onClose(CheckboxConfirmDialog dialog) {
-                        if (dialog.isConfirmed()) {
-
-                            List<Publication> allPublications = new ArrayList<Publication>();
-                            if (dialog.searchInArxiv()) {
-                                allPublications.addAll(getArxivAuthorPublications(authorName));
-                            }
-                            if (dialog.searchInBwn()) {
-                                allPublications.addAll(getBWNAuthorPublications(authorName));
-                            }
-                            if (dialog.searchInWoK()) {
-                                allPublications.addAll(getWoKAuthorPublications(authorName));
-                            }
-                            if (parentPanel instanceof HomeScreenPanel) {         
-                                ((HomeScreenPanel) parentPanel).addPublicationsToTable(allPublications);
-                                ((HomeScreenPanel) parentPanel).setProperPublicationsTableListener();
-                            } else {
-                                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser(), allPublications, true));
-                            }
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    private List<Publication> getArxivAuthorPublications(String authorName) {
-        ArxivAuthorCollector arxivAuthorCollector = new ArxivAuthorCollector(authorName);
-        arxivAuthorCollector.downloadAuthorPublications();
-        return arxivAuthorCollector.getPublications();
-    }
-
-    private List<Publication> getBWNAuthorPublications(String authorName) {
-        BWNAuthorCollector bwnAuthorCollector = new BWNAuthorCollector(authorName);
-        bwnAuthorCollector.downloadAuthorPublications();
-        return bwnAuthorCollector.getPublications();
-    }
-
-    private List<Publication> getWoKAuthorPublications(String authorName) {
-        WoKAuthorCollector wokAuthorCollector = new WoKAuthorCollector(authorName);
-        wokAuthorCollector.downloadAuthorPublications();
-        return wokAuthorCollector.getPublications();
     }
 
     public void additionalMarkAsReadAction() {
@@ -457,7 +369,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                     null,
                     activePublication.getPublicationDate(),
                     activePublication.getPdfLink());
-            
+
             authorManager.setPublicationAuthorsIds(publicationId, authorIds);
             return publicationId;
         } catch (PublicationAlreadyExistException ex) {

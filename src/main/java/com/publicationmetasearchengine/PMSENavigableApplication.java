@@ -1,33 +1,22 @@
 package com.publicationmetasearchengine;
 
-import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarUnauthorizedUser;
 import com.publicationmetasearchengine.utils.Notificator;
-import com.vaadin.Application;
 import com.vaadin.terminal.Terminal;
-import com.vaadin.ui.Window;
 import java.io.IOException;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.vaadin.navigator7.NavigableApplication;
+import org.vaadin.navigator7.window.NavigableAppLevelWindow;
 
-public class PMSEApplication extends Application{
+
+public class PMSENavigableApplication extends NavigableApplication {
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(PMSENavigableApplication.class);
 
-    private static final Logger LOGGER = Logger.getLogger(PMSEApplication.class);
-
-    @Override
-    public void init() {
-        initLog4j();
-        initMainWindow();
-        LOGGER.info("Publication MetaSearch Engine is up");
-    }
-
-    private void initMainWindow() {
+    public PMSENavigableApplication() {
         setTheme("pmseTheme");
-        Window mainWindow = new Window("Publication MetaSearch Engine");
-        mainWindow.setContent(new HomeScreenPanel(new MainMenuBarUnauthorizedUser()));
-        setMainWindow(mainWindow);
+        initLog4j();
     }
 
     @Override
@@ -38,6 +27,12 @@ public class PMSEApplication extends Application{
             Notificator.showNotification(this, "Error", "Unexpected error.\nPlease notify administrator.", Notificator.NotificationType.ERROR);
         }
         LOGGER.fatal(String.format("Uncaught exception - %s", event.getThrowable().getClass()), event.getThrowable());
+    }
+    
+    @Override
+    public Object getUser()
+    {
+        return super.getUser();
     }
 
     private void initLog4j() {
@@ -50,4 +45,10 @@ public class PMSEApplication extends Application{
         }
         PropertyConfigurator.configure(log);
     }
+
+    @Override
+    public NavigableAppLevelWindow createNewNavigableAppLevelWindow() {
+        return new PMSEAppLevelWindow();
+    }
+    
 }

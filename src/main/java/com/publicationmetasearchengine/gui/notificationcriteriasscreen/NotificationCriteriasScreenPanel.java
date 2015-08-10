@@ -10,7 +10,7 @@ import com.vaadin.ui.VerticalLayout;
 public class NotificationCriteriasScreenPanel extends VerticalLayout implements ScreenPanel {
     private static final long serialVersionUID = 1L;
 
-    private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
+ //   private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
 
     private PMSEPanel listPanel = new PMSEPanel("Saved search criterias");
     private FilterCriteriasList filterCriteriasList;
@@ -38,9 +38,9 @@ public class NotificationCriteriasScreenPanel extends VerticalLayout implements 
         mainLayout.setExpandRatio(listPanel, 1);
         mainLayout.setExpandRatio(filtersPanel, 2);
 
-        addComponent(menuBar);
+//        addComponent(menuBar);
         addComponent(mainLayout);
-        setExpandRatio(menuBar, 0);
+ //       setExpandRatio(menuBar, 0);
         setExpandRatio(mainLayout, 1);
     }
 

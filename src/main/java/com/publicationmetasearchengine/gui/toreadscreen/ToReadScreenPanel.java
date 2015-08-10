@@ -16,6 +16,7 @@ import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.data.Property;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -29,12 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class ToReadScreenPanel extends VerticalLayout implements PublicationScreenPanel {
+public class ToReadScreenPanel extends CustomComponent implements PublicationScreenPanel {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ToReadScreenPanel.class);
     private boolean isExternalPublication = false;
 
-    private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
+ //   private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
 
     @Autowired
     private PublicationManager publicationManager;
@@ -343,14 +344,15 @@ public class ToReadScreenPanel extends VerticalLayout implements PublicationScre
     }
 
     private void initToReadScreenPanel() {
-        setMargin(true);
-        setSpacing(true);
+//        setMargin(true);
+//        setSpacing(true);
         setSizeFull();
         mainHorizontalLayout = initMainHorizontalLayout();
 
-        addComponent(menuBar);
-        addComponent(mainHorizontalLayout);
-        setExpandRatio(menuBar, 0);
-        setExpandRatio(mainHorizontalLayout, 1);
+        //addComponent(menuBar);
+        setCompositionRoot(mainHorizontalLayout);
+//        addComponent(mainHorizontalLayout);
+//        setExpandRatio(menuBar, 0);
+//        setExpandRatio(mainHorizontalLayout, 1);
     }
 }

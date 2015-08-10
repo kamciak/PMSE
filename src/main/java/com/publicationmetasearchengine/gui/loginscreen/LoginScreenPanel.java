@@ -1,5 +1,6 @@
 package com.publicationmetasearchengine.gui.loginscreen;
 
+import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
@@ -7,15 +8,15 @@ import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
 import com.publicationmetasearchengine.dao.users.exceptions.InvalidCredentialsException;
 import com.publicationmetasearchengine.gui.ScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarUnauthorizedUser;
 import com.publicationmetasearchengine.utils.CryptoUtils;
 import com.publicationmetasearchengine.utils.Notificator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -24,9 +25,12 @@ import com.vaadin.ui.VerticalLayout;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.navigator7.Page;
 
+@Page(uriName="LoginScreenPanel")
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
+public class LoginScreenPanel extends CustomComponent implements ScreenPanel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOGGER = Logger.getLogger(LoginScreenPanel.class);
@@ -48,12 +52,16 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
     private PMSEButton goBackBtn = new PMSEButton("Go back");
     
     public LoginScreenPanel() {
-        setSizeFull();
-        setHeight("50%");
-
+        setSizeUndefined();
         initLoginPanel();
-        addComponent(loginPanel);
-        setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
+
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setMargin(true);
+        hl.setSpacing(true);
+        hl.setWidth("100%");
+        hl.addComponent(loginPanel);
+        hl.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
+        setCompositionRoot(hl);
     }
 
     private void initLoginPanel() {
@@ -83,22 +91,10 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
         forgotPasswordBtn.setTabIndex(-1);
         registerBtn.setTabIndex(-1);
 
-        
         loginPanel.setContent(gl);
         loginPanel.setSizeUndefined();
-        
-        
-        
-        
-        
-        goBackBtn.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            public void buttonClick(ClickEvent event) {
-                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarUnauthorizedUser()));
-            }
-        });
+        initGoBackBtnListener();
     }
 
     private VerticalLayout initButtonLayout() {
@@ -134,8 +130,6 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
             }
         });
 
-        
-
         vl.addComponent(loginBtn);
         vl.addComponent(forgotPasswordBtn);
         vl.addComponent(registerBtn);
@@ -153,10 +147,21 @@ public class LoginScreenPanel extends VerticalLayout implements ScreenPanel {
             User user = userManager.getUserByLoginAndPassword(username, password);
             getApplication().setUser(user);
             LOGGER.info(String.format("User [%s] logged in", user));
-            getApplication().getMainWindow().setContent(user.getScreenPanel(new HomeScreenPanel(new MainMenuBarAuthorizedUser())));
+            PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().navigateTo(HomeScreenPanel.class);       
         } catch (InvalidCredentialsException ex) {
             Notificator.showNotification(getApplication(), "Login error", "Invalid user credentials", Notificator.NotificationType.ERROR);
             LOGGER.debug(String.format("Invalid users credentials [%s - %s]", username, password));
         }
+    }
+
+    private void initGoBackBtnListener() {
+        goBackBtn.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().navigateTo(HomeScreenPanel.class);
+            }
+        });
     }
 }

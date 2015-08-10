@@ -31,7 +31,7 @@ public class MainMenuBarAuthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarAuthorizedUser()));
+                navigator.navigateTo(HomeScreenPanel.class);
             }
         });
     }
@@ -42,7 +42,7 @@ public class MainMenuBarAuthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(user.getScreenPanel(new ToReadScreenPanel()));
+                navigator.navigateTo(ToReadScreenPanel.class);
             }
         });
 
@@ -54,7 +54,7 @@ public class MainMenuBarAuthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(user.getScreenPanel(new SearchScreenPanel()));
+                navigator.navigateTo(SearchScreenPanel.class);
             }
         });
 
@@ -66,7 +66,7 @@ public class MainMenuBarAuthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(user.getScreenPanel(new NotificationCriteriasScreenPanel()));
+                navigator.navigateTo(NotificationCriteriasScreenPanel.class);
             }
         });
 
@@ -79,7 +79,7 @@ public class MainMenuBarAuthorizedUser extends MainMenuBar{
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                getApplication().getMainWindow().setContent(user.getScreenPanel(new ProfileScreenPanel()));
+                navigator.navigateTo(ProfileScreenPanel.class);
             }
         });
         profileMenuItem.addSeparator();

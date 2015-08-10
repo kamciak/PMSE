@@ -1,21 +1,23 @@
 package com.publicationmetasearchengine.gui.mainmenu;
 
+import com.publicationmetasearchengine.PMSEAppLevelWindow;
+import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
 import com.vaadin.ui.MenuBar;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.navigator7.Navigator;
 
 /**
  *
  * @author Kamciak
  */
-public abstract class MainMenuBar extends MenuBar {
+public class MainMenuBar extends MenuBar {
     protected static final long serialVersionUID = 1L;
     protected static final Logger LOGGER = Logger.getLogger(MainMenuBarUnauthorizedUser.class);
-
+    protected Navigator navigator;
     @Autowired
     protected UserManager userManager;
     protected User user;
@@ -30,10 +32,14 @@ public abstract class MainMenuBar extends MenuBar {
         user = (User) getApplication().getUser();
     }
 
-
+    public void setNavigator(Navigator navigator)
+    {
+        this.navigator = navigator;
+    }
+    
     protected void logout() {
         getApplication().setUser(null);
-        getApplication().getMainWindow().setContent(new HomeScreenPanel(new MainMenuBarUnauthorizedUser()));
+        navigator.navigateTo(HomeScreenPanel.class);
         LOGGER.info(String.format("User [%s] logged out", user.toString()));
     }
 }

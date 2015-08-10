@@ -1,5 +1,6 @@
 package com.publicationmetasearchengine.gui.profilescreen;
 
+import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.dao.users.exceptions.UserDoesNotExistException;
 import com.publicationmetasearchengine.gui.ScreenPanel;
@@ -16,7 +17,9 @@ import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -26,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class ProfileScreenPanel extends VerticalLayout implements ScreenPanel {
+public class ProfileScreenPanel extends CustomComponent implements ScreenPanel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOGGER = Logger.getLogger(ProfileScreenPanel.class);
@@ -72,7 +75,7 @@ public class ProfileScreenPanel extends VerticalLayout implements ScreenPanel {
         }
     }
 
-    private MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
+    //private MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser(PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator());
 
     @Autowired
     UserManager userManager;
@@ -96,20 +99,29 @@ public class ProfileScreenPanel extends VerticalLayout implements ScreenPanel {
     public ProfileScreenPanel() {
         setSizeUndefined();
         setWidth("100%");
-        setMargin(true);
-        setSpacing(true);
+//        setMargin(true);
+//        setSpacing(true);
 
         initProfilePanel();
         initPasswordPanel();
-        addComponent(menuBar);
+        //addComponent(menuBar);
 
         VerticalLayout vl = new VerticalLayout();
-        addComponent(vl);
+     //   addComponent(vl);
         vl.setSizeUndefined();
         vl.addComponent(profilePanel);
         vl.addComponent(changePasswordPanel);
+        
+        
 
-        setComponentAlignment(vl, Alignment.MIDDLE_CENTER);
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setMargin(true);
+        hl.setSpacing(true);
+        hl.setWidth("100%");
+        hl.addComponent(vl);
+        hl.setComponentAlignment(vl, Alignment.MIDDLE_CENTER);
+        setCompositionRoot(hl);
+//        setComponentAlignment(vl, Alignment.MIDDLE_CENTER);
     }
 
     @Override
