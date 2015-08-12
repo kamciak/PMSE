@@ -4,7 +4,6 @@ import com.publicationmetasearchengine.dao.publications.exceptions.PublicationAl
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationDoesNotExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationAlreadyExistException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesNotExistException;
-import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
 import java.util.Date;

@@ -1,6 +1,5 @@
 package com.publicationmetasearchengine.services.datacollectorservice.arxiv.parser;
 
-import com.publicationmetasearchengine.services.ServiceManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

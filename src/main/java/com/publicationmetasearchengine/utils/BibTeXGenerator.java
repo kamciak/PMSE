@@ -7,8 +7,8 @@ package com.publicationmetasearchengine.utils;
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationWithNoAuthorException;
 import com.publicationmetasearchengine.data.Author;
 import com.publicationmetasearchengine.data.Publication;
-import com.publicationmetasearchengine.gui.searchscreen.SearchScreenPanel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 
@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class BibTeXGenerator {
 
-    private static final Logger LOGGER = Logger.getLogger(SearchScreenPanel.class);
+    private static final Logger LOGGER = Logger.getLogger(BibTeXGenerator.class);
 
     /*
      * @Article{Beneke:1997hv,
@@ -48,12 +48,11 @@ public class BibTeXGenerator {
                 LOGGER.error(ex);
             }
 
-            sb.append(getTitleString(publication)).append("\n");
-            sb.append(getYearString(publication)).append("\n");
-            sb.append(getPagesString(publication)).append("\n");
-            sb.append(getEprintString(publication)).append("\n");
-            sb.append(getJournalRefString(publication)).append("\n");
-
+            sb.append(getTitleString(publication));
+            sb.append(getYearString(publication));
+            sb.append(getPagesString(publication));
+            sb.append(getEprintString(publication));
+            sb.append(getJournalRefString(publication));
             sb.append("}").append("\n\n");
 
             bibtexList.add(sb.toString());
@@ -63,17 +62,23 @@ public class BibTeXGenerator {
 
     }
 
-    public static String getTypeString() {
+    private static String getTypeString() {
         return "@Article";
     }
 
-    public static String getAuthorsString(List<Author> authorList) {
+    private static String getAuthorsString(List<Author> authorList) {
         StringBuilder sb = new StringBuilder();
         sb.append("author\t= \"");
         for (int i = 0; i < authorList.size(); ++i) {
-            sb.append(authorList.get(i).getName());
+            String [] authorDetails = authorList.get(i).getName().split(" ");
+            sb.append(authorDetails[0]).append(", ");
+            for(int j = 1; j< authorDetails.length; ++j)
+            {
+                sb.append(authorDetails[j]).append(" ");
+            }
+            
             if (i < authorList.size() - 1) {
-                sb.append(" and ");
+                sb.append("and ");
             }
         }
         sb.append("\",");
@@ -81,7 +86,7 @@ public class BibTeXGenerator {
         return sb.toString();
     }
 
-    public static String getMainAuthorString(Publication publication) {
+    private static String getMainAuthorString(Publication publication) {
         StringBuilder sb = new StringBuilder();
         sb.append("author\t= \"");
         sb.append(publication.getMainAuthor());
@@ -91,48 +96,66 @@ public class BibTeXGenerator {
         return sb.toString();
     }
 
-    public static String getTitleString(Publication publication) {
+    private static String getTitleString(Publication publication) {
         StringBuilder sb = new StringBuilder();
         sb.append("title\t= \"{");
         sb.append(publication.getTitle());
-        sb.append("}\",");
+        sb.append("}\",\n");
 
         return sb.toString();
     }
 
-    public static String getYearString(Publication publication) {
+    private static String getYearString(Publication publication) {
+        Date publicationDate = publication.getPublicationDate();
+        if (publicationDate == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("year\t= \"");
-        sb.append(DateUtils.formatYearOnly(publication.getPublicationDate()));
-        sb.append("\",");
+        sb.append(DateUtils.formatYearOnly(publicationDate));
+        sb.append("\",\n");
 
         return sb.toString();
     }
 
-    public static String getPagesString(Publication publication) {
+    private static String getPagesString(Publication publication) {
+        String pageRange = publication.getSourcePageRange();
+        if(pageRange == null || pageRange.isEmpty())
+        {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("pages\t= \"");
-        sb.append(publication.getSourcePageRange());
-        sb.append("\",");
+        sb.append(pageRange);
+        sb.append("\",\n");
 
         return sb.toString();
     }
 
-    public static String getEprintString(Publication publication) {
+    private static String getEprintString(Publication publication) {
+        String doi = publication.getDoi();
+        if(doi == null || doi.isEmpty())
+        {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("eprint\t= \"");
-        //do zmiany;
-        sb.append(publication.getDoi());
-        sb.append("\",");
+        sb.append(doi);
+        sb.append("\",\n");
 
         return sb.toString();
     }
 
-    public static String getJournalRefString(Publication publication) {
+    private static String getJournalRefString(Publication publication) {
+        String journalRef = publication.getJournalRef();
+        if(journalRef == null || journalRef.isEmpty())
+        {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("journal\t= \"");
-        sb.append(publication.getJournalRef());
-        sb.append("\",");
+        sb.append(journalRef);
+        sb.append("\",\n");
 
         return sb.toString();
     }

@@ -1,10 +1,8 @@
 package com.publicationmetasearchengine.gui.profilescreen;
 
-import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.dao.users.exceptions.UserDoesNotExistException;
 import com.publicationmetasearchengine.gui.ScreenPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
@@ -74,8 +72,6 @@ public class ProfileScreenPanel extends CustomComponent implements ScreenPanel {
 
         }
     }
-
-    //private MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser(PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator());
 
     @Autowired
     UserManager userManager;

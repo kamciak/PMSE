@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ToReadTable extends Table {
+public class ToReadTable extends Table{
     private static final long serialVersionUID = 1L;
 
     public static final String TABLE_DATE_COLUMN = "Mark Date";
@@ -95,6 +95,13 @@ public class ToReadTable extends Table {
             }
         return publicationList;
     }
+    
+    @Override
+    public boolean removeItem(Object itemId) {
+        boolean result = super.removeItem(itemId);
+        selectedItemIds.remove(itemId);
+        return result;
+    }
 
     public void addPublication(Date date, Publication publication) {
         Object id = addItem();
@@ -120,4 +127,5 @@ public class ToReadTable extends Table {
 
         return publications;
     }
+
 }

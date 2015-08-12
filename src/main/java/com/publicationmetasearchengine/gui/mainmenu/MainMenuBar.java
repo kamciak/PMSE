@@ -1,7 +1,5 @@
 package com.publicationmetasearchengine.gui.mainmenu;
 
-import com.publicationmetasearchengine.PMSEAppLevelWindow;
-import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
@@ -16,7 +14,7 @@ import org.vaadin.navigator7.Navigator;
  */
 public class MainMenuBar extends MenuBar {
     protected static final long serialVersionUID = 1L;
-    protected static final Logger LOGGER = Logger.getLogger(MainMenuBarUnauthorizedUser.class);
+    protected static final Logger LOGGER = Logger.getLogger(MainMenuBar.class);
     protected Navigator navigator;
     @Autowired
     protected UserManager userManager;

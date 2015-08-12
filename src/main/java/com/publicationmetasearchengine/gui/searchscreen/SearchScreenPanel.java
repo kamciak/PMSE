@@ -3,9 +3,7 @@ package com.publicationmetasearchengine.gui.searchscreen;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
-import com.publicationmetasearchengine.gui.ScreenPanel;
 import com.publicationmetasearchengine.gui.homescreen.PreviewPanel;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarAuthorizedUser;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
@@ -23,6 +21,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
 public class SearchScreenPanel extends CustomComponent implements PublicationScreenPanel {
+
     private static final Logger LOGGER = Logger.getLogger(SearchScreenPanel.class);
     private static final long serialVersionUID = 1L;
     private boolean isExternalPublication = false;
@@ -30,26 +29,22 @@ public class SearchScreenPanel extends CustomComponent implements PublicationScr
     PublicationManager publicationManager;
     @Autowired
     private BackupManager backupManager;
-
-    //private final MainMenuBarAuthorizedUser menuBar = new MainMenuBarAuthorizedUser();
     private List<Publication> allPublications = new ArrayList<Publication>();
-
     private FiltersPanel filtersPanel = new FiltersPanel("Filters") {
         private static final long serialVersionUID = 1L;
 
         @Override
         public void searchClick() {
-                final List<FilterCriteria> filtersCriteria = getFiltersCriteria();
-                if(!isFilterCriteriaEmpty(filtersCriteria)){
-                    final List<Publication> publications = publicationManager.getPublicationsMatchingFiltersCriteria(filtersCriteria);
-                    resultTable.clear();
-                    resultTable.addPublications(publications);
-                } else {
-                    Notificator.showNotification(getApplication(), "No filter criteria", "\nEmpty filter criteria. Please fill any of field.", Notificator.NotificationType.HUMANIZED);
-                }
+            final List<FilterCriteria> filtersCriteria = getFiltersCriteria();
+            if (!isFilterCriteriaEmpty(filtersCriteria)) {
+                final List<Publication> publications = publicationManager.getPublicationsMatchingFiltersCriteria(filtersCriteria);
+                resultTable.clear();
+                resultTable.addPublications(publications);
+            } else {
+                Notificator.showNotification(getApplication(), "No filter criteria", "\nEmpty filter criteria. Please fill any of field.", Notificator.NotificationType.HUMANIZED);
+            }
         }
     };
-
     private PMSEPanel resultPanel = new PMSEPanel("Result");
     private ResultTable resultTable = new ResultTable();
     private PreviewPanel previewPanel = new PreviewPanel("Content");
@@ -61,9 +56,8 @@ public class SearchScreenPanel extends CustomComponent implements PublicationScr
         initSearchScreenPanel();
         setCompositionRoot(mainHorizontalLayout);
     }
-    
-    public SearchScreenPanel(boolean isExternalPublication)
-    {
+
+    public SearchScreenPanel(boolean isExternalPublication) {
         super();
         initSearchScreenPanel();
         this.isExternalPublication = isExternalPublication;
@@ -81,7 +75,6 @@ public class SearchScreenPanel extends CustomComponent implements PublicationScr
         initResultPanel();
         previewPanel.setSizeFull();
         previewPanel.setParentPanel(this);
-
 
         hl.addComponent(filtersPanel);
         hl.addComponent(resultPanel);
@@ -133,71 +126,57 @@ public class SearchScreenPanel extends CustomComponent implements PublicationScr
             mainHorizontalLayout.removeComponent(previewPanel);
         }
     }
-    
-    private boolean isFilterCriteriaEmpty(List<FilterCriteria> filterCriteriaList){
+
+    private boolean isFilterCriteriaEmpty(List<FilterCriteria> filterCriteriaList) {
         boolean isEmpty = true;
-        for(FilterCriteria filter : filterCriteriaList){
-            if(!filter.isEmpty())
-                if(!filter.gotOnlyNulls())
+        for (FilterCriteria filter : filterCriteriaList) {
+            if (!filter.isEmpty()) {
+                if (!filter.gotOnlyNulls()) {
                     isEmpty = false;
+                }
+            }
         }
         return isEmpty;
     }
-    
- @Override
-    public List<Publication> getPanelPublications()
-    {
-        for(Object id: resultTable.getItemIds())
-        {
+
+    @Override
+    public List<Publication> getPanelPublications() {
+        for (Object id : resultTable.getItemIds()) {
             allPublications.add((Publication) resultTable.getItem(id).getItemProperty(ResultTable.TABLE_PUBLICATION_COLUMN).getValue());
         }
 
         return allPublications;
     }
-    
+
     @Override
-    public Publication getCurrentPublication()
-    {
+    public Publication getCurrentPublication() {
         return previewPanel.getActivePublication();
     }
-    
+
     @Override
-    public void setBackup()
-    {
+    public void setBackup() {
         backupManager.setBackupPublications(getPanelPublications());
         backupManager.setPreviousPublication(getCurrentPublication());
         backupManager.setBackupScreen(this);
     }
-    
+
     @Override
-    public Table getPublicationTable()
-    {
+    public Table getPublicationTable() {
         return resultTable;
     }
-    
+
     @Override
-    public boolean isExternalPublication()
-    {
+    public boolean isExternalPublication() {
         return isExternalPublication;
     }
-    
+
     @Override
-    public void setIsExternalPublication(boolean externalPublication)
-    {
+    public void setIsExternalPublication(boolean externalPublication) {
         isExternalPublication = externalPublication;
     }
 
     private void initSearchScreenPanel() {
-//        setMargin(true);
-//        setSpacing(true);
         setSizeFull();
-
         mainHorizontalLayout = initMainHorizontalLayout();
-
-//        addComponent(menuBar);
-//        addComponent(mainHorizontalLayout);
-        
-//        setExpandRatio(menuBar, 0);
-//        setExpandRatio(mainHorizontalLayout, 1);
     }
 }

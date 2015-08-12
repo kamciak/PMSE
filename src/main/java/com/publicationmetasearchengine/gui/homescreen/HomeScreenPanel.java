@@ -39,11 +39,17 @@ import org.vaadin.navigator7.Page;
 import org.vaadin.navigator7.ParamChangeListener;
 import org.vaadin.navigator7.uri.Param;
 
-
-@Page(uriName="HomeScreenPanel")
+@Page(uriName = "HomeScreenPanel")
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class HomeScreenPanel extends CustomComponent implements PublicationScreenPanel, ParamChangeListener {
+
+    @Autowired
+    private SourceDbDAO sourceDbDAO;
+    @Autowired
+    private PublicationManager publicationManager;
+    @Autowired
+    private BackupManager backupManager;
     private static final long serialVersionUID = 1L;
     private final PMSEPanel recentPanel = new PMSEPanel("Recent publications");
     HorizontalLayout searchLayout = new HorizontalLayout();
@@ -64,12 +70,6 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         dateMap.put("Half Year", now.minusMonths(6).toDate());
     }
     private boolean isExternalPublication = false;
-    @Autowired
-    private SourceDbDAO sourceDbDAO;
-    @Autowired
-    private PublicationManager publicationManager;
-    @Autowired
-    private BackupManager backupManager;
     private final NativeSelect sourceDBCB = new NativeSelect("Source");
     private final NativeSelect dateCB = new NativeSelect("Period");
     final String confirmationText = "Searching in external libraries can take up to few minutes. Do you want to continue?";
@@ -81,8 +81,7 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             publicationTable.filterByTitleKeywords(keywordFilter.getKeywords());
         }
     };
-    
-    
+
     public HomeScreenPanel() {
         super();
         initHomeScreenPanel();
@@ -94,9 +93,9 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         mainHorizontalLayout = initMainHorizontalLayout();
         mainHorizontalLayout.setSizeFull();
         setCompositionRoot(mainHorizontalLayout);
-        
+
         setHomePanelForPreviewPanel();
-        
+
         goBackBtn.addListener(goBackBtnListener);
         backupManager.setIsExternalPublication(isExternalPublication);
         publicationTable.setSelectable(true);
@@ -110,16 +109,16 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         publicationTable.cleanAndAddPublications(publications);
     }
 
-    public void setProperPublicationsTableListener()
-    {
+    public void setProperPublicationsTableListener() {
         removeGoBackBtnToReadScreenPanelListener();
         goBackBtn.addListener(goBackBtnListener);
-        if(isExternalPublication)
+        if (isExternalPublication) {
             setAuthorPublicationTableChangeListener();
-        else
+        } else {
             setPublicationTableChangeListener();
+        }
     }
-    
+
     public void filterPublicationByAuthorOfSelected(String authorName) {
         List<Publication> publications = publicationManager.getPublicationOfAuthor(authorName);
         publicationTable.cleanAndAddPublications(publications);
@@ -147,10 +146,10 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         searchLayout.addComponent(sourceDBCB);
         searchLayout.addComponent(dateCB);
 
-        
+
         searchLayout.addComponent(keywordFilter);
         searchLayout.setExpandRatio(keywordFilter, 1);
-        searchLayout.setComponentAlignment(keywordFilter, Alignment.MIDDLE_RIGHT); 
+        searchLayout.setComponentAlignment(keywordFilter, Alignment.MIDDLE_RIGHT);
 
         publicationTable.setSizeFull();
         publicationTable.setImmediate(true);
@@ -163,7 +162,7 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         }
         dateCB.select(dateMap.get("Day"));
         dateCB.addListener(cbValueChangeListener);
-        
+
         List<SourceDB> allSourceDBS = sourceDbDAO.getAllSourceDBS();
         for (SourceDB sourceDB : allSourceDBS) {
             sourceDBCB.addItem(sourceDB);
@@ -173,7 +172,7 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         sourceDBCB.setNullSelectionAllowed(false);
         sourceDBCB.addListener(cbValueChangeListener);
         sourceDBCB.select(allSourceDBS.get(0));
-        
+
         HorizontalLayout bottomLayout = new HorizontalLayout();
         bottomLayout.setSpacing(true);
 
@@ -212,29 +211,25 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
     public void changePreviePanelVisibility() {
         setPreviewPanelVisibility(!isPreviewVisible);
     }
-  
+
     @Override
-    public List<Publication> getPanelPublications()
-    {
+    public List<Publication> getPanelPublications() {
         return publicationTable.getAllPublication();
     }
-    
+
     @Override
-    public Publication getCurrentPublication()
-    {
+    public Publication getCurrentPublication() {
         return previewPanel.getActivePublication();
     }
-    
+
     @Override
-    public void setBackup()
-    {
+    public void setBackup() {
         backupManager.setBackupScreen(this);
         enableBackButon();
     }
-    
+
     @Override
-    public Table getPublicationTable()
-    {
+    public Table getPublicationTable() {
         return publicationTable;
     }
 
@@ -245,7 +240,7 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             backupManager.setPreviousPublication(previewPanel.getActivePublication());
         }
         backupManager.setBackupPublications(getPanelPublications());
-        
+
     }
 
     private void enableBackButon() {
@@ -256,13 +251,13 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         removeAllPublicationTableChangeListeners();
         publicationTable.addListener(publicationTableChangeListener);
     }
-    
+
     private void setAuthorPublicationTableChangeListener() {
         removeAllPublicationTableChangeListeners();
         publicationTable.addListener(authorPublicationTableChangeListener);
     }
-    
-    public void removeAllPublicationTableChangeListeners(){
+
+    public void removeAllPublicationTableChangeListeners() {
         publicationTable.removeListener(publicationTableChangeListener);
         publicationTable.removeListener(authorPublicationTableChangeListener);
     }
@@ -287,7 +282,6 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             previewPanel.setContent(currentPublication);
         }
     };
-    
     private Property.ValueChangeListener authorPublicationTableChangeListener = new Property.ValueChangeListener() {
         private static final long serialVersionUID = 1L;
 
@@ -305,7 +299,6 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             previewPanel.setContentForAuthorPublications(currentPublication);
         }
     };
-    
     private Property.ValueChangeListener cbValueChangeListener = new Property.ValueChangeListener() {
         private static final long serialVersionUID = 1L;
 
@@ -328,8 +321,6 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             }
         }
     };
-
-
     private final Button.ClickListener goBackBtnListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
 
@@ -344,7 +335,7 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             setPreviewPanelVisibility(true);
             goBackBtn.setEnabled(false);
             if (isExternalPublication()) {
-               
+
                 PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().setUriParams("#E");
                 setAuthorPublicationTableChangeListener();
                 previewPanel.setContentForAuthorPublications(backupManager.getPreviousPublication());
@@ -355,7 +346,6 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             }
         }
     };
-    
     private final Button.ClickListener goBackBtnToReadScreenPanelListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
 
@@ -364,15 +354,16 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             searchLayout.setEnabled(false);
             backupManager.setIsExternalPublication(isExternalPublication);
             PublicationScreenPanel previousPanel = backupManager.getBackupScreen();
-            if(previousPanel instanceof ToReadScreenPanel)
+            if (previousPanel instanceof ToReadScreenPanel) {
                 getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new ToReadScreenPanel(false)));
-            else if(previousPanel instanceof SearchScreenPanel)
+            } else if (previousPanel instanceof SearchScreenPanel) {
                 getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new SearchScreenPanel(false)));
+            }
         }
     };
- 
     private final Button.ClickListener refreshBtnListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
+
         @Override
         public void buttonClick(Button.ClickEvent event) {
             searchLayout.setEnabled(true);
@@ -396,21 +387,18 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             }
         }
     };
-    
+
     @Override
-    public void setIsExternalPublication(boolean externalPublication)
-    {
+    public void setIsExternalPublication(boolean externalPublication) {
         isExternalPublication = externalPublication;
     }
-    
+
     @Override
-    public boolean isExternalPublication()
-    {
+    public boolean isExternalPublication() {
         return isExternalPublication;
     }
 
-    private void removeGoBackBtnToReadScreenPanelListener()
-    {
+    private void removeGoBackBtnToReadScreenPanelListener() {
         goBackBtn.removeListener(goBackBtnToReadScreenPanelListener);
     }
 
@@ -421,20 +409,21 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             ((PMSEAppLevelWindow) (PMSENavigableApplication.getCurrentNavigableAppLevelWindow())).initAuthorizedMenuBar();
         }
     }
-    
-    @Param(pos=0) String authorName;
+    @Param(pos = 0)
+    String authorName;
+
     @Override
     public void paramChanged(Navigator.NavigationEvent event) {
         if (authorName != null) {
             if (authorName.contains("E#")) {
                 createBackup(true);
                 handleSearchForExternalPublicationOfAuthor(authorName);
-                
+
             } else {
                 createBackup(false);
                 handleSearchForLocalPublicationOfAuthor(authorName);
             }
-            
+
             if (authorName.startsWith("DE#") || authorName.startsWith("DL#")) {
                 goBackBtn.setVisible(false);
             }
@@ -442,22 +431,22 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             publicationTable.setSelectable(true);
         }
     }
-   private void createBackup(boolean isExternal)
-   {
+
+    private void createBackup(boolean isExternal) {
         backupManager.setIsExternalPublication(isExternalPublication);
         backupManager.setBackupPublications(getPanelPublications());
         backupManager.setPreviousPublication(previewPanel.getActivePublication());
-        
+
         setBackup();
         setIsExternalPublication(isExternal);
-   }
-    
+    }
+
     private void handleSearchForLocalPublicationOfAuthor(final String authorName) {
         String authorNameCut = authorName.replaceFirst("[ED]L#", "");
         filterPublicationByAuthorOfSelected(authorNameCut);
-        setProperPublicationsTableListener();     
+        setProperPublicationsTableListener();
     }
-    //EXTERNAL
+
     private void handleSearchForExternalPublicationOfAuthor(final String authorName) {
         CheckboxConfirmDialog.show(getWindow(), confirmationText,
                 new CheckboxConfirmDialog.Listener() {
@@ -482,10 +471,8 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             }
         });
     }
-    
-    
-    
-     private List<Publication> getArxivAuthorPublications(String authorName) {
+
+    private List<Publication> getArxivAuthorPublications(String authorName) {
         ArxivAuthorCollector arxivAuthorCollector = new ArxivAuthorCollector(authorName);
         arxivAuthorCollector.downloadAuthorPublications();
         return arxivAuthorCollector.getPublications();
@@ -502,5 +489,4 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         wokAuthorCollector.downloadAuthorPublications();
         return wokAuthorCollector.getPublications();
     }
-
 }

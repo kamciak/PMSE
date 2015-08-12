@@ -10,7 +10,6 @@ import com.publicationmetasearchengine.gui.ConfirmWindow;
 import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.gui.loginscreen.LoginScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBar;
-import com.publicationmetasearchengine.gui.mainmenu.MainMenuBarUnauthorizedUser;
 import com.publicationmetasearchengine.gui.notificationcriteriasscreen.NotificationCriteriasScreenPanel;
 import com.publicationmetasearchengine.gui.profilescreen.ProfileScreenPanel;
 import com.publicationmetasearchengine.gui.searchscreen.SearchScreenPanel;
@@ -33,14 +32,13 @@ import org.vaadin.navigator7.window.HeaderFooterFluidAppLevelWindow;
  * @author Kamciak
  */
 @Configurable(preConstruction = true)
-public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
-    
+public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
+
     protected static final Logger LOGGER = Logger.getLogger(PMSEAppLevelWindow.class);
-    
     @Autowired
     private UserManager userManager;
     private MenuBar menuBar = new MainMenuBar();
-    
+
     @Override
     protected Component createHeader() {
         HorizontalLayout header = new HorizontalLayout();
@@ -54,7 +52,7 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
         initUnauthorizedMenuBar();
 
         return header;
-        
+
     }
 
     @Override
@@ -66,55 +64,33 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
         info.setWidth(null);
         vl.addComponent(info);
         vl.setComponentAlignment(info, Alignment.TOP_CENTER);
-        
-        
-        return vl; 
+
+
+        return vl;
     }
-    
-    public MenuBar getMenuBar()
-    {
+
+    public MenuBar getMenuBar() {
         return menuBar;
     }
-    
-    public void setMenuBar(MenuBar menu)
-    {
+
+    public void setMenuBar(MenuBar menu) {
         this.menuBar = menu;
     }
-    
+
     @Override
     protected ComponentContainer createComponents() {
         ComponentContainer result = super.createComponents();
-        //this.getFooterBand().addStyleName("footer");   // We apply the footer to the whole outer band, not only to the fixed width inner band.
         result.setSizeFull();
         return result;
     }
-//    
-//        @Override
-//    public void attach() {
-//        // Main layout creation. Do that before you add anything to the Window.
-//        Layout main = createMainLayout();
-////        main.addStyleName("PageTemplate-mainLayout");
-//        main.setWidth("100%"); //  If you do that instead of the addStyleName (containing a width:100%;) above, Vaadin JavaScript will recompute the width everytime you resize the browser.
-//        this.setContent(main);    
-//
-//        // Must be done after calling this.setConent(main), as for any component added to the window.
-//        this.navigator = new Navigator();
-//        this.addComponent(navigator);
-//        this.setWidth("100%");
-//        pageContainer = createComponents();  // Let descendants add components in this.getContent().
-////        pageContainer.addStyleName("FixedPageTemplate-bandOuterLayoutPage");
-//        pageContainer.setWidth("100%");
-//    }
-    
-    public void initUnauthorizedMenuBar()
-    {
+
+    public void initUnauthorizedMenuBar() {
         menuBar.removeItems();
         initHomeMenuItem();
         initLoginMenuItem();
     }
-    
-    public void initAuthorizedMenuBar()
-    {
+
+    public void initAuthorizedMenuBar() {
         menuBar.removeItems();
         initHomeMenuItem();
         initToReadMenuItem();
@@ -124,8 +100,7 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
         initLogoutMenuItem();
     }
 
-    
-        private void initHomeMenuItem(){
+    private void initHomeMenuItem() {
         MenuBar.MenuItem homeMenuItem = menuBar.addItem("News", new MenuBar.Command() {
             private static final long serialVersionUID = 1L;
 
@@ -136,9 +111,9 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
         });
     }
 
-    private void initLoginMenuItem(){
+    private void initLoginMenuItem() {
         MenuBar.MenuItem loginMenuItem = menuBar.addItem("Login", new MenuBar.Command() {
-        private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -146,9 +121,8 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
             }
         });
     }
-    
-    
-    private void initToReadMenuItem(){
+
+    private void initToReadMenuItem() {
         MenuBar.MenuItem toReadMenuItem = menuBar.addItem("To-Read", new MenuBar.Command() {
             private static final long serialVersionUID = 1L;
 
@@ -184,7 +158,7 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
 
     }
 
-    private void initProfileMenuItem(){
+    private void initProfileMenuItem() {
         MenuBar.MenuItem profileMenuItem = menuBar.addItem("Profile", null);
         profileMenuItem.addItem("Edit", new MenuBar.Command() {
             private static final long serialVersionUID = 1L;
@@ -206,7 +180,7 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
                     @Override
                     public void yesButtonClick() {
                         try {
-                            userManager.deleteUser((User)PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getApplication().getUser());
+                            userManager.deleteUser((User) PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getApplication().getUser());
                             logout();
                         } catch (UserDoesNotExistException ex) {
                             LOGGER.fatal("Error while deleteing user [%s] - Should not occure");
@@ -217,7 +191,7 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
         });
     }
 
-    private void initLogoutMenuItem(){
+    private void initLogoutMenuItem() {
         MenuBar.MenuItem logoutMenuItem = menuBar.addItem("Logout", new MenuBar.Command() {
             private static final long serialVersionUID = 1L;
 
@@ -228,15 +202,11 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow{
         });
     }
 
-
-
-
-    
     protected void logout() {
-        User user = (User)PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getApplication().getUser();
+        User user = (User) PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getApplication().getUser();
         LOGGER.info(String.format("User [%s] logged out", user.toString()));
         PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getApplication().setUser(null);
         navigator.navigateTo(HomeScreenPanel.class);
-        
+
     }
 }
