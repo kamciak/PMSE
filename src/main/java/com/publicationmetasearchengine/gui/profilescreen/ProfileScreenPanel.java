@@ -1,8 +1,11 @@
 package com.publicationmetasearchengine.gui.profilescreen;
 
+import com.publicationmetasearchengine.PMSEAppLevelWindow;
+import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.dao.users.exceptions.UserDoesNotExistException;
 import com.publicationmetasearchengine.gui.ScreenPanel;
+import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
@@ -95,20 +98,14 @@ public class ProfileScreenPanel extends CustomComponent implements ScreenPanel {
     public ProfileScreenPanel() {
         setSizeUndefined();
         setWidth("100%");
-//        setMargin(true);
-//        setSpacing(true);
 
         initProfilePanel();
         initPasswordPanel();
-        //addComponent(menuBar);
 
         VerticalLayout vl = new VerticalLayout();
-     //   addComponent(vl);
         vl.setSizeUndefined();
         vl.addComponent(profilePanel);
         vl.addComponent(changePasswordPanel);
-        
-        
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setMargin(true);
@@ -117,17 +114,20 @@ public class ProfileScreenPanel extends CustomComponent implements ScreenPanel {
         hl.addComponent(vl);
         hl.setComponentAlignment(vl, Alignment.MIDDLE_CENTER);
         setCompositionRoot(hl);
-//        setComponentAlignment(vl, Alignment.MIDDLE_CENTER);
     }
 
     @Override
     public void attach() {
-        super.attach();
-        User user = (User) getApplication().getUser();
-        profilePanel.setCaption(String.format("Profile: %s", user.getLogin()));
-        fillupProfilePanel(user);
+        if (((PMSEAppLevelWindow) (PMSENavigableApplication.getCurrentNavigableAppLevelWindow())).getApplication().getUser() == null) {
+            PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().navigateTo(HomeScreenPanel.class);
+        } else {
+            super.attach();
+            User user = (User) getApplication().getUser();
+            profilePanel.setCaption(String.format("Profile: %s", user.getLogin()));
+            fillupProfilePanel(user);
+        }
     }
-
+    
     private void initProfilePanel() {
         GridLayout gl = new GridLayout(2, 4);
         gl.setSpacing(true);
@@ -239,7 +239,7 @@ public class ProfileScreenPanel extends CustomComponent implements ScreenPanel {
 
     private String getFieldValue(AbstractTextField field) {
         String value = (String) field.getValue();
-        if (value == null | value.equals(""))
+        if (value == null || value.equals(""))
             return null;
         return value;
     }

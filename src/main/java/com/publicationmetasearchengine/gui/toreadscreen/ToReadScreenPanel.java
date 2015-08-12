@@ -1,5 +1,7 @@
 package com.publicationmetasearchengine.gui.toreadscreen;
 
+import com.publicationmetasearchengine.PMSEAppLevelWindow;
+import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.dao.publications.exceptions.PublicationWithNoAuthorException;
 import com.publicationmetasearchengine.dao.publications.exceptions.RelationDoesNotExistException;
 import com.publicationmetasearchengine.gui.homescreen.*;
@@ -83,16 +85,14 @@ public class ToReadScreenPanel extends CustomComponent implements PublicationScr
         initToReadScreenPanel();
     }
 
-    public ToReadScreenPanel(boolean isExternalPublication) {
-        super();
-        initToReadScreenPanel();
-        this.isExternalPublication = isExternalPublication;
-    }
-
     @Override
     public void attach() {
-        super.attach();
-        loadUsersPublications((User) getApplication().getUser());
+        if (((PMSEAppLevelWindow) (PMSENavigableApplication.getCurrentNavigableAppLevelWindow())).getApplication().getUser() == null) {
+            PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().navigateTo(HomeScreenPanel.class);
+        } else {
+            super.attach();
+            loadUsersPublications((User) getApplication().getUser());
+        }
     }
 
     private HorizontalLayout initMainHorizontalLayout() {

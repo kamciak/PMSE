@@ -1,8 +1,11 @@
 package com.publicationmetasearchengine.gui.searchscreen;
 
+import com.publicationmetasearchengine.PMSEAppLevelWindow;
+import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
+import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.gui.homescreen.PreviewPanel;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
 import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
@@ -56,12 +59,14 @@ public class SearchScreenPanel extends CustomComponent implements PublicationScr
         initSearchScreenPanel();
         setCompositionRoot(mainHorizontalLayout);
     }
-
-    public SearchScreenPanel(boolean isExternalPublication) {
-        super();
-        initSearchScreenPanel();
-        this.isExternalPublication = isExternalPublication;
-        setCompositionRoot(mainHorizontalLayout);
+    
+    @Override
+    public void attach() {
+        if (((PMSEAppLevelWindow) (PMSENavigableApplication.getCurrentNavigableAppLevelWindow())).getApplication().getUser() == null) {
+            PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().navigateTo(HomeScreenPanel.class);
+        } else {
+            super.attach();
+        }
     }
 
     private HorizontalLayout initMainHorizontalLayout() {

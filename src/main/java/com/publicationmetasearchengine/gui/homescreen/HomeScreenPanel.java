@@ -110,7 +110,6 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
     }
 
     public void setProperPublicationsTableListener() {
-        removeGoBackBtnToReadScreenPanelListener();
         goBackBtn.addListener(goBackBtnListener);
         if (isExternalPublication) {
             setAuthorPublicationTableChangeListener();
@@ -346,21 +345,7 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             }
         }
     };
-    private final Button.ClickListener goBackBtnToReadScreenPanelListener = new Button.ClickListener() {
-        private static final long serialVersionUID = 1L;
 
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            searchLayout.setEnabled(false);
-            backupManager.setIsExternalPublication(isExternalPublication);
-            PublicationScreenPanel previousPanel = backupManager.getBackupScreen();
-            if (previousPanel instanceof ToReadScreenPanel) {
-                getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new ToReadScreenPanel(false)));
-            } else if (previousPanel instanceof SearchScreenPanel) {
-                getApplication().getMainWindow().setContent(((User) getApplication().getUser()).getScreenPanel(new SearchScreenPanel(false)));
-            }
-        }
-    };
     private final Button.ClickListener refreshBtnListener = new Button.ClickListener() {
         private static final long serialVersionUID = 1L;
 
@@ -398,9 +383,6 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         return isExternalPublication;
     }
 
-    private void removeGoBackBtnToReadScreenPanelListener() {
-        goBackBtn.removeListener(goBackBtnToReadScreenPanelListener);
-    }
 
     private void initMenuBar() {
         if (((PMSEAppLevelWindow) (PMSENavigableApplication.getCurrentNavigableAppLevelWindow())).getApplication().getUser() == null) {

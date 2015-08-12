@@ -51,4 +51,12 @@ public class PMSENavigableApplication extends NavigableApplication {
         return new PMSEAppLevelWindow();
     }
     
+
+    public static SystemMessages getSystemMessages() {
+    CustomizedSystemMessages m = new CustomizedSystemMessages();
+    m.setSessionExpiredURL("/");
+    
+    return m;
+}
+    
 }
