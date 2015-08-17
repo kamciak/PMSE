@@ -22,6 +22,7 @@ public class Publication {
     private final Date publicationDate;
     private final String pdfLink;
     private final Date insertDate;
+    private String journalTitle;
 
     private List<Author> authors;
 
@@ -42,6 +43,20 @@ public class Publication {
         this.publicationDate = publicationDate;
         this.pdfLink = pdfLink;
         this.insertDate = insertDate;
+    }
+    
+    public void setJournalTitle(String journalTitle)
+    {
+        this.journalTitle = journalTitle;
+    }
+    
+    public String getJournalTitle()
+    {
+        if(journalTitle == null || journalTitle.isEmpty()){
+            return journalRef;
+        } else {
+            return journalTitle;
+        }
     }
 
     public Integer getId() {

@@ -14,8 +14,8 @@ public class ArxivParser {
     private static final Logger LOGGER = Logger.getLogger(ArxivParser.class);
     public ArxivParser(String xmlString) {
         this.arxivDoc = Jsoup.parse(xmlString);
-        LOGGER.debug("\n=====ARXIV DOC========\n");
-        LOGGER.debug(arxivDoc);
+//        LOGGER.debug("\n=====ARXIV DOC========\n");
+//        LOGGER.debug(arxivDoc);
     }
 
     public List<RawEntry> getEtnriesAfterDate(Date afterDate) {
@@ -36,6 +36,16 @@ public class ArxivParser {
             EntryParser entryParser = new EntryParser(rawEntry.toString());
             entries.add(entryParser.getRawEntry());
         }
+        return entries;
+    }
+    
+    public List<RawEntry> getAllEntries(){
+        List<RawEntry> entries = new ArrayList<RawEntry>();
+        for(Element rawEntry : arxivDoc.select("entry")){
+            EntryParser entryParser = new EntryParser(rawEntry.toString());
+            entries.add(entryParser.getRawEntry());
+        }
+        
         return entries;
     }
 }

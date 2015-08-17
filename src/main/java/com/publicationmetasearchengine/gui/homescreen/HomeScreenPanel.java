@@ -5,13 +5,10 @@ import com.publicationmetasearchengine.PMSENavigableApplication;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.data.Publication;
 import com.publicationmetasearchengine.data.SourceDB;
-import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
 import com.publicationmetasearchengine.gui.dialog.CheckboxConfirmDialog;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
-import com.publicationmetasearchengine.gui.searchscreen.SearchScreenPanel;
-import com.publicationmetasearchengine.gui.toreadscreen.ToReadScreenPanel;
 import com.publicationmetasearchengine.management.backupmanagement.BackupManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.services.datacollectorservice.arxiv.ArxivAuthorCollector;
@@ -99,6 +96,7 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
         goBackBtn.addListener(goBackBtnListener);
         backupManager.setIsExternalPublication(isExternalPublication);
         publicationTable.setSelectable(true);
+        
     }
 
     private void setHomePanelForPreviewPanel() {

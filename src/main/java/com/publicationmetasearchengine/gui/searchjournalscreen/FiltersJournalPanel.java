@@ -1,13 +1,16 @@
-package com.publicationmetasearchengine.gui.searchscreen;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.publicationmetasearchengine.gui.searchjournalscreen;
 
-import com.publicationmetasearchengine.gui.searchscreen.components.DateFilterPanel;
 import com.publicationmetasearchengine.data.filters.FilterCriteria;
 import com.publicationmetasearchengine.data.filters.FilterType;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
+import com.publicationmetasearchengine.gui.searchscreen.components.AllOptionFilterPanel;
 import com.publicationmetasearchengine.gui.searchscreen.components.AndOrFilterPanel;
 import com.publicationmetasearchengine.gui.searchscreen.components.Filter;
-import com.publicationmetasearchengine.gui.searchscreen.components.ListFiterPanel;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -17,30 +20,26 @@ import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class FiltersPanel  extends PMSEPanel {
+/**
+ *
+ * @author Kamciak
+ */
+public abstract class FiltersJournalPanel extends PMSEPanel {
     private static final long serialVersionUID = 1L;
 
-    private final AndOrFilterPanel titleFilterPanel = new AndOrFilterPanel("Title", FilterType.TITLE);
-    private final AndOrFilterPanel summrayFilterPanel = new AndOrFilterPanel("Summary", FilterType.SUMMARY);
-    private final DateFilterPanel dateFilterPanel = new DateFilterPanel("Publication date", FilterType.PUBLICATION_DATE);
-    private final ListFiterPanel authorFilterPanel = new ListFiterPanel("Author", FilterType.AUTHOR);
-    private final ListFiterPanel doiFilterPanel = new ListFiterPanel("DOI", FilterType.DOI);
-    private final ListFiterPanel journalFilterPanel = new ListFiterPanel("Journal", FilterType.JOURNAL);
+    private final AllOptionFilterPanel titleFilterPanel = new AllOptionFilterPanel("Title", FilterType.TITLE_JOURNAL);
+    private final AllOptionFilterPanel abstractFilterPanel = new AllOptionFilterPanel("Abstract", FilterType.ABSTRACT_JOURNAL);
     private final List<Filter> filters = new ArrayList<Filter>();
     private VerticalLayout filterLayout = new VerticalLayout();
     {
-        filters.add(authorFilterPanel);
         filters.add(titleFilterPanel);
-        filters.add(summrayFilterPanel);
-        filters.add(dateFilterPanel);
-        filters.add(journalFilterPanel);
-        filters.add(doiFilterPanel);
+        filters.add(abstractFilterPanel);
     };
 
     private final PMSEButton searchBtn = new PMSEButton("Search");
     private final PMSEButton clearBtn = new PMSEButton("Clear");
 
-    public FiltersPanel(String caption) {
+    public FiltersJournalPanel(String caption) {
         super(caption);
         setSizeFull();
 
@@ -94,21 +93,7 @@ public abstract class FiltersPanel  extends PMSEPanel {
         mainLayout.setExpandRatio(filterLayoutPanel, 1);
         setContent(mainLayout);
     }
-    
-    public void removeFilters()
-    {
-        filters.remove(authorFilterPanel);
-        filters.remove(dateFilterPanel);
-        filters.remove(journalFilterPanel);
-        filters.remove(doiFilterPanel);
-        filterLayout.removeComponent(authorFilterPanel);
-        filterLayout.removeComponent(dateFilterPanel);
-        filterLayout.removeComponent(journalFilterPanel);
-        filterLayout.removeComponent(doiFilterPanel);
-        
-        summrayFilterPanel.setCaption("Abstract");
-        
-    }
+
 
     public List<FilterCriteria> getFiltersCriteria(){
         ArrayList<FilterCriteria> criterias = new ArrayList<FilterCriteria>();

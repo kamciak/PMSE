@@ -4,6 +4,7 @@
  */
 package com.publicationmetasearchengine;
 
+import com.publicationmetasearchengine.dao.impactfactor.ImpactFactorDAO;
 import com.publicationmetasearchengine.dao.users.exceptions.UserDoesNotExistException;
 import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.ConfirmWindow;
@@ -12,6 +13,7 @@ import com.publicationmetasearchengine.gui.loginscreen.LoginScreenPanel;
 import com.publicationmetasearchengine.gui.mainmenu.MainMenuBar;
 import com.publicationmetasearchengine.gui.notificationcriteriasscreen.NotificationCriteriasScreenPanel;
 import com.publicationmetasearchengine.gui.profilescreen.ProfileScreenPanel;
+import com.publicationmetasearchengine.gui.searchjournalscreen.SearchJournalScreenPanel;
 import com.publicationmetasearchengine.gui.searchscreen.SearchScreenPanel;
 import com.publicationmetasearchengine.gui.toreadscreen.ToReadScreenPanel;
 import com.publicationmetasearchengine.management.usermanagement.UserManager;
@@ -38,6 +40,8 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
     @Autowired
     private UserManager userManager;
     private MenuBar menuBar = new MainMenuBar();
+    @Autowired
+    ImpactFactorDAO impactFactorDao;
 
     @Override
     protected Component createHeader() {
@@ -64,7 +68,6 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
         info.setWidth(null);
         vl.addComponent(info);
         vl.setComponentAlignment(info, Alignment.TOP_CENTER);
-
 
         return vl;
     }
@@ -95,6 +98,7 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
         initHomeMenuItem();
         initToReadMenuItem();
         initSearchMenuItem();
+        initSearchJournalMenuItem();
         initNotificationCriteriasMenuItem();
         initProfileMenuItem();
         initLogoutMenuItem();
@@ -121,6 +125,30 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
             }
         });
     }
+    /*
+        private void initDownloadImpactFactor() {
+        MenuBar.MenuItem downloadImpactFactor = menuBar.addItem("Download ImpactFactor", new MenuBar.Command() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                downloadImpactFactor();
+                navigator.navigateTo(HomeScreenPanel.class);
+            }
+        });
+    }
+    
+        private void downloadImpactFactor()
+    {
+        ImpactFactorDownloader impacFactorDownloader = new ImpactFactorDownloader();
+        impacFactorDownloader.downloadImpactFactor();
+        List<Journal> journalsStartAt = impactFactorDao.getJournalsStartAt('Z');
+        LOGGER.debug("Journals starts at Z:");
+        for(Journal journal : journalsStartAt)
+        {
+            LOGGER.debug(journal);
+        }
+    }*/
 
     private void initToReadMenuItem() {
         MenuBar.MenuItem toReadMenuItem = menuBar.addItem("To-Read", new MenuBar.Command() {
@@ -141,6 +169,18 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 navigator.navigateTo(SearchScreenPanel.class);
+            }
+        });
+
+    }
+    
+        private void initSearchJournalMenuItem() {
+        MenuBar.MenuItem searchMenuItem = menuBar.addItem("Search Journal", new MenuBar.Command() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                navigator.navigateTo(SearchJournalScreenPanel.class);
             }
         });
 

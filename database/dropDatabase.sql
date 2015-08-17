@@ -10,4 +10,5 @@ DROP TABLE `publicationAuthors`;
 DROP TABLE `author`;
 DROP TABLE `publication`;
 DROP TABLE `user`;
+DROP TABLE `impactFactor`;
 DROP DATABASE `PublicationMetaSearchEngine`;

@@ -56,5 +56,9 @@
     <bean id="filterCriteriasDAO" class="com.publicationmetasearchengine.dao.filtercriterias.FilterCriteriasDAOImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    
+    <bean id="impactFactorDao" class="com.publicationmetasearchengine.dao.impactfactor.ImpactFactorDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 
 </beans>

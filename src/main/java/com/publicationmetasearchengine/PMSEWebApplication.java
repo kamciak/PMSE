@@ -8,6 +8,7 @@ import com.publicationmetasearchengine.gui.homescreen.HomeScreenPanel;
 import com.publicationmetasearchengine.gui.loginscreen.LoginScreenPanel;
 import com.publicationmetasearchengine.gui.notificationcriteriasscreen.NotificationCriteriasScreenPanel;
 import com.publicationmetasearchengine.gui.profilescreen.ProfileScreenPanel;
+import com.publicationmetasearchengine.gui.searchjournalscreen.SearchJournalScreenPanel;
 import com.publicationmetasearchengine.gui.searchscreen.SearchScreenPanel;
 import com.publicationmetasearchengine.gui.toreadscreen.ToReadScreenPanel;
 import org.vaadin.navigator7.WebApplication;
@@ -24,6 +25,7 @@ public class PMSEWebApplication extends WebApplication{
                                    ToReadScreenPanel.class,
                                    SearchScreenPanel.class,
                                    NotificationCriteriasScreenPanel.class,
-                                   ProfileScreenPanel.class});
+                                   ProfileScreenPanel.class,
+                                   SearchJournalScreenPanel.class});
     }
 }

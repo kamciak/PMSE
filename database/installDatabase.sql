@@ -90,3 +90,18 @@ CREATE TABLE `filterCriterias` (
 );
 
 ALTER TABLE filterCriterias ADD CONSTRAINT userFilterCriteriasRelation FOREIGN KEY (IdU) REFERENCES USER(id) ON DELETE CASCADE;
+
+CREATE TABLE `impactFactor` (
+    `id`            INT NOT NULL AUTO_INCREMENT,
+    `journal`       VARCHAR(128) NOT NULL,
+    `ISSN`          VARCHAR(32) NOT NULL,
+    `if2013_2014`     FLOAT DEFAULT NULL,
+    `if2012`          FLOAT DEFAULT NULL,
+    `if2011`          FLOAT DEFAULT NULL,
+    `if2010`          FLOAT DEFAULT NULL,
+    `if2009`          FLOAT DEFAULT NULL,
+    `if2008`          FLOAT DEFAULT NULL,
+
+    PRIMARY KEY (`id`)
+);
+

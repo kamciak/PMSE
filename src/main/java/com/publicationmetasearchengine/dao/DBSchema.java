@@ -67,6 +67,17 @@ public enum DBSchema {
     public static DbColumn FILTERCRITERIAS_USER_ID_COLUMN = FILTERCRITERIAS_TABLE.addColumn("IdU");
     public static DbColumn FILTERCRITERIAS_FILTERS_COLUMN = FILTERCRITERIAS_TABLE.addColumn("filters");
     public static DbColumn FILTERCRITERIAS_LAST_SEARCH_DATE_COLUMN = FILTERCRITERIAS_TABLE.addColumn("lastSearchDate");
+    
+    public static DbTable IMPACTFACTOR_TABLE = DBSCHEMA.addTable("impactFactor");
+    public static DbColumn IMPACTFACTOR_ID_COLUMN = IMPACTFACTOR_TABLE.addColumn("id");
+    public static DbColumn IMPACTFACTOR_NAME_COLUMN = IMPACTFACTOR_TABLE.addColumn("journal");
+    public static DbColumn IMPACTFACTOR_ISSN_COLUMN = IMPACTFACTOR_TABLE.addColumn("ISSN");
+    public static DbColumn IMPACTFACTOR_2013_2014_COLUMN = IMPACTFACTOR_TABLE.addColumn("if2013_2014");
+    public static DbColumn IMPACTFACTOR_2012_COLUMN = IMPACTFACTOR_TABLE.addColumn("if2012");
+    public static DbColumn IMPACTFACTOR_2011_COLUMN = IMPACTFACTOR_TABLE.addColumn("if2011");
+    public static DbColumn IMPACTFACTOR_2010_COLUMN = IMPACTFACTOR_TABLE.addColumn("if2010");
+    public static DbColumn IMPACTFACTOR_2009_COLUMN = IMPACTFACTOR_TABLE.addColumn("if2009");
+    public static DbColumn IMPACTFACTOR_2008_COLUMN = IMPACTFACTOR_TABLE.addColumn("if2008");
 
     //JOINs
     public static DbJoin PUBLICATION_MAINAUTHOR_JOIN = DBSPEC.addJoin(

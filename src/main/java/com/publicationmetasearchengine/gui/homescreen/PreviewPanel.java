@@ -16,6 +16,7 @@ import com.publicationmetasearchengine.data.User;
 import com.publicationmetasearchengine.gui.PublicationScreenPanel;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEButton;
 import com.publicationmetasearchengine.gui.pmsecomponents.PMSEPanel;
+import com.publicationmetasearchengine.gui.searchjournalscreen.SearchJournalScreenPanel;
 import com.publicationmetasearchengine.management.authormanagement.AuthorManager;
 import com.publicationmetasearchengine.management.publicationmanagement.PublicationManager;
 import com.publicationmetasearchengine.utils.DateUtils;
@@ -278,7 +279,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
         @Override
         public void buttonClick(Button.ClickEvent event) {
             try {
-                if (parentPanel instanceof HomeScreenPanel && parentPanel.isExternalPublication()) {
+                if ((parentPanel instanceof HomeScreenPanel || parentPanel instanceof SearchJournalScreenPanel) && parentPanel.isExternalPublication()) {
                     Integer publicationId = insertActivePublicationIntoDB();
                     if (publicationId != null) {
                         try {

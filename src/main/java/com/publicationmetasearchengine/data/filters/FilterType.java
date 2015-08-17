@@ -9,14 +9,21 @@ public enum FilterType {
     PUBLICATION_DATE(DBSchema.PUBLICATION_PUBLICATION_DATE_COLUMN),
     AUTHOR(null),
     DOI(DBSchema.PUBLICATION_DOI_COLUMN),
-    JOURNAL(DBSchema.PUBLICATION_JOURNAL_REF_COLUMN);
+    JOURNAL(DBSchema.PUBLICATION_JOURNAL_REF_COLUMN),
+    TITLE_JOURNAL,
+    ABSTRACT_JOURNAL;
 
     private final DbColumn dbColumn;
 
     private FilterType(DbColumn dbColumn) {
         this.dbColumn = dbColumn;
     }
-
+    
+    private FilterType()
+    {
+        this.dbColumn = null;
+    }
+    
     public DbColumn getDbColumn() {
         return dbColumn;
     }
