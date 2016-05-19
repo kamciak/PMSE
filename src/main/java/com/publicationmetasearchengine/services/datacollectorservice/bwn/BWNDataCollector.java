@@ -214,6 +214,9 @@ public class BWNDataCollector implements ServiceJobProvider, Serializable {
             int daysBetween = Days.daysBetween(
                     (new DateTime(lastestDateFromDb)).withTimeAtStartOfDay(),
                     (new DateTime()).withTimeAtStartOfDay()).getDays();
+            
+            if(daysBetween > maxDaysBackwardsToDownload)
+                daysBetween = maxDaysBackwardsToDownload;
             LOGGER.debug("Number of days between today and last date in DB: " + daysBetween);
             return daysBetween - 1;
         }

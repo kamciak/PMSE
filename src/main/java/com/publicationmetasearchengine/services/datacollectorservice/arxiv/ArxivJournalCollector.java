@@ -90,12 +90,9 @@ public class ArxivJournalCollector implements Serializable {
             LOGGER.error(ex);
         }
         
-        
         while (!entryStack.isEmpty()) {
             addToList(entryStack.pop());
         }
-        
-        
         LOGGER.info("Fetching of journal ended...");
     }
     

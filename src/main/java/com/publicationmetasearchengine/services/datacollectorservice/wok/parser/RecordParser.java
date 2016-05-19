@@ -64,10 +64,14 @@ public class RecordParser {
     public CategoryInfo getCategoryInfo() {
         CategoryInfo categoryInfo = new CategoryInfo();
         Element rawCategoryInfo = wokDoc.select("category_info").first();
-        for(Element heading : rawCategoryInfo.select("headings > heading"))
-            categoryInfo.addHeading(heading.text());
-        for(Element subheading : rawCategoryInfo.select("subheadings > subheading"))
-            categoryInfo.addSubheading(subheading.text());
+        if (rawCategoryInfo != null) {
+            for (Element heading : rawCategoryInfo.select("headings > heading")) {
+                categoryInfo.addHeading(heading.text());
+            }
+            for (Element subheading : rawCategoryInfo.select("subheadings > subheading")) {
+                categoryInfo.addSubheading(subheading.text());
+            }
+        }
         return categoryInfo;
     }
 

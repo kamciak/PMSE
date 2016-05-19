@@ -4,19 +4,24 @@ import com.publicationmetasearchengine.dao.properties.PropertiesManager;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.dao.sourcedbs.exceptions.SourceDbDoesNotExistException;
 import com.publicationmetasearchengine.data.Publication;
+import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.WOKLiteParser;
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.WOKParser;
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.parts.RawRecord;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.thomsonreuters.wokmws.cxf.auth.WOKMWSAuthenticate;
 import com.thomsonreuters.wokmws.cxf.auth.WOKMWSAuthenticateService;
-import com.thomsonreuters.wokmws.v3.woksearch.EditionDesc;
-import com.thomsonreuters.wokmws.v3.woksearch.FullRecordData;
-import com.thomsonreuters.wokmws.v3.woksearch.FullRecordSearchResults;
-import com.thomsonreuters.wokmws.v3.woksearch.QueryParameters;
-import com.thomsonreuters.wokmws.v3.woksearch.RetrieveParameters;
-import com.thomsonreuters.wokmws.v3.woksearch.SortField;
-import com.thomsonreuters.wokmws.v3.woksearch.WokSearch;
-import com.thomsonreuters.wokmws.v3.woksearch.WokSearchService;
+import com.thomsonreuters.wokmws.v3.woksearchlite.EditionDesc;
+import com.thomsonreuters.wokmws.v3.woksearchlite.LiteRecord;
+import com.thomsonreuters.wokmws.v3.woksearchlite.QueryParameters;
+import com.thomsonreuters.wokmws.v3.woksearchlite.RetrieveParameters;
+import com.thomsonreuters.wokmws.v3.woksearchlite.SearchResults;
+import com.thomsonreuters.wokmws.v3.woksearchlite.SortField;
+import com.thomsonreuters.wokmws.v3.woksearchlite.TimeSpan;
+import com.thomsonreuters.wokmws.v3.woksearchlite.WokSearchLite;
+import com.thomsonreuters.wokmws.v3.woksearchlite.WokSearchLiteService;
+import com.thomsonreuters.wokmws.v3.woksearchlite.SearchResults;
+import com.thomsonreuters.wokmws.v3.woksearchlite.WokSearchLite;
+import com.thomsonreuters.wokmws.v3.woksearchlite.WokSearchLiteService;
 import com.thoughtworks.xstream.InitializationException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,11 +44,13 @@ public class WoKAuthorCollector {
     @Autowired
     private SourceDbDAO sourceDbDAO;
     private String SOCKSproxyHostPort;
-    private Queue<String> recordsQueue = new LinkedList<String>();
+    private Queue<LiteRecord> recordsQueue = new LinkedList<LiteRecord>();
     private Integer sourceDBId = null;
     private String authorName;
     private static int tmp = 1;
     private List<Publication> publicationList = new ArrayList<Publication>();
+    private String password;
+    private String username;
 
     public WoKAuthorCollector(String authorName) {
         this.authorName = authorName;
@@ -56,32 +63,41 @@ public class WoKAuthorCollector {
         WOKMWSAuthenticateService wokMWSAuthenticateService = new WOKMWSAuthenticateService();
         WOKMWSAuthenticate authenticator = wokMWSAuthenticateService.getWOKMWSAuthenticatePort();
         BindingProvider bp = (BindingProvider) authenticator;
-        bp.getRequestContext().put(BindingProvider.SESSION_MAINTAIN_PROPERTY, true);
+        Map<String, Object> bpContext = bp.getRequestContext();
+        bpContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, true);
+
+        bpContext.put(javax.xml.ws.BindingProvider.USERNAME_PROPERTY, username);
+        bpContext.put(javax.xml.ws.BindingProvider.PASSWORD_PROPERTY, password);
 
         try {
             LOGGER.debug("Authenticating... ");
             String cookie = String.format("SID=\"%s\"", authenticator.authenticate());
             LOGGER.debug("Obtained cookie: " + cookie);
 
-            WokSearchService wokSearchService = new WokSearchService();
-            WokSearch searchService = wokSearchService.getWokSearchPort();
+            WokSearchLiteService wokSearchService = new WokSearchLiteService();
+            WokSearchLite searchService = wokSearchService.getWokSearchLitePort();
             Map map = new HashMap();
             map.put("Cookie", Collections.singletonList(cookie));
             ((BindingProvider) searchService).getRequestContext().put(
                     MessageContext.HTTP_REQUEST_HEADERS, map);
 
             RetrieveParameters retrieveParameters = getRetrieveParameters();
-            FullRecordSearchResults searchResults = searchService.search(getQueryParameters(authorName), retrieveParameters);
+//            FullRecordSearchResults searchResults = searchService.search(getQueryParameters(authorName), retrieveParameters);
+            SearchResults searchResults = searchService.search(getQueryParameters(authorName), retrieveParameters);
             LOGGER.info(String.format("Querying for %s... found %d records", authorName, searchResults.getRecordsFound()));
             LOGGER.debug(String.format("Retrieving for %s started...", authorName));
-            recordsQueue.add(searchResults.getRecords());
+             for (LiteRecord lr : searchResults.getRecords()) {
+                recordsQueue.add(lr);
+            }
 
             for (int i = 101; i < searchResults.getRecordsFound(); i = i + 100) {
                 LOGGER.debug(String.format("Retriving %03d-%03d", i, i + 99));
                 retrieveParameters.setFirstRecord(i);
-                FullRecordData retrieve = searchService.retrieve(searchResults.getQueryId(), retrieveParameters);
-                recordsQueue.add(retrieve.getRecords());
-            }
+                SearchResults retrieve = searchService.retrieve(searchResults.getQueryId(), retrieveParameters);
+                for (LiteRecord lr : retrieve.getRecords()) {
+                    recordsQueue.add(lr);
+                }
+            }   
             LOGGER.debug(String.format("Retrieving for %s ended...", authorName));
             
         } catch (Exception ex) {
@@ -95,11 +111,12 @@ public class WoKAuthorCollector {
         }
         unsetProxy();
 
-        while (!recordsQueue.isEmpty()) {
-            for (RawRecord rawRecord : new WOKParser(recordsQueue.poll()).getRecords()) {
-                addToList(rawRecord);
-            }
-        }
+//            while (!recordsQueue.isEmpty()) {
+                for (RawRecord rawRecord : new WOKLiteParser((List)recordsQueue).getRecords()) {
+                    LOGGER.debug("--------->Tu wsadzam do bazy");
+                    addToList(rawRecord);
+                }
+//               
         LOGGER.info("Fetching publications ended...");
     }
 
@@ -172,6 +189,15 @@ public class WoKAuthorCollector {
         this.SOCKSproxyHostPort = SOCKSproxyHostPort;
     }
 
+    public void setUsername(String username)
+    {
+        this.username = username;
+    }
+    
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }    
     public List<Publication> getPublications() {
         return publicationList;
     }
@@ -211,6 +237,8 @@ public class WoKAuthorCollector {
             LOGGER.fatal("Database WOK has no ID assigned. Cancelling job...");
         }
         setProxy();
+        username = pm.getProperty(collectorPrefix  + "username");
+        password = pm.getProperty(collectorPrefix + "password");
     }
 
     private void unsetProxy() {

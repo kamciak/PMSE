@@ -22,11 +22,14 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -333,11 +336,13 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             goBackBtn.setEnabled(false);
             if (isExternalPublication()) {
 
-                PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().setUriParams("#E");
+                //PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().setUriParams("#E");
+                PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().setUriParams("");
                 setAuthorPublicationTableChangeListener();
                 previewPanel.setContentForAuthorPublications(backupManager.getPreviousPublication());
             } else {
-                PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().setUriParams("#L");
+                //PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().setUriParams("#L");
+                PMSENavigableApplication.getCurrentNavigableAppLevelWindow().getNavigator().setUriParams("");
                 setPublicationTableChangeListener();
                 previewPanel.setContent(backupManager.getPreviousPublication());
             }
@@ -395,20 +400,26 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
     @Override
     public void paramChanged(Navigator.NavigationEvent event) {
         if (authorName != null) {
-            if (authorName.contains("E#")) {
-                createBackup(true);
-                handleSearchForExternalPublicationOfAuthor(authorName);
+            try {
+                authorName = URLDecoder.decode(authorName, "UTF-8");
+                //authorName = authorName.replace("%20", " ");
+                if (authorName.contains("E#")) {
+                    createBackup(true);
+                    handleSearchForExternalPublicationOfAuthor(authorName);
 
-            } else {
-                createBackup(false);
-                handleSearchForLocalPublicationOfAuthor(authorName);
-            }
+                } else {
+                    createBackup(false);
+                    handleSearchForLocalPublicationOfAuthor(authorName);
+                }
 
-            if (authorName.startsWith("DE#") || authorName.startsWith("DL#")) {
-                goBackBtn.setVisible(false);
+                if (authorName.startsWith("DE#") || authorName.startsWith("DL#")) {
+                    goBackBtn.setVisible(false);
+                }
+                searchLayout.setEnabled(false);
+                publicationTable.setSelectable(true);
+            } catch (UnsupportedEncodingException ex) {
+                java.util.logging.Logger.getLogger(HomeScreenPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            searchLayout.setEnabled(false);
-            publicationTable.setSelectable(true);
         }
     }
 
@@ -422,7 +433,10 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
     }
 
     private void handleSearchForLocalPublicationOfAuthor(final String authorName) {
+        LOGGER.debug("#####LOCAL#######");
+        LOGGER.debug("authorName: " + authorName);
         String authorNameCut = authorName.replaceFirst("[ED]L#", "");
+        LOGGER.debug("authorNameCut:" + authorNameCut);
         filterPublicationByAuthorOfSelected(authorNameCut);
         setProperPublicationsTableListener();
     }
@@ -433,7 +447,11 @@ public class HomeScreenPanel extends CustomComponent implements PublicationScree
             @Override
             public void onClose(CheckboxConfirmDialog dialog) {
                 if (dialog.isConfirmed()) {
+                    LOGGER.debug("\n========================\n");
+                    LOGGER.debug("authorName: " + authorName);
+                    
                     String authorNameCut = authorName.replaceFirst("[ED]E#", "");
+                    LOGGER.debug("authorCut: " + authorNameCut);
                     List<Publication> allPublications = new ArrayList<Publication>();
                     if (dialog.searchInArxiv()) {
                         allPublications.addAll(getArxivAuthorPublications(authorNameCut));

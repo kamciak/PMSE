@@ -66,7 +66,7 @@ public class EntryParser {
     
     public String getPDF()
     {
-        return !getOriginalPDFLink().isEmpty() ? getOriginalPDFLink() : getPDFLink();
+        return !(getOriginalPDFLink() == null || getOriginalPDFLink().isEmpty()) ? getOriginalPDFLink() : getPDFLink();
     }
 
     public RawEntry getRawEntry() {

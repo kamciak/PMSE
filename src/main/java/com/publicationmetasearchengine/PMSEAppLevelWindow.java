@@ -126,29 +126,29 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
         });
     }
     /*
-        private void initDownloadImpactFactor() {
-        MenuBar.MenuItem downloadImpactFactor = menuBar.addItem("Download ImpactFactor", new MenuBar.Command() {
-            private static final long serialVersionUID = 1L;
+     private void initDownloadImpactFactor() {
+     MenuBar.MenuItem downloadImpactFactor = menuBar.addItem("Download ImpactFactor", new MenuBar.Command() {
+     private static final long serialVersionUID = 1L;
 
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                downloadImpactFactor();
-                navigator.navigateTo(HomeScreenPanel.class);
-            }
-        });
-    }
+     @Override
+     public void menuSelected(MenuBar.MenuItem selectedItem) {
+     downloadImpactFactor();
+     navigator.navigateTo(HomeScreenPanel.class);
+     }
+     });
+     }
     
-        private void downloadImpactFactor()
-    {
-        ImpactFactorDownloader impacFactorDownloader = new ImpactFactorDownloader();
-        impacFactorDownloader.downloadImpactFactor();
-        List<Journal> journalsStartAt = impactFactorDao.getJournalsStartAt('Z');
-        LOGGER.debug("Journals starts at Z:");
-        for(Journal journal : journalsStartAt)
-        {
-            LOGGER.debug(journal);
-        }
-    }*/
+     private void downloadImpactFactor()
+     {
+     ImpactFactorDownloader impacFactorDownloader = new ImpactFactorDownloader();
+     impacFactorDownloader.downloadImpactFactor();
+     List<Journal> journalsStartAt = impactFactorDao.getJournalsStartAt('Z');
+     LOGGER.debug("Journals starts at Z:");
+     for(Journal journal : journalsStartAt)
+     {
+     LOGGER.debug(journal);
+     }
+     }*/
 
     private void initToReadMenuItem() {
         MenuBar.MenuItem toReadMenuItem = menuBar.addItem("To-Read", new MenuBar.Command() {
@@ -173,8 +173,8 @@ public class PMSEAppLevelWindow extends HeaderFooterFluidAppLevelWindow {
         });
 
     }
-    
-        private void initSearchJournalMenuItem() {
+
+    private void initSearchJournalMenuItem() {
         MenuBar.MenuItem searchMenuItem = menuBar.addItem("Search Journal", new MenuBar.Command() {
             private static final long serialVersionUID = 1L;
 

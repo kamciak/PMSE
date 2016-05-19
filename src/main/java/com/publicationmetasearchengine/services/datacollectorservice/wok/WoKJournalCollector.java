@@ -4,27 +4,26 @@
  */
 package com.publicationmetasearchengine.services.datacollectorservice.wok;
 
-import com.healthmarketscience.sqlbuilder.ComboCondition;
 import com.publicationmetasearchengine.dao.impactfactor.ImpactFactorDAO;
 import com.publicationmetasearchengine.dao.properties.PropertiesManager;
 import com.publicationmetasearchengine.dao.sourcedbs.SourceDbDAO;
 import com.publicationmetasearchengine.dao.sourcedbs.exceptions.SourceDbDoesNotExistException;
 import com.publicationmetasearchengine.data.Journal;
 import com.publicationmetasearchengine.data.Publication;
-import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.WOKParser;
+import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.WOKLiteParser;
 import com.publicationmetasearchengine.services.datacollectorservice.wok.parser.parts.RawRecord;
 import com.publicationmetasearchengine.utils.JournalComparator;
 import com.publicationmetasearchengine.utils.PMSEConstants;
 import com.thomsonreuters.wokmws.cxf.auth.WOKMWSAuthenticate;
 import com.thomsonreuters.wokmws.cxf.auth.WOKMWSAuthenticateService;
-import com.thomsonreuters.wokmws.v3.woksearch.EditionDesc;
-import com.thomsonreuters.wokmws.v3.woksearch.FullRecordData;
-import com.thomsonreuters.wokmws.v3.woksearch.FullRecordSearchResults;
-import com.thomsonreuters.wokmws.v3.woksearch.QueryParameters;
-import com.thomsonreuters.wokmws.v3.woksearch.RetrieveParameters;
-import com.thomsonreuters.wokmws.v3.woksearch.SortField;
-import com.thomsonreuters.wokmws.v3.woksearch.WokSearch;
-import com.thomsonreuters.wokmws.v3.woksearch.WokSearchService;
+import com.thomsonreuters.wokmws.v3.woksearchlite.EditionDesc;
+import com.thomsonreuters.wokmws.v3.woksearchlite.LiteRecord;
+import com.thomsonreuters.wokmws.v3.woksearchlite.QueryParameters;
+import com.thomsonreuters.wokmws.v3.woksearchlite.RetrieveParameters;
+import com.thomsonreuters.wokmws.v3.woksearchlite.SortField;
+import com.thomsonreuters.wokmws.v3.woksearchlite.SearchResults;
+import com.thomsonreuters.wokmws.v3.woksearchlite.WokSearchLite;
+import com.thomsonreuters.wokmws.v3.woksearchlite.WokSearchLiteService;
 import com.thoughtworks.xstream.InitializationException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,34 +54,21 @@ public class WoKJournalCollector {
     @Autowired
     ImpactFactorDAO impactFactorDao;
     private String SOCKSproxyHostPort;
-    private Queue<String> recordsQueue = new LinkedList<String>();
+    private Queue<LiteRecord> recordsQueue = new LinkedList<LiteRecord>();
     private Integer sourceDBId = null;
     private static int tmp = 1;
     private List<Publication> publicationList = new ArrayList<Publication>();
 
-    private String title;
-    //private List<String> abstractKeys;
-//    private ComboCondition.Op titleKeysInnerOperator;
-//    private ComboCondition.Op outerOperator;
-//    private ComboCondition.Op abstractKeysInnerOperator;
-    
+    private String title = "";
     private HashMap<String, ArrayList<Publication>> resultMap = new HashMap<String, ArrayList<Publication>>();
     private HashMap<String, List<Journal>> journalsHashMapStartsAt = new HashMap<String, List<Journal>>();
+    private String username = "";
+    private String password = "";
 
     public WoKJournalCollector(List<String> titleKeys){
-            //ComboCondition.Op titleKeysInnerOperator){
-            //ComboCondition.Op outerOperator,
-            //List<String> abstractKeys,
-           // ComboCondition.Op abstractKeysInnerOperator) {
-        title = "";
-        for(String key : titleKeys)
-        {
+        for (String key : titleKeys) {
             title += key + " ";
         }
-        //this.abstractKeys = abstractKeys;
-        //this.outerOperator = outerOperator;
-        //this.titleKeysInnerOperator = titleKeysInnerOperator;
-       // this.abstractKeysInnerOperator = abstractKeysInnerOperator;
     }
     
     public List<Publication> getPublications() {
@@ -97,10 +83,20 @@ public class WoKJournalCollector {
         LOGGER.info("Fetching author publications started...");
         initialize();
 
-        WOKMWSAuthenticateService wokMWSAuthenticateService = new WOKMWSAuthenticateService();
-        WOKMWSAuthenticate authenticator = wokMWSAuthenticateService.getWOKMWSAuthenticatePort();
-        BindingProvider bp = (BindingProvider) authenticator;
-        bp.getRequestContext().put(BindingProvider.SESSION_MAINTAIN_PROPERTY, true);
+        
+            WOKMWSAuthenticateService wokMWSAuthenticateService = new WOKMWSAuthenticateService();
+            WOKMWSAuthenticate authenticator = wokMWSAuthenticateService.getWOKMWSAuthenticatePort();
+            BindingProvider bp = (BindingProvider) authenticator;
+            Map<String, Object> bpContext = bp.getRequestContext();
+            bpContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, true);
+
+            bpContext.put(javax.xml.ws.BindingProvider.USERNAME_PROPERTY, username);
+            bpContext.put(javax.xml.ws.BindingProvider.PASSWORD_PROPERTY, password);
+            
+//        WOKMWSAuthenticateService wokMWSAuthenticateService = new WOKMWSAuthenticateService();
+//        WOKMWSAuthenticate authenticator = wokMWSAuthenticateService.getWOKMWSAuthenticatePort();
+//        BindingProvider bp = (BindingProvider) authenticator;
+//        bp.getRequestContext().put(BindingProvider.SESSION_MAINTAIN_PROPERTY, true);
 
         try {
             
@@ -108,25 +104,30 @@ public class WoKJournalCollector {
             String cookie = String.format("SID=\"%s\"", authenticator.authenticate());
             LOGGER.debug("Obtained cookie: " + cookie);
 
-            WokSearchService wokSearchService = new WokSearchService();
-            WokSearch searchService = wokSearchService.getWokSearchPort();
+            WokSearchLiteService wokSearchService = new WokSearchLiteService();
+            WokSearchLite searchService = wokSearchService.getWokSearchLitePort();
             Map map = new HashMap();
             map.put("Cookie", Collections.singletonList(cookie));
             ((BindingProvider) searchService).getRequestContext().put(
                     MessageContext.HTTP_REQUEST_HEADERS, map);
 
             RetrieveParameters retrieveParameters = getRetrieveParameters();
-            FullRecordSearchResults searchResults = searchService.search(getQueryParameters(title), retrieveParameters);
+            SearchResults searchResults = searchService.search(getQueryParameters(title), retrieveParameters);
+//            FullRecordSearchResults searchResults = searchService.search(getQueryParameters(title), retrieveParameters);
             LOGGER.info(String.format("Querying for %s... found %d records", title, searchResults.getRecordsFound()));
             LOGGER.debug(String.format("Retrieving for \"%s\" started...", title));
-            recordsQueue.add(searchResults.getRecords());
+             for (LiteRecord lr : searchResults.getRecords()) {
+                recordsQueue.add(lr);
+            }
 
             for (int i = 101; i < searchResults.getRecordsFound(); i = i + 100) {
                 LOGGER.debug(String.format("Retriving %03d-%03d", i, i + 99));
                 retrieveParameters.setFirstRecord(i);
-                FullRecordData retrieve = searchService.retrieve(searchResults.getQueryId(), retrieveParameters);
-                recordsQueue.add(retrieve.getRecords());
-            }
+                SearchResults retrieve = searchService.retrieve(searchResults.getQueryId(), retrieveParameters);
+                for (LiteRecord lr : retrieve.getRecords()) {
+                    recordsQueue.add(lr);
+                }
+            }            
             LOGGER.debug(String.format("Retrieving for \"%s\" ended...", title));
             
         } catch (Exception ex) {
@@ -140,11 +141,12 @@ public class WoKJournalCollector {
         }
         unsetProxy();
 
-        while (!recordsQueue.isEmpty()) {
-            for (RawRecord rawRecord : new WOKParser(recordsQueue.poll()).getRecords()) {
-                addToList(rawRecord);
-            }
-        }
+//            while (!recordsQueue.isEmpty()) {
+                for (RawRecord rawRecord : new WOKLiteParser((List)recordsQueue).getRecords()) {
+                    LOGGER.debug("--------->Tu wsadzam do bazy");
+                    addToList(rawRecord);
+                }
+//            }        
         LOGGER.info("Fetching publications ended...");
     }
 
@@ -221,7 +223,7 @@ public class WoKJournalCollector {
     private QueryParameters getQueryParameters(String title) {
         QueryParameters qp = new QueryParameters();
         qp.setDatabaseId("WOS");
-        qp.setUserQuery("TI=" + title); //Author name
+        qp.setUserQuery("TI=" + title); //Title 
         EditionDesc editionDesc = new EditionDesc();
         editionDesc.setCollection("WOS");
         editionDesc.setEdition("SCI");
@@ -249,6 +251,16 @@ public class WoKJournalCollector {
 
     public void setSOCKSproxyHostPort(String SOCKSproxyHostPort) {
         this.SOCKSproxyHostPort = SOCKSproxyHostPort;
+    }
+    
+    public void setUsername(String username)
+    {
+        this.username = username;
+    }
+    
+    public void setPassword(String password)
+    {
+        this.password = password;
     }
 
     private void validateSOCKSproxyHostPort() throws InitializationException {
@@ -285,6 +297,8 @@ public class WoKJournalCollector {
         } catch (SourceDbDoesNotExistException ex) {
             LOGGER.fatal("Database WOK has no ID assigned. Cancelling job...");
         }
+        username = pm.getProperty(collectorPrefix  + "username");
+        password = pm.getProperty(collectorPrefix + "password");
         setProxy();
     }
 

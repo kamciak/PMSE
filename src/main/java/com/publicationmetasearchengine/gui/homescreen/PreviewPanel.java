@@ -187,7 +187,7 @@ public class PreviewPanel extends PMSEPanel implements Serializable {
                     DateUtils.formatDateOnly(publication.getPublicationDate()),
                     publication.getSourceTitle() != null ? publication.getSourceTitle() : publication.getJournalRef(),
                     publication.getSourceVolume() != null ? publication.getSourceVolume() : "",
-                    publication.getSourceIssue() != null ? "(" + publication.getSourceIssue() + ")" : "",
+                    publication.getSourceIssue() != null && !publication.getSourceIssue().isEmpty() ? "(" + publication.getSourceIssue() + ")" : "",
                     DateUtils.formatYearOnly(publication.getPublicationDate())));
         }
     }

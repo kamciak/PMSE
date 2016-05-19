@@ -23,6 +23,31 @@ public class RawRecord {
         this.DOI = DOI;
         this.journalRef = journalRef;
     }
+    
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Title: ");
+        sb.append(this.title + "\n");
+        sb.append("Id: ");
+        sb.append(this.id + "\n");
+        sb.append("SourceInfo ");
+        sb.append(this.sourceInfo + "\n");
+        sb.append("Authors: ");
+        sb.append(this.authors + "\n");
+        sb.append("CategoryInfo: ");
+        sb.append(this.categoryInfo + "\n");
+        sb.append("Summary: ");
+        sb.append(this.summary + "\n");
+        sb.append("Summary: ");
+        sb.append(this.summary + "\n");
+        sb.append("DOI: ");
+        sb.append(this.DOI + "\n");
+        sb.append("JournalRef: ");
+        sb.append(this.journalRef + "\n");
+        
+        return sb.toString();
+    }
 
     public String getId() {
         return id;

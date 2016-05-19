@@ -259,7 +259,7 @@
                             <goal>wsdl2java</goal>
                         </goals>
                     </execution>
-<!--                    <execution>
+                    <execution>
                         <id>generate-searchlite-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -273,7 +273,7 @@
                         <goals>
                             <goal>wsdl2java</goal>
                         </goals>
-                    </execution>-->
+                    </execution>
                     <execution>
                         <id>generate-search-sources</id>
                         <phase>generate-sources</phase>
